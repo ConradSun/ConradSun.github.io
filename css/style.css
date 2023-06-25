@@ -776,7 +776,7 @@ body {
   font-family: Satoshi-Variable, Noto Sans SC, -apple-system, system-ui, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, Helvetica Neue, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial;
   font-weight: 450;
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.8;
 }
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
@@ -787,14 +787,14 @@ body::-webkit-scrollbar {
   html,
   body {
     font-size: 15.36px;
-    line-height: 1.44;
+    line-height: 1.728;
   }
 }
 @media (max-width: 500px) {
   html,
   body {
     font-size: 14.4px;
-    line-height: 1.35;
+    line-height: 1.62;
   }
 }
 ::selection {
@@ -918,7 +918,7 @@ button {
   clear: both;
 }
 .markdown-body {
-  font-family: 'Satoshi-Variable', sans-serif, 'Noto Sans SC', sans-serif, sans-serif;
+  font-family: 'Lora', 'SimSun', sans-serif;
   font-size: 16px;
 }
 .markdown-body blockquote {
@@ -937,7 +937,7 @@ button {
   padding: 5px 5px 5px 10px;
 }
 .markdown-body p {
-  line-height: 1.5;
+  line-height: 1.8;
   color: var(--default-text-color);
   font-weight: 400;
   margin-bottom: 1rem;
@@ -1022,9 +1022,9 @@ button {
 .markdown-body .h4,
 .markdown-body .h5,
 .markdown-body .h6 {
-  font-family: 'Satoshi-Variable', sans-serif, 'Noto Sans SC', sans-serif, sans-serif;
+  font-family: 'Lora', 'SimSun', sans-serif;
   color: var(--second-text-color);
-  line-height: 1.5;
+  line-height: 1.8;
   margin-bottom: 1rem !important;
 }
 @media (max-width: 780px) {
@@ -1040,7 +1040,7 @@ button {
   .markdown-body .h4,
   .markdown-body .h5,
   .markdown-body .h6 {
-    line-height: 1.44;
+    line-height: 1.728;
   }
 }
 .markdown-body h1,
@@ -1110,7 +1110,7 @@ button {
 .markdown-body .h6 {
   font-size: 1.2rem;
   font-weight: 600;
-  line-height: 1.5;
+  line-height: 1.8;
   margin-top: 2rem;
 }
 @media (max-width: 780px) {
@@ -1543,7 +1543,7 @@ pre,
 }
 pre,
 code {
-  font-family: 'Ubuntu Mono', Courier, monospace;
+  font-family: 'Courier', 'Ubuntu Mono', Courier, monospace;
 }
 pre.mermaid {
   background-color: var(--background-color);
@@ -3023,7 +3023,7 @@ pre .deletion {
   width: 100%;
   font-size: 0.92rem;
   box-sizing: border-box;
-  font-family: 'Satoshi-Variable', sans-serif, 'Noto Sans SC', sans-serif, 'Noto Sans', 'Noto Sans SC', sans-serif;
+  font-family: 'Lora', 'SimSun', 'Noto Sans', 'Noto Sans SC', sans-serif;
 }
 .post-toc-wrap .post-toc .toc-title {
   font-size: 0.8rem;
@@ -6474,7 +6474,7 @@ pre .deletion {
   }
 }
 .article-copyright-info-container {
-  font-family: 'Satoshi-Variable', sans-serif, 'Noto Sans SC', sans-serif;
+  font-family: 'Lora', 'Noto Sans SC', sans-serif;
   position: relative;
   width: 100%;
   box-sizing: border-box;
@@ -6872,7 +6872,7 @@ pre .deletion {
   font-size: 1.4rem;
   line-height: 1.5;
   color: var(--second-text-color);
-  font-family: 'Satoshi-Variable', sans-serif, 'Noto Sans SC', sans-serif, 'Noto Sans SC', sans-serif;
+  font-family: 'Lora', 'SimSun', 'Noto Sans SC', sans-serif;
   margin: 0;
 }
 @media (max-width: 780px) {
@@ -7770,7 +7770,7 @@ pre .deletion {
   margin: 0px 0 30px 0;
   line-height: 1.4;
   color: var(--second-text-color);
-  font-family: 'Satoshi-Variable', sans-serif, 'Noto Sans SC', sans-serif, 'Noto Sans SC', sans-serif;
+  font-family: 'Lora', 'SimSun', 'Noto Sans SC', sans-serif;
 }
 .post-page-container .article-content-container .article-title .article-title-cover {
   display: flex;
@@ -7781,7 +7781,7 @@ pre .deletion {
   bottom: 36px;
   left: 0;
   text-align: center;
-  font-family: 'Satoshi-Variable', sans-serif, 'Noto Sans SC', sans-serif, 'Noto Sans SC', sans-serif;
+  font-family: 'Lora', 'SimSun', 'Noto Sans SC', sans-serif;
   color: var(--second-text-color);
   font-size: 3.2rem;
   font-weight: 700;
@@ -7805,7 +7805,7 @@ pre .deletion {
   }
 }
 .post-page-container .article-content-container .article-header {
-  font-family: 'Satoshi-Variable', sans-serif, 'Noto Sans SC', sans-serif, 'Noto Sans', 'Noto Sans SC', sans-serif;
+  font-family: 'Lora', 'SimSun', 'Noto Sans', 'Noto Sans SC', sans-serif;
   position: relative;
   padding-left: 46px;
   width: 100%;
