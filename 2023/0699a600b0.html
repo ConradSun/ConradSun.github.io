@@ -26,7 +26,7 @@
 <meta property="og:description" content="前面 已经讲解了基于KernControl API的通信实现，该实现相对简单，但有一些缺点。内核向应用层传输消息需调用ctl_enqueuedata接口，该接口实际将数据缓存至缓冲区，当需要瞬时大量传输消息时，缓冲区容量有限，将丢弃后来的数据。如果传输的数据有优先级，则需对ctl_enqueuedata接口进行二次封装，避免高优先级数据丢失。 IOKit Fundamentals  框架提供更加全">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-06-21T05:12:57.000Z">
-<meta property="article:modified_time" content="2023-07-05T03:50:48.114Z">
+<meta property="article:modified_time" content="2023-07-05T03:56:05.955Z">
 <meta property="article:author" content="ConradSun">
 <meta property="article:tag" content="macOS">
 <meta property="article:tag" content="内核通信">
@@ -346,8 +346,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-07-05 11:50:48</span>
-            <span class="mobile">2023-07-05 11:50</span>
+            <span class="desktop">2023-07-05 11:56:05</span>
+            <span class="mobile">2023-07-05 11:56</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -409,7 +409,7 @@
             
 
             <div class="article-content markdown-body">
-                <p><a class="link"   target="_blank" rel="noopener" href="https://conradsun.github.io/2023/06a9b0ec68.html/" >前面 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>已经讲解了基于KernControl API的通信实现，该实现相对简单，但有一些缺点。内核向应用层传输消息需调用<code>ctl_enqueuedata</code>接口，该接口实际将数据缓存至缓冲区，当需要瞬时大量传输消息时，缓冲区容量有限，将丢弃后来的数据。如果传输的数据有优先级，则需对<code>ctl_enqueuedata</code>接口进行二次封装，避免高优先级数据丢失。</p>
+                <p><a class="link"   target="_blank" rel="noopener" href="https://conradsun.github.io/2023/06a9b0ec68.html" >前面 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>已经讲解了基于KernControl API的通信实现，该实现相对简单，但有一些缺点。内核向应用层传输消息需调用<code>ctl_enqueuedata</code>接口，该接口实际将数据缓存至缓冲区，当需要瞬时大量传输消息时，缓冲区容量有限，将丢弃后来的数据。如果传输的数据有优先级，则需对<code>ctl_enqueuedata</code>接口进行二次封装，避免高优先级数据丢失。</p>
 <p><a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/kernel/iokit_fundamentals" >IOKit Fundamentals <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 框架提供更加全面且方便的内核驱动API。<a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/kernel/ioservice-1g" >IOService <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>是大多数内核驱动的基类，提供驱动实例化相关的各项服务。<a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/kernel/iouserclient" >IOUserClient <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>是与用户态应用程序间通信的基类，通过继承并实现该类，可与客户端应用程序建立通信机制。<a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/kernel/ioshareddataqueue" >IOSharedDataQueue <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>是非常便于使用的内核与用户态进程进行数据交换的通用队列，用户可自行设置队列大小。基于IOKit中的IOService、IOUserClient、IOSharedDataQueue可方便的实现内核与用户进程的通信和数据传输。下面结合代码进行简单实现，更多代码细节和工程配置可参考<a class="link"   target="_blank" rel="noopener" href="https://github.com/ConradSun/NuwaStone" >NuwaStone <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>项目。</p>
 <h2 id="IOService内核编程"><a href="#IOService内核编程" class="headerlink" title="IOService内核编程"></a>IOService内核编程</h2><p>由于本次编写的为内核拓展，仅需要IOService进行驱动的加载与卸载管理，这里的代码实现很简单，仅需重写start、stop方法。如有加载卸载时的自定义操作可在函数中实现。</p>
 <div class="highlight-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">DriverService.hpp</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DriverService</span> : <span class="keyword">public</span> IOService &#123;</span><br><span class="line">    <span class="built_in">OSDeclareDefaultStructors</span>(DriverService);</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// Called by the kernel when the kext is loaded</span></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">start</span><span class="params">(IOService *provider)</span> <span class="keyword">override</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Called by the kernel when the kext is unloaded</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">stop</span><span class="params">(IOService *provider)</span> <span class="keyword">override</span></span>;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">clearInstances</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
@@ -436,7 +436,7 @@
         <li><strong>创建于:</strong> 2023-06-21 13:12:57</li>
         
             <li>
-                <strong>更新于:</strong> 2023-07-05 11:50:48
+                <strong>更新于:</strong> 2023-07-05 11:56:05
             </li>
         
         <li>
