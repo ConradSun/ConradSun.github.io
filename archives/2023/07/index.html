@@ -13,24 +13,17 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="http://example.com/2023/0676d00749.html"/>
+    <link rel="canonical" href="http://example.com/archives/2023/07/"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="基于Kauth或者EndpointSecurity框架可以监视系统的各类文件、进程事件，在审计后阻断或放通事件的执行。其中基于内核拓展的方案除了可以阻断执行，还可以修改函数调用参数，进行诸如文件保护、网络隔离等操作。 编写内核拓展较为复杂且可能导致系统崩溃等严重后果。Apple提供了在用户态hook函数调用的机制，使用较为方便，称为动态库注入。动态库注入是dyld加载器提供的功能，通过修改环境变量">
-<meta property="og:type" content="article">
-<meta property="og:title" content="macOS Hook系统调用">
-<meta property="og:url" content="http://example.com/2023/0676d00749.html">
+        <meta property="og:type" content="website">
+<meta property="og:title" content="康的个人博客">
+<meta property="og:url" content="http://example.com/archives/2023/07/index.html">
 <meta property="og:site_name" content="康的个人博客">
-<meta property="og:description" content="基于Kauth或者EndpointSecurity框架可以监视系统的各类文件、进程事件，在审计后阻断或放通事件的执行。其中基于内核拓展的方案除了可以阻断执行，还可以修改函数调用参数，进行诸如文件保护、网络隔离等操作。 编写内核拓展较为复杂且可能导致系统崩溃等严重后果。Apple提供了在用户态hook函数调用的机制，使用较为方便，称为动态库注入。动态库注入是dyld加载器提供的功能，通过修改环境变量">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-06-24T05:12:57.000Z">
-<meta property="article:modified_time" content="2023-07-05T03:41:21.943Z">
 <meta property="article:author" content="ConradSun">
-<meta property="article:tag" content="macOS">
-<meta property="article:tag" content="hook">
-<meta property="article:tag" content="interpose">
 <meta name="twitter:card" content="summary">
     
     
@@ -43,7 +36,7 @@
     
     <title>
         
-            macOS Hook系统调用 -
+            归档: 2023/7 -
         
         Kang&#39;s Blog
     </title>
@@ -171,7 +164,7 @@
                         
                             <li class="navbar-item">
                                 <!-- Menu -->
-                                <a class="" 
+                                <a class="active" 
                                     href="/archives"  >
                                     
                                         
@@ -254,7 +247,7 @@
             
                 
                     <li class="drawer-navbar-item flex-center">
-                        <a class="" 
+                        <a class="active" 
                         href="/archives"  >
                              
                                 
@@ -311,269 +304,72 @@
 
                 
                     <div class="fade-in-down-animation">
-    <div class="post-page-container">
-        <div class="article-content-container">
-
-            
-            
-                <div class="article-title">
-                    <h1 class="article-title-regular">macOS Hook系统调用</h1>
-                </div>
-            
-                
-            
-
-            
-                <div class="article-header">
-                    <div class="avatar">
-                        <img src="/images/git-avatar.png">
-                    </div>
-                    <div class="info">
-                        <div class="author">
-                            <span class="name">孙康</span>
-                            
-                                <span class="author-label">Lv2</span>
-                            
-                        </div>
-                        <div class="meta-info">
-                            <div class="article-meta-info">
-    <span class="article-date article-meta-item">
-        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
-        <span class="desktop">2023-06-24 13:12:57</span>
-        <span class="mobile">2023-06-24 13:12</span>
-        <span class="hover-info">创建</span>
-    </span>
+    <div class="archive-container ">
+        
+<div class="archive-list-container">
     
-        <span class="article-date article-meta-item">
-            <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-07-05 11:41:21</span>
-            <span class="mobile">2023-07-05 11:41</span>
-            <span class="hover-info">更新</span>
-        </span>
-    
-
-    
-        <span class="article-categories article-meta-item">
-            <i class="fa-regular fa-folders"></i>&nbsp;
-            <ul>
-                
-                    <li>
-                        <a href="/categories/macOS%E5%BC%80%E5%8F%91/">macOS开发</a>&nbsp;
-                    </li>
-                
-            </ul>
-        </span>
-    
-    
-        <span class="article-tags article-meta-item">
-            <i class="fa-regular fa-tags"></i>&nbsp;
-            <ul>
-                
-                    <li>
-                        <a href="/tags/macOS/">macOS</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/hook/">hook</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/interpose/">interpose</a>&nbsp;
-                    </li>
-                
-            </ul>
-        </span>
-    
-
-    
-    
-        <span class="article-wordcount article-meta-item">
-            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>536 字</span>
-        </span>
-    
-    
-        <span class="article-min2read article-meta-item">
-            <i class="fa-regular fa-clock"></i>&nbsp;<span>2 分钟</span>
-        </span>
-    
-    
-        <span class="article-pv article-meta-item">
-            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
-        </span>
-    
-</div>
-
-                        </div>
-                    </div>
-                </div>
-            
-
-            <div class="article-content markdown-body">
-                <p>基于Kauth或者EndpointSecurity框架可以监视系统的各类文件、进程事件，在审计后阻断或放通事件的执行。其中基于内核拓展的方案除了可以阻断执行，还可以修改函数调用参数，进行诸如文件保护、网络隔离等操作。</p>
-<p>编写内核拓展较为复杂且可能导致系统崩溃等严重后果。Apple提供了在用户态hook函数调用的机制，使用较为方便，称为动态库注入。动态库注入是dyld加载器提供的功能，通过修改环境变量<code>DYLD_INSERT_LIBRARIES</code>可向二进制注入动态库。注入的动态库需实现函数替换，Apple提供了<a class="link"   target="_blank" rel="noopener" href="https://opensource.apple.com/source/dyld/dyld-210.2.3/include/mach-o/dyld-interposing.h" >dyld-interposing <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>方法，使用如下。</p>
-<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> DYLD_INTERPOSE</span></span><br><span class="line">    <span class="meta">#<span class="keyword">define</span> DYLD_INTERPOSE(_replacement,_replacee) \</span></span><br><span class="line"><span class="meta">        __attribute__((used)) static struct&#123; const void* replacement; const void* replacee; &#125; _interpose_##_replacee \</span></span><br><span class="line"><span class="meta">        __attribute__ ((section (<span class="string">&quot;__DATA,__interpose&quot;</span>))) = &#123; (const void*)(unsigned long)&amp;_replacement, (const void*)(unsigned long)&amp;_replacee &#125;;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure></div>
-
-<p>该段宏定义的目的是修改MachO文件的DATA区的interpose字段，目的是将原始函数的地址替换为自定义函数地址，dyld在加载动态库时对该地址进行替换。如这里对进程执行的系统调用<code>execve</code>和<code>posix_spawn</code>进行替换，将映像更换为echo，读者可自行查看是否完成替换。注意，调用<code>printf</code>函数不一定可以打印出来，具体原因不太明白，猜测是因为<code>printf</code>属于懒加载函数，注入动态库时该函数地址没有更新，无法调用。</p>
-<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="type">char</span> *s_repalce_path = <span class="string">&quot;/bin/echo&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">fh_execve</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *file, <span class="type">char</span> *<span class="type">const</span> *argv, <span class="type">char</span> *<span class="type">const</span> *envp)</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[FishHook - execve] pid: %d, process path: %s.&quot;</span>, getpid(), file);</span><br><span class="line">    <span class="keyword">return</span> execve(s_repalce_path, argv, envp);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">fh_posix_spawn</span><span class="params">(<span class="type">pid_t</span> *pid, <span class="type">const</span> <span class="type">char</span> *path, <span class="type">const</span> <span class="type">posix_spawn_file_actions_t</span> *actions, <span class="type">const</span> <span class="type">posix_spawnattr_t</span> *attr, <span class="type">char</span> *<span class="type">const</span> *argv, <span class="type">char</span> *<span class="type">const</span> *envp)</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[FishHook - posix_spawn] pid: %d, process path: %s.&quot;</span>, *pid, path);</span><br><span class="line">    <span class="keyword">return</span> posix_spawn(pid, s_repalce_path, actions, attr, argv, envp);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">DYLD_INTERPOSE(fh_execve, execve)</span><br><span class="line">DYLD_INTERPOSE(fh_posix_spawn, posix_spawn)</span><br></pre></td></tr></table></figure></div>
-
-<p>需要注意的是，在开启SIP (System Integrity Protection) 机制的机器上，签名的应用程序可能无法继承该环境变量，原因是内核会进行防止可执行文件被修改的检查，可参考Apple官方的<a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/library/archive/documentation/Security/Conceptual/System_Integrity_Protection_Guide/RuntimeProtections/RuntimeProtections.html" >SIP指南 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。</p>
-
+        <section class="archive-item">
+            <div class="archive-item-header">
+                <span class="archive-year">2023</span>
+                <span class="archive-year-post-count">[8]</span>
             </div>
-
-            
-                <div class="post-copyright-info">
-                    <div class="article-copyright-info-container">
-    <ul>
-        <li><strong>标题:</strong> macOS Hook系统调用</li>
-        <li><strong>作者:</strong> 孙康</li>
-        <li><strong>创建于:</strong> 2023-06-24 13:12:57</li>
-        
-            <li>
-                <strong>更新于:</strong> 2023-07-05 11:41:21
-            </li>
-        
-        <li>
-            <strong>链接:</strong> https://conradsun.github.io/2023/0676d00749.html
-        </li>
-        <li>
-            <strong>版权声明:</strong> 本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a> 进行许可。
-        </li>
-    </ul>
-</div>
-
-                </div>
-            
-
-            
-                <ul class="post-tags-box">
-                    
-                        <li class="tag-item">
-                            <a href="/tags/macOS/">#macOS</a>&nbsp;
-                        </li>
-                    
-                        <li class="tag-item">
-                            <a href="/tags/hook/">#hook</a>&nbsp;
-                        </li>
-                    
-                        <li class="tag-item">
-                            <a href="/tags/interpose/">#interpose</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            
-
-            
-
-            
-                <div class="article-nav">
-                    
-                        <div class="article-prev">
-                            <a class="prev"
-                            rel="prev"
-                            href="/2023/0686aa5ea2.html"
-                            >
-                                <span class="left arrow-icon flex-center">
-                                    <i class="fa-solid fa-chevron-left"></i>
-                                </span>
-                                <span class="title flex-center">
-                                    <span class="post-nav-title-item">macOS修改Mach-o文件实现动态库注入（一）</span>
-                                    <span class="post-nav-item">上一篇</span>
-                                </span>
-                            </a>
-                        </div>
-                    
-                    
-                        <div class="article-next">
-                            <a class="next"
-                            rel="next"
-                            href="/2023/06b3e3d734.html"
-                            >
-                                <span class="title flex-center">
-                                    <span class="post-nav-title-item">macOS用户态进程间的通信实现</span>
-                                    <span class="post-nav-item">下一篇</span>
-                                </span>
-                                <span class="right arrow-icon flex-center">
-                                    <i class="fa-solid fa-chevron-right"></i>
-                                </span>
-                            </a>
-                        </div>
-                    
-                </div>
-            
-
-
-            
-                <div class="comment-container">
-                    <div class="comments-container">
-    <div id="comment-anchor"></div>
-    <div class="comment-area-title">
-        <i class="fa-solid fa-comments"></i>&nbsp;评论
-    </div>
-    
-
-        
-            
-    <div id="giscus-container"></div>
-    <script data-pjax defer>
-        async function loadGiscus() {
-            const giscusConfig = {
-                'src': 'https://giscus.app/client.js',
-                'data-repo': 'ConradSun/ConradSun.github.io',
-                'data-repo-id': 'R_kgDOJyCxdQ',
-                'data-category': 'Show and tell',
-                'data-category-id': 'DIC_kwDOJyCxdc4CXco-',
-                'data-mapping': 'pathname',
-                'data-strict': '0',
-                'data-reactions-enabled': '1',
-                'data-emit-metadata': '1',
-                'data-theme': 'preferred_color_scheme',
-                'data-lang': 'zh-CN',
-                'data-input-position': 'bottom',
-                'data-loading': 'lazy',
-                'crossorigin': 'anonymous',
-                'async': true
-            }
-            const giscusScript = document.createElement('script');
-            for (const key in giscusConfig) {
-                giscusScript.setAttribute(key, giscusConfig[key]);
-            }
-            document.getElementById('giscus-container').appendChild(giscusScript);
-        }
-        if ('true') {
-            let loadGiscusTimeout = setTimeout(() => {
-                loadGiscus();
-                clearTimeout(loadGiscusTimeout);
-            }, 1000);
-        } else {
-            window.addEventListener('DOMContentLoaded', loadGiscus);
-        }
-    </script>
-
-
-        
-        
+            <ul class="article-list">
+              
+              <li class="article-item" date-is='07-09'>
+                <a href="/2023/07f5dbd820.html">
+                  <span class="article-title">macOS应用程序坞和菜单栏设置</span>
+                </a>
+              </li>
+              
+              <li class="article-item" date-is='06-26'>
+                <a href="/2023/06b81ddf97.html">
+                  <span class="article-title">macOS修改MachO文件实现动态库注入（三）</span>
+                </a>
+              </li>
+              
+              <li class="article-item" date-is='06-25'>
+                <a href="/2023/06f5037cc5.html">
+                  <span class="article-title">macOS修改MachO文件实现动态库注入（二）</span>
+                </a>
+              </li>
+              
+              <li class="article-item" date-is='06-25'>
+                <a href="/2023/0686aa5ea2.html">
+                  <span class="article-title">macOS修改Mach-o文件实现动态库注入（一）</span>
+                </a>
+              </li>
+              
+              <li class="article-item" date-is='06-24'>
+                <a href="/2023/0676d00749.html">
+                  <span class="article-title">macOS Hook系统调用</span>
+                </a>
+              </li>
+              
+              <li class="article-item" date-is='06-23'>
+                <a href="/2023/06b3e3d734.html">
+                  <span class="article-title">macOS用户态进程间的通信实现</span>
+                </a>
+              </li>
+              
+              <li class="article-item" date-is='06-21'>
+                <a href="/2023/0699a600b0.html">
+                  <span class="article-title">macOS内核拓展与用户态进程的通信实现（二）</span>
+                </a>
+              </li>
+              
+              <li class="article-item" date-is='06-21'>
+                <a href="/2023/06a9b0ec68.html">
+                  <span class="article-title">macOS内核拓展与用户态进程的通信实现（一）</span>
+                </a>
+              </li>
+              
+            </ul>
+        </section>
     
 </div>
 
-                </div>
-            
-        </div>
-
-        
-            <div class="toc-content-container">
-                <div class="post-toc-wrap">
-    <div class="post-toc">
-        <div class="toc-title">此页目录</div>
-        <div class="page-title">macOS Hook系统调用</div>
-        
-
     </div>
 </div>
-            </div>
-        
-    </div>
-</div>
-
 
                 
 
@@ -646,27 +442,6 @@
         </div>
     </div>
 
-    
-        <div class="post-tools">
-            <div class="post-tools-container">
-    <ul class="article-tools-list">
-        <!-- TOC aside toggle -->
-        
-            <li class="right-bottom-tools page-aside-toggle">
-                <i class="fa-regular fa-outdent"></i>
-            </li>
-        
-
-        <!-- go comment -->
-        
-            <li class="go-comment">
-                <i class="fa-regular fa-comments"></i>
-            </li>
-        
-    </ul>
-</div>
-
-        </div>
     
 
     <div class="right-side-tools-container">
@@ -811,16 +586,6 @@
 
 
 <div class="post-scripts pjax">
-    
-        
-<script src="/js/tools/tocToggle.js"></script>
-
-<script src="/js/libs/anime.min.js"></script>
-
-<script src="/js/layouts/toc.js"></script>
-
-<script src="/js/plugins/tabs.js"></script>
-
     
 </div>
 
