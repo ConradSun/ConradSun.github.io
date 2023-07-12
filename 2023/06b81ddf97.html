@@ -13,26 +13,28 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="http://example.com/2023/07f5dbd820.html"/>
+    <link rel="canonical" href="http://example.com/2023/06b81ddf97.html"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="和Windows操作系统有所不同的是，macOS中多数应用程序关闭窗口后并不会退出，程序坞（Dock）还会显示该应用的图标，图标下的黑点也表示该应用处于打开状态。造成这种差异的原因是Windows使用的是Single Document Interface（SDI）式 GUI ，应用、窗口和文档具有一对一的关系；而macOS使用的是Multiple Document Interface（MDI）式">
+        <meta name="description" content="前面讲到如何新增一条LC_LOAD_DYLIB指令到二进制，以注入动态库。这种方式有一定的局限性，因为注入的前提是由于Segment及Section间的内存对齐，存在足够的空白空间可以插入一条动态库依赖指令。如果没有足够的空白空间，则强制添加指令会导致代码段（__text）被覆盖，进而造成二进制打不开或者行为异常的现象。Google Chrome及Microsoft Edge浏览器Bundle内的">
 <meta property="og:type" content="article">
-<meta property="og:title" content="macOS应用程序坞和菜单栏设置">
-<meta property="og:url" content="http://example.com/2023/07f5dbd820.html">
+<meta property="og:title" content="macOS修改MachO文件实现动态库注入（三）">
+<meta property="og:url" content="http://example.com/2023/06b81ddf97.html">
 <meta property="og:site_name" content="康的个人博客">
-<meta property="og:description" content="和Windows操作系统有所不同的是，macOS中多数应用程序关闭窗口后并不会退出，程序坞（Dock）还会显示该应用的图标，图标下的黑点也表示该应用处于打开状态。造成这种差异的原因是Windows使用的是Single Document Interface（SDI）式 GUI ，应用、窗口和文档具有一对一的关系；而macOS使用的是Multiple Document Interface（MDI）式">
+<meta property="og:description" content="前面讲到如何新增一条LC_LOAD_DYLIB指令到二进制，以注入动态库。这种方式有一定的局限性，因为注入的前提是由于Segment及Section间的内存对齐，存在足够的空白空间可以插入一条动态库依赖指令。如果没有足够的空白空间，则强制添加指令会导致代码段（__text）被覆盖，进而造成二进制打不开或者行为异常的现象。Google Chrome及Microsoft Edge浏览器Bundle内的">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-07-09T04:13:25.000Z">
-<meta property="article:modified_time" content="2023-07-10T03:17:17.540Z">
+<meta property="og:image" content="http://example.com/images/article-pics/Interpose-libSystem.B.dylib.png">
+<meta property="og:image" content="http://example.com/images/article-pics/Interpose-libinject.dylib.png">
+<meta property="article:published_time" content="2023-06-26T07:12:57.000Z">
+<meta property="article:modified_time" content="2023-07-10T03:11:03.856Z">
 <meta property="article:author" content="ConradSun">
 <meta property="article:tag" content="macOS">
-<meta property="article:tag" content="程序坞">
-<meta property="article:tag" content="菜单栏">
-<meta property="article:tag" content="窗体">
+<meta property="article:tag" content="interpose">
+<meta property="article:tag" content="Mach-o">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/article-pics/Interpose-libSystem.B.dylib.png">
     
     
     <!--- Icon Part-->
@@ -44,7 +46,7 @@
     
     <title>
         
-            macOS应用程序坞和菜单栏设置 -
+            macOS修改MachO文件实现动态库注入（三） -
         
         Kang&#39;s Blog
     </title>
@@ -318,7 +320,7 @@
             
             
                 <div class="article-title">
-                    <h1 class="article-title-regular">macOS应用程序坞和菜单栏设置</h1>
+                    <h1 class="article-title-regular">macOS修改MachO文件实现动态库注入（三）</h1>
                 </div>
             
                 
@@ -340,15 +342,15 @@
                             <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
-        <span class="desktop">2023-07-09 12:13:25</span>
-        <span class="mobile">2023-07-09 12:13</span>
+        <span class="desktop">2023-06-26 15:12:57</span>
+        <span class="mobile">2023-06-26 15:12</span>
         <span class="hover-info">创建</span>
     </span>
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-07-10 11:17:17</span>
-            <span class="mobile">2023-07-10 11:17</span>
+            <span class="desktop">2023-07-10 11:11:03</span>
+            <span class="mobile">2023-07-10 11:11</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -375,15 +377,11 @@
                     </li>
                 
                     <li>
-                        | <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%9D%9E/">程序坞</a>&nbsp;
+                        | <a href="/tags/interpose/">interpose</a>&nbsp;
                     </li>
                 
                     <li>
-                        | <a href="/tags/%E8%8F%9C%E5%8D%95%E6%A0%8F/">菜单栏</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/%E7%AA%97%E4%BD%93/">窗体</a>&nbsp;
+                        | <a href="/tags/Mach-o/">Mach-o</a>&nbsp;
                     </li>
                 
             </ul>
@@ -393,12 +391,12 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>684 字</span>
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>1.8k 字</span>
         </span>
     
     
         <span class="article-min2read article-meta-item">
-            <i class="fa-regular fa-clock"></i>&nbsp;<span>2 分钟</span>
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>7 分钟</span>
         </span>
     
     
@@ -414,32 +412,54 @@
             
 
             <div class="article-content markdown-body">
-                <p>和Windows操作系统有所不同的是，macOS中多数应用程序关闭窗口后并不会退出，程序坞（Dock）还会显示该应用的图标，图标下的黑点也表示该应用处于打开状态。造成这种差异的原因是Windows使用的是Single Document Interface（SDI）式 GUI ，应用、窗口和文档具有一对一的关系；而macOS使用的是Multiple Document Interface（MDI）式 GUI，应用、窗体、文档具有一对多的关系。macOS作为更古老的操作系统，在早期计算机算力不强时使用MDI可减少应用启动关闭造成的资源消耗。更多细节可阅读<a class="link"   target="_blank" rel="noopener" href="https://www.zhihu.com/question/21143701" >知乎问答 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。本文展示的代码片段出自开源项目<a class="link"   target="_blank" rel="noopener" href="https://github.com/ConradSun/NuwaStone" >NuwaStone <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，如需了解更多细节可参考该项目。</p>
-<p>使用Xcode默认创建的app便是MDI，虽然窗体关闭后应用并未退出，但点击程序坞应用图标并不会重新显示窗体，如需实现该功能需重写<code>AppDelegate</code>类的相关函数，代码如下。入参中的<code>flag</code>表示当前窗体是否关闭，如果关闭需查找当前系统所持有的窗体，将其置于前台。</p>
-<div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">applicationShouldHandleReopen</span>(<span class="keyword">_</span> <span class="params">sender</span>: <span class="type">NSApplication</span>, <span class="params">hasVisibleWindows</span> <span class="params">flag</span>: <span class="type">Bool</span>) -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> flag &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> window <span class="operator">=</span> getMainWindow(sender) &#123;</span><br><span class="line">        window.makeKeyAndOrderFront(<span class="keyword">self</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">func</span> <span class="title function_">getMainWindow</span>(<span class="keyword">_</span> <span class="params">sender</span>: <span class="type">NSApplication</span>) -&gt; <span class="type">NSWindow</span>? &#123;</span><br><span class="line">    <span class="keyword">for</span> window: <span class="type">AnyObject</span> <span class="keyword">in</span> sender.windows &#123;</span><br><span class="line">        <span class="keyword">if</span> window.frameAutosaveName <span class="operator">==</span> <span class="string">&quot;Your Window Name&quot;</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> window <span class="keyword">as?</span> <span class="type">NSWindow</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+                <p>前面讲到如何新增一条<code>LC_LOAD_DYLIB</code>指令到二进制，以注入动态库。这种方式有一定的局限性，因为注入的前提是由于Segment及Section间的内存对齐，存在足够的空白空间可以插入一条动态库依赖指令。如果没有足够的空白空间，则强制添加指令会导致代码段（__text）被覆盖，进而造成二进制打不开或者行为异常的现象。Google Chrome及Microsoft Edge浏览器Bundle内的二进制很多没有足够的空白空间，读者可自行验证。</p>
+<p>那么如果没有足够的空白空间插入新的指令，如何注入动态库？一种比较麻烦的方法是人为构造空白空间：将代码段及其后的二进制数据进行后移，增大二进制的文件大小，以留出足够的空间。这种方法难度大，二进制数据偏移后还须进行修正，如各个Segment和Section的起始地址、二进制中表示函数或者其他数据地址的数据、二进制中表示地址偏移的数据等。有的Section数据需要修正，有的不需要；某些Section部分数据需要修正，部分不需要；某些表示偏移大小的数据（需要注意的是这种数据是以uleb128进行编码存储的）修正后其占用的空间变大了，还须单独修正。这里不展开说了。</p>
+<p>还有一种更为简单的方法：替换<code>libSystem.B.dylib</code>依赖库。在macOS上，基本所有的Mach-o文件均会依赖<code>libSystem.B.dylib</code>，那么如果把依赖该动态库的加载指令修改为依赖我们自定义的动态库，就不必关心空白空间是否足够了。这需要注意两点：</p>
+<blockquote>
+<p>1 自定义的依赖库路径不能过长；<br>2 原二进制所使用的来自libSystem.B.dylib的符号需要自定义的依赖库导出。</p>
+</blockquote>
+<p>第一点目的是避免麻烦。因为字节对齐的原因，<code>/usr/lib/libSystem.B.dylib</code>路径会占用32个字节，如下图所示。所以自定义的依赖库路径长度不要大于31字节，否则需要对后续二进制内容进行偏移。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/article-pics/Interpose-libSystem.B.dylib.png"
+                      alt="libSystem.B.dylib占用空间"
+                ></p>
+<p>修改后的二进制依赖库情况如下图，注入的动态库路径为<code>/usr/local/lib/libinject.dylib</code>，路径长度是30字节。这里所举例的二进制只有一个依赖库，那么注入后能否运行？如果你编写的demo非常简单，简单到没有依赖<code>libSystem.B.dylib</code>的任何符号，那么即使<code>libinject.dylib</code>是个空壳动态库，修改后的二进制也是可以直接运行的。<br><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/article-pics/Interpose-libinject.dylib.png"
+                      alt="libSystem.B.dylib加载指令修改后状态"
+                ></p>
+<p>如果修改的二进制比较复杂，那么修改后直接运行该二进制会崩溃，错误信息如下。日志很直白，<code>dyld</code>在链接阶段寻找<code>helloWorld-mod</code>引用的符号<code>_printf</code>，在依赖库<code>libinject.dylib</code>中没有找到。当然是找不到的，因为<code>_printf</code>符号并不在<code>libinject.dylib</code>导出符号里。这个符号本来是<code>libSystem.B.dylib</code>提供的，但因为我们把依赖库修改了，所以链接器不会去<code>libSystem.B.dylib</code>中查找。</p>
+<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">➜  Debug ./helloWorld-mod                            </span><br><span class="line">dyld[10541]: Symbol not found: _printf</span><br><span class="line">  Referenced from: &lt;9562BD19-769A-3AC8-83FD-7912CDB97807&gt; /Users/....../Build/Products/Debug/helloWorld-mod</span><br><span class="line">  Expected in:     &lt;499C61D6-3325-3E7F-915E-30E2A609A84B&gt; /usr/local/lib/libinject.dylib</span><br><span class="line">[1]    10541 abort      ./helloWorld-mod</span><br></pre></td></tr></table></figure></div>
 
-<p>如果不想在程序坞显示应用图标，也是修改<code>AppDelegate</code>文件。<code>NSApp.setActivationPolicy</code>API可以很方便的设置应用状态，状态分为<code>regular</code>、<code>accessory</code>、<code>prohibited</code>。简单来说分别表示正常显示图标和窗口、不在Dock栏显示图标、不显示图标和窗口。这里展示的代码图标和窗体状态同步，如果隐藏图标，窗体也一同关闭。</p>
-<div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@objc</span> <span class="keyword">func</span> <span class="title function_">hideDockIcon</span>() &#123;</span><br><span class="line">    <span class="type">NSApp</span>.setActivationPolicy(.accessory)</span><br><span class="line">    getMainWindow(<span class="type">NSApplication</span>.shared)<span class="operator">?</span>.close()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@objc</span> <span class="keyword">func</span> <span class="title function_">showDockIcon</span>() &#123;</span><br><span class="line">    <span class="type">NSApp</span>.setActivationPolicy(.regular)</span><br><span class="line">    <span class="type">NSApp</span>.activate(ignoringOtherApps: <span class="literal">true</span>)</span><br><span class="line">    getMainWindow(<span class="type">NSApplication</span>.shared)<span class="operator">?</span>.makeKeyAndOrderFront(<span class="keyword">self</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>这就是第二点的注意事项，二进制引用的<code>libSystem.B.dylib</code>的导出符号需要我们自定义的动态库提供。如果修改的二进制的引用符号很简单，直接自己实现一份也可以。但如果引用符号很多，成百上千，而且符号的原型、作用也不清楚，那么只能想办法使用<code>libSystem.B.dylib</code>的导出符号。可执行文件依赖的系统动态库被修改为自定义的动态库<code>libinject.dylib</code>后，如果还想使用<code>libSystem.B.dylib</code>的导出符号，就需要在<code>dyld</code>链接<code>libinject.dylib</code>的时候去链接<code>libSystem.B.dylib</code>。这是完全可行的，因为不止可执行文件，动态库也会依赖<code>libSystem.B.dylib</code>，如下。</p>
+<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ otool -L /usr/local/lib/libinject.dylib </span><br><span class="line">/usr/local/lib/libinject.dylib:</span><br><span class="line">	/usr/local/lib/libinject.dylib (compatibility version 1.0.0, current version 1.0.0)</span><br><span class="line">	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1336.0.0)</span><br></pre></td></tr></table></figure></div>
 
-<p>有些应用在桌面右上角会提供常驻的菜单，例如系统输入法、控制中心等。如果需要设置该功能，也是修改<code>AppDelegate</code>文件。这里为右上角的菜单栏添加了后台运行、显示窗体、关闭应用三个功能。<code>button.toolTip</code>是指鼠标停靠在菜单栏图标上时显示的提示信息，如果不设置则没有提示。</p>
-<div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">setupMenuBar</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> statusMenu <span class="operator">=</span> <span class="type">NSMenu</span>()</span><br><span class="line">    statusMenu.addItem(withTitle: <span class="string">&quot;Run in Background&quot;</span>, action: <span class="keyword">#selector</span>(hideDockIcon), keyEquivalent: <span class="string">&quot;&quot;</span>)</span><br><span class="line">    statusMenu.addItem(withTitle: <span class="string">&quot;Show App Window&quot;</span>, action: <span class="keyword">#selector</span>(showDockIcon), keyEquivalent: <span class="string">&quot;&quot;</span>)</span><br><span class="line">    statusMenu.addItem(withTitle: <span class="string">&quot;Quit&quot;</span>, action: <span class="keyword">#selector</span>(<span class="type">NSApplication</span>.terminate(<span class="keyword">_</span>:)), keyEquivalent: <span class="string">&quot;q&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    menuBar.button<span class="operator">!</span>.image <span class="operator">=</span> <span class="type">NSImage</span>(named: <span class="type">NSImage</span>.<span class="type">Name</span>(<span class="string">&quot;Your Menu Icon Name&quot;</span>))</span><br><span class="line">    menuBar.button<span class="operator">!</span>.toolTip <span class="operator">=</span> <span class="string">&quot;Your Tip Name&quot;</span></span><br><span class="line">    menuBar.menu <span class="operator">=</span> statusMenu</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>所以<code>libinject.dylib</code>可以间接导出符号，即导出的符号自身没有实现，依赖其他库实现。<code>clang</code>编译器可以使用参数<code>exported_symbols_list</code>指定导出符号表，比如这里我们需要<code>libinject.dylib</code>导出<code>_printf</code>符号，可以使用如下命令实现。如需依赖其他库或者符号，可自行添加。</p>
+<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ touch symbols.txt                                                 </span><br><span class="line">➜  ~ echo _printf &gt; ./symbols.txt </span><br><span class="line">➜  ~ clang -dynamiclib -o libinject.dylib -exported_symbols_list ./symbols.txt ./inject.c -lSystem.B</span><br></pre></td></tr></table></figure></div>
 
+<p>此时查看<code>libinject.dylib</code>的导出符号，可以发现<code>_printf</code>符号已被导出。这时再次运行被修改的二进制则可以正常运行。这里使用<code>nm</code>命令打印二进制的引用或导出符号，<code>from libSystem</code>表示符号来源为<code>libSystem.B.dylib</code>，<code>indirect</code>表示符号是间接引用或导出的。</p>
+<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ nm -m ./libinject.dylib</span><br><span class="line">                 (undefined) external _printf (from libSystem)</span><br><span class="line">                 (indirect) external _printf (for _printf)</span><br><span class="line">          </span><br><span class="line">➜  ~ mv ./libinject.dylib /usr/local/lib </span><br><span class="line">➜  ~ ./helloWorld-mod </span><br><span class="line">Hello, World!</span><br></pre></td></tr></table></figure></div>
+
+<p>读者可自行查看系统二进制的引用符号，如<code>zsh</code>等，其引用及导出符号相当可观，大部分的引用符号来源<code>libSystem.B.dylib</code>。那么这类二进制修改系统依赖库为自定义动态库，自定义依赖库就需要导出大量符号。如果我将<code>/bin</code>、<code>/sbin</code>、<code>/usr/bin</code>、<code>/usr/sbin</code>等系统目录下的所有的可执行文件都注入一遍，需要解决多少<code>libSystem.B.dylib</code>导出符号？大概是2900+。如果纯靠人工搜集符号，过于浪费时间，可使用如下<code>python</code>脚本搜集符号。</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">is_macho_executable</span>(<span class="params">file_path</span>):</span><br><span class="line">    output = subprocess.check_output([<span class="string">&#x27;file&#x27;</span>, file_path]).decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Mach-O&#x27;</span> <span class="keyword">in</span> output <span class="keyword">and</span> <span class="string">&#x27;executable&#x27;</span> <span class="keyword">in</span> output</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">collect_symbols</span>(<span class="params">binary_path, x86_symbol_file_path, arm_symbol_file_path</span>):</span><br><span class="line">    nm_output = subprocess.check_output([<span class="string">&#x27;nm&#x27;</span>, <span class="string">&#x27;-m&#x27;</span>, binary_path])</span><br><span class="line">    x86_symbols = <span class="built_in">set</span>()</span><br><span class="line">    arm_symbols = <span class="built_in">set</span>()</span><br><span class="line"></span><br><span class="line">    lines = nm_output.decode().split(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    size = <span class="built_in">len</span>(lines)</span><br><span class="line">    <span class="keyword">while</span> i &lt; size:</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27; (for architecture x86_64)&#x27;</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">            <span class="keyword">while</span> i &lt; size <span class="keyword">and</span> <span class="string">&#x27; architecture&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">                <span class="keyword">if</span> <span class="string">&#x27; (from libSystem)&#x27;</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">                    symbol = lines[i].split(<span class="string">&#x27; &#x27;</span>)[<span class="number">19</span>]</span><br><span class="line">                    x86_symbols.add(symbol)</span><br><span class="line">                i += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">elif</span> <span class="string">&#x27; (for architecture arm64e)&#x27;</span> <span class="keyword">in</span> lines[i] <span class="keyword">or</span> <span class="string">&#x27; (for architecture arm64)&#x27;</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">            <span class="keyword">while</span> i &lt; size <span class="keyword">and</span> <span class="string">&#x27; architecture&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">                <span class="keyword">if</span> <span class="string">&#x27; (from libSystem)&#x27;</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">                    symbol = lines[i].split(<span class="string">&#x27; &#x27;</span>)[<span class="number">19</span>]</span><br><span class="line">                    arm_symbols.add(symbol)</span><br><span class="line">                i += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="string">&#x27; (from libSystem)&#x27;</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">                symbol = lines[i].split(<span class="string">&#x27; &#x27;</span>)[<span class="number">19</span>]</span><br><span class="line">                x86_symbols.add(symbol)</span><br><span class="line">                arm_symbols.add(symbol)</span><br><span class="line"></span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(x86_symbol_file_path, <span class="string">&#x27;r+&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        existing_symbols = <span class="built_in">set</span>(line.strip() <span class="keyword">for</span> line <span class="keyword">in</span> f)</span><br><span class="line">        new_symbols = existing_symbols | x86_symbols</span><br><span class="line">        f.seek(<span class="number">0</span>)</span><br><span class="line">        f.truncate()</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> <span class="built_in">sorted</span>(new_symbols):</span><br><span class="line">            f.write(line + <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(arm_symbol_file_path, <span class="string">&#x27;r+&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        existing_symbols = <span class="built_in">set</span>(line.strip() <span class="keyword">for</span> line <span class="keyword">in</span> f)</span><br><span class="line">        new_symbols =  existing_symbols | arm_symbols</span><br><span class="line">        f.seek(<span class="number">0</span>)</span><br><span class="line">        f.truncate()</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> <span class="built_in">sorted</span>(new_symbols):</span><br><span class="line">            f.write(line + <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(sys.argv) != <span class="number">4</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Usage: python collect_symbols.py &lt;binary_path&gt; &lt;x86_symbol_file_path&gt; &lt;arm_symbol_file_path&gt;&#x27;</span>)</span><br><span class="line">        sys.exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    path = sys.argv[<span class="number">1</span>]</span><br><span class="line">    x86_symbol_file_path = sys.argv[<span class="number">2</span>]</span><br><span class="line">    arm_symbol_file_path = sys.argv[<span class="number">3</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> os.path.isdir(path):</span><br><span class="line">        <span class="keyword">for</span> root, dirs, files <span class="keyword">in</span> os.walk(path):</span><br><span class="line">            <span class="keyword">for</span> file <span class="keyword">in</span> files:</span><br><span class="line">                binary_path = os.path.join(root, file)</span><br><span class="line">                <span class="keyword">if</span> is_macho_executable(binary_path):</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;dump symbols for file &quot;</span>, binary_path)</span><br><span class="line">                    collect_symbols(binary_path, x86_symbol_file_path, arm_symbol_file_path)</span><br><span class="line">    <span class="keyword">elif</span> is_macho_executable(path):</span><br><span class="line">        collect_symbols(path, x86_symbol_file_path, arm_symbol_file_path)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Invalid binary path&#x27;</span>)</span><br><span class="line">        sys.exit(<span class="number">1</span>)</span><br></pre></td></tr></table></figure></div>
             </div>
 
             
                 <div class="post-copyright-info">
                     <div class="article-copyright-info-container">
     <ul>
-        <li><strong>标题:</strong> macOS应用程序坞和菜单栏设置</li>
+        <li><strong>标题:</strong> macOS修改MachO文件实现动态库注入（三）</li>
         <li><strong>作者:</strong> 孙康</li>
-        <li><strong>创建于:</strong> 2023-07-09 12:13:25</li>
+        <li><strong>创建于:</strong> 2023-06-26 15:12:57</li>
         
             <li>
-                <strong>更新于:</strong> 2023-07-10 11:17:17
+                <strong>更新于:</strong> 2023-07-10 11:11:03
             </li>
         
         <li>
-            <strong>链接:</strong> https://conradsun.github.io/2023/07f5dbd820.html
+            <strong>链接:</strong> https://conradsun.github.io/2023/06b81ddf97.html
         </li>
         <li>
             <strong>版权声明:</strong> 本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a> 进行许可。
@@ -458,15 +478,11 @@
                         </li>
                     
                         <li class="tag-item">
-                            <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%9D%9E/">#程序坞</a>&nbsp;
+                            <a href="/tags/interpose/">#interpose</a>&nbsp;
                         </li>
                     
                         <li class="tag-item">
-                            <a href="/tags/%E8%8F%9C%E5%8D%95%E6%A0%8F/">#菜单栏</a>&nbsp;
-                        </li>
-                    
-                        <li class="tag-item">
-                            <a href="/tags/%E7%AA%97%E4%BD%93/">#窗体</a>&nbsp;
+                            <a href="/tags/Mach-o/">#Mach-o</a>&nbsp;
                         </li>
                     
                 </ul>
@@ -477,14 +493,29 @@
             
                 <div class="article-nav">
                     
+                        <div class="article-prev">
+                            <a class="prev"
+                            rel="prev"
+                            href="/2023/07f5dbd820.html"
+                            >
+                                <span class="left arrow-icon flex-center">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </span>
+                                <span class="title flex-center">
+                                    <span class="post-nav-title-item">macOS应用程序坞和菜单栏设置</span>
+                                    <span class="post-nav-item">上一篇</span>
+                                </span>
+                            </a>
+                        </div>
+                    
                     
                         <div class="article-next">
                             <a class="next"
                             rel="next"
-                            href="/2023/06b81ddf97.html"
+                            href="/2023/06f5037cc5.html"
                             >
                                 <span class="title flex-center">
-                                    <span class="post-nav-title-item">macOS修改MachO文件实现动态库注入（三）</span>
+                                    <span class="post-nav-title-item">macOS修改MachO文件实现动态库注入（二）</span>
                                     <span class="post-nav-item">下一篇</span>
                                 </span>
                                 <span class="right arrow-icon flex-center">
@@ -559,7 +590,7 @@
                 <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
-        <div class="page-title">macOS应用程序坞和菜单栏设置</div>
+        <div class="page-title">macOS修改MachO文件实现动态库注入（三）</div>
         
 
     </div>
