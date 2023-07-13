@@ -1,27 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>macOS Hook系统调用</title>
-    <url>/2023/0676d00749.html</url>
-    <content><![CDATA[<p>基于Kauth或者EndpointSecurity框架可以监视系统的各类文件、进程事件，在审计后阻断或放通事件的执行。其中基于内核拓展的方案除了可以阻断执行，还可以修改函数调用参数，进行诸如文件保护、网络隔离等操作。</p>
-<p>编写内核拓展较为复杂且可能导致系统崩溃等严重后果。Apple提供了在用户态hook函数调用的机制，使用较为方便，称为动态库注入。动态库注入是dyld加载器提供的功能，通过修改环境变量<code>DYLD_INSERT_LIBRARIES</code>可向二进制注入动态库。注入的动态库需实现函数替换，Apple提供了<a class="link"   href="https://opensource.apple.com/source/dyld/dyld-210.2.3/include/mach-o/dyld-interposing.h" >dyld-interposing <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>方法，使用如下。</p>
-<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> DYLD_INTERPOSE</span></span><br><span class="line">    <span class="meta">#<span class="keyword">define</span> DYLD_INTERPOSE(_replacement,_replacee) \</span></span><br><span class="line"><span class="meta">        __attribute__((used)) static struct&#123; const void* replacement; const void* replacee; &#125; _interpose_##_replacee \</span></span><br><span class="line"><span class="meta">        __attribute__ ((section (<span class="string">&quot;__DATA,__interpose&quot;</span>))) = &#123; (const void*)(unsigned long)&amp;_replacement, (const void*)(unsigned long)&amp;_replacee &#125;;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure></div>
-
-<p>该段宏定义的目的是修改MachO文件的DATA区的interpose字段，目的是将原始函数的地址替换为自定义函数地址，dyld在加载动态库时对该地址进行替换。如这里对进程执行的系统调用<code>execve</code>和<code>posix_spawn</code>进行替换，将映像更换为echo，读者可自行查看是否完成替换。注意，调用<code>printf</code>函数不一定可以打印出来，具体原因不太明白，猜测是因为<code>printf</code>属于懒加载函数，注入动态库时该函数地址没有更新，无法调用。</p>
-<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="type">char</span> *s_repalce_path = <span class="string">&quot;/bin/echo&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">fh_execve</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *file, <span class="type">char</span> *<span class="type">const</span> *argv, <span class="type">char</span> *<span class="type">const</span> *envp)</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[FishHook - execve] pid: %d, process path: %s.&quot;</span>, getpid(), file);</span><br><span class="line">    <span class="keyword">return</span> execve(s_repalce_path, argv, envp);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">fh_posix_spawn</span><span class="params">(<span class="type">pid_t</span> *pid, <span class="type">const</span> <span class="type">char</span> *path, <span class="type">const</span> <span class="type">posix_spawn_file_actions_t</span> *actions, <span class="type">const</span> <span class="type">posix_spawnattr_t</span> *attr, <span class="type">char</span> *<span class="type">const</span> *argv, <span class="type">char</span> *<span class="type">const</span> *envp)</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[FishHook - posix_spawn] pid: %d, process path: %s.&quot;</span>, *pid, path);</span><br><span class="line">    <span class="keyword">return</span> posix_spawn(pid, s_repalce_path, actions, attr, argv, envp);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">DYLD_INTERPOSE(fh_execve, execve)</span><br><span class="line">DYLD_INTERPOSE(fh_posix_spawn, posix_spawn)</span><br></pre></td></tr></table></figure></div>
-
-<p>需要注意的是，在开启SIP (System Integrity Protection) 机制的机器上，签名的应用程序可能无法继承该环境变量，原因是内核会进行防止可执行文件被修改的检查，可参考Apple官方的<a class="link"   href="https://developer.apple.com/library/archive/documentation/Security/Conceptual/System_Integrity_Protection_Guide/RuntimeProtections/RuntimeProtections.html" >SIP指南 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。</p>
-]]></content>
-      <categories>
-        <category>macOS开发</category>
-      </categories>
-      <tags>
-        <tag>macOS</tag>
-        <tag>hook</tag>
-        <tag>interpose</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>macOS修改Mach-o文件实现动态库注入（一）</title>
     <url>/2023/0686aa5ea2.html</url>
     <content><![CDATA[<p><a class="link"   href="https://conradsun.github.io/2023/0676d00749.html" >前面 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>已经提到可以通过修改环境变量<code>DYLD_INSERT_LIBRARIES</code>注入动态库，但这种方法具有一定的局限性，在开启SIP的机器上，应用程序可能无法继承该环境变量，导致注入失败。那么有没有局限性更小的注入方法？本文所展示的代码片段来自开源项目<a class="link"   href="https://github.com/ConradSun/FishHook" >FishHook <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，更多细节可参考该项目。</p>
@@ -56,8 +35,29 @@
       </categories>
       <tags>
         <tag>macOS</tag>
-        <tag>interpose</tag>
         <tag>Mach-o</tag>
+        <tag>interpose</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>macOS Hook系统调用</title>
+    <url>/2023/0676d00749.html</url>
+    <content><![CDATA[<p>基于Kauth或者EndpointSecurity框架可以监视系统的各类文件、进程事件，在审计后阻断或放通事件的执行。其中基于内核拓展的方案除了可以阻断执行，还可以修改函数调用参数，进行诸如文件保护、网络隔离等操作。</p>
+<p>编写内核拓展较为复杂且可能导致系统崩溃等严重后果。Apple提供了在用户态hook函数调用的机制，使用较为方便，称为动态库注入。动态库注入是dyld加载器提供的功能，通过修改环境变量<code>DYLD_INSERT_LIBRARIES</code>可向二进制注入动态库。注入的动态库需实现函数替换，Apple提供了<a class="link"   href="https://opensource.apple.com/source/dyld/dyld-210.2.3/include/mach-o/dyld-interposing.h" >dyld-interposing <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>方法，使用如下。</p>
+<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> DYLD_INTERPOSE</span></span><br><span class="line">    <span class="meta">#<span class="keyword">define</span> DYLD_INTERPOSE(_replacement,_replacee) \</span></span><br><span class="line"><span class="meta">        __attribute__((used)) static struct&#123; const void* replacement; const void* replacee; &#125; _interpose_##_replacee \</span></span><br><span class="line"><span class="meta">        __attribute__ ((section (<span class="string">&quot;__DATA,__interpose&quot;</span>))) = &#123; (const void*)(unsigned long)&amp;_replacement, (const void*)(unsigned long)&amp;_replacee &#125;;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure></div>
+
+<p>该段宏定义的目的是修改MachO文件的DATA区的interpose字段，目的是将原始函数的地址替换为自定义函数地址，dyld在加载动态库时对该地址进行替换。如这里对进程执行的系统调用<code>execve</code>和<code>posix_spawn</code>进行替换，将映像更换为echo，读者可自行查看是否完成替换。注意，调用<code>printf</code>函数不一定可以打印出来，具体原因不太明白，猜测是因为<code>printf</code>属于懒加载函数，注入动态库时该函数地址没有更新，无法调用。</p>
+<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="type">char</span> *s_repalce_path = <span class="string">&quot;/bin/echo&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">fh_execve</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *file, <span class="type">char</span> *<span class="type">const</span> *argv, <span class="type">char</span> *<span class="type">const</span> *envp)</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[FishHook - execve] pid: %d, process path: %s.&quot;</span>, getpid(), file);</span><br><span class="line">    <span class="keyword">return</span> execve(s_repalce_path, argv, envp);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">fh_posix_spawn</span><span class="params">(<span class="type">pid_t</span> *pid, <span class="type">const</span> <span class="type">char</span> *path, <span class="type">const</span> <span class="type">posix_spawn_file_actions_t</span> *actions, <span class="type">const</span> <span class="type">posix_spawnattr_t</span> *attr, <span class="type">char</span> *<span class="type">const</span> *argv, <span class="type">char</span> *<span class="type">const</span> *envp)</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[FishHook - posix_spawn] pid: %d, process path: %s.&quot;</span>, *pid, path);</span><br><span class="line">    <span class="keyword">return</span> posix_spawn(pid, s_repalce_path, actions, attr, argv, envp);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">DYLD_INTERPOSE(fh_execve, execve)</span><br><span class="line">DYLD_INTERPOSE(fh_posix_spawn, posix_spawn)</span><br></pre></td></tr></table></figure></div>
+
+<p>需要注意的是，在开启SIP (System Integrity Protection) 机制的机器上，签名的应用程序可能无法继承该环境变量，原因是内核会进行防止可执行文件被修改的检查，可参考Apple官方的<a class="link"   href="https://developer.apple.com/library/archive/documentation/Security/Conceptual/System_Integrity_Protection_Guide/RuntimeProtections/RuntimeProtections.html" >SIP指南 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。</p>
+]]></content>
+      <categories>
+        <category>macOS开发</category>
+      </categories>
+      <tags>
+        <tag>macOS</tag>
+        <tag>interpose</tag>
+        <tag>hook</tag>
       </tags>
   </entry>
   <entry>
@@ -100,8 +100,8 @@
       </categories>
       <tags>
         <tag>macOS</tag>
-        <tag>interpose</tag>
         <tag>Mach-o</tag>
+        <tag>interpose</tag>
       </tags>
   </entry>
   <entry>
@@ -127,8 +127,8 @@
       </categories>
       <tags>
         <tag>macOS</tag>
-        <tag>interpose</tag>
         <tag>Mach-o</tag>
+        <tag>interpose</tag>
       </tags>
   </entry>
   <entry>
