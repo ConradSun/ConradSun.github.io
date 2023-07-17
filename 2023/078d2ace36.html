@@ -13,28 +13,27 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="https://ConradSun.github.io/2023/06b81ddf97.html"/>
+    <link rel="canonical" href="https://ConradSun.github.io/2023/078d2ace36.html"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="前面讲到如何新增一条LC_LOAD_DYLIB指令到二进制，以注入动态库。这种方式有一定的局限性，因为注入的前提是由于 Segment 及 Section 间的内存对齐，存在足够的空白空间可以插入一条动态库依赖指令。如果没有足够的空白空间，则强制添加指令会导致代码段（__text）被覆盖，进而造成二进制打不开或者行为异常的现象。Google Chrome 及 Microsoft Edge 浏览器">
+        <meta name="description" content="如果要实现应用内新版本检查，需对应用安装包和版本信息进行托管。这里所举例适用 Github 平台，但检查思路大同小异。总体步骤分为菜单配置、版本信息获取、用户窗口提示、在线下载更新。本文展示代码源自开源项目NuwaStone 。 配置检查更新菜单首先需要在菜单栏新增一项菜单，然后关联功能实现方法。如这里在主菜单内新增Check for Updates...菜单。然后在ViewController文">
 <meta property="og:type" content="article">
-<meta property="og:title" content="macOS修改MachO文件实现动态库注入（三）">
-<meta property="og:url" content="https://conradsun.github.io/2023/06b81ddf97.html">
+<meta property="og:title" content="macOS实现应用内检查更新">
+<meta property="og:url" content="https://conradsun.github.io/2023/078d2ace36.html">
 <meta property="og:site_name" content="康的个人博客">
-<meta property="og:description" content="前面讲到如何新增一条LC_LOAD_DYLIB指令到二进制，以注入动态库。这种方式有一定的局限性，因为注入的前提是由于 Segment 及 Section 间的内存对齐，存在足够的空白空间可以插入一条动态库依赖指令。如果没有足够的空白空间，则强制添加指令会导致代码段（__text）被覆盖，进而造成二进制打不开或者行为异常的现象。Google Chrome 及 Microsoft Edge 浏览器">
+<meta property="og:description" content="如果要实现应用内新版本检查，需对应用安装包和版本信息进行托管。这里所举例适用 Github 平台，但检查思路大同小异。总体步骤分为菜单配置、版本信息获取、用户窗口提示、在线下载更新。本文展示代码源自开源项目NuwaStone 。 配置检查更新菜单首先需要在菜单栏新增一项菜单，然后关联功能实现方法。如这里在主菜单内新增Check for Updates...菜单。然后在ViewController文">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://conradsun.github.io/images/article-pics/Interpose-libSystem.B.dylib.png">
-<meta property="og:image" content="https://conradsun.github.io/images/article-pics/Interpose-libinject.dylib.png">
-<meta property="article:published_time" content="2023-06-26T07:12:57.000Z">
-<meta property="article:modified_time" content="2023-07-17T07:47:15.434Z">
+<meta property="og:image" content="https://conradsun.github.io/images/article-pics/Menu-update.png">
+<meta property="og:image" content="https://conradsun.github.io/images/article-pics/Menu-link.png">
+<meta property="article:published_time" content="2023-07-15T04:00:00.000Z">
+<meta property="article:modified_time" content="2023-07-17T09:05:24.291Z">
 <meta property="article:author" content="ConradSun">
 <meta property="article:tag" content="macOS">
-<meta property="article:tag" content="Mach-o">
-<meta property="article:tag" content="interpose">
+<meta property="article:tag" content="检查更新">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://conradsun.github.io/images/article-pics/Interpose-libSystem.B.dylib.png">
+<meta name="twitter:image" content="https://conradsun.github.io/images/article-pics/Menu-update.png">
     
     
     <!--- Icon Part-->
@@ -46,7 +45,7 @@
     
     <title>
         
-            macOS修改MachO文件实现动态库注入（三） -
+            macOS实现应用内检查更新 -
         
         Kang&#39;s Blog
     </title>
@@ -319,7 +318,7 @@
 
             <div class="article-title">
                 
-                  <h1 class="article-title-regular">macOS修改MachO文件实现动态库注入（三）</h1>
+                  <h1 class="article-title-regular">macOS实现应用内检查更新</h1>
                 
               </div>
               
@@ -341,15 +340,15 @@
                             <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
-        <span class="desktop">2023-06-26 15:12:57</span>
-        <span class="mobile">2023-06-26 15:12:57</span>
+        <span class="desktop">2023-07-15 12:00</span>
+        <span class="mobile">2023-07-15 12:00</span>
         <span class="hover-info">创建</span>
     </span>
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-07-17 15:47:15</span>
-            <span class="mobile">2023-07-17 15:47:15</span>
+            <span class="desktop">2023-07-17 17:05:24</span>
+            <span class="mobile">2023-07-17 17:05:24</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -381,11 +380,7 @@
                     </li>
                 
                     <li>
-                        | <a href="/tags/Mach-o/">Mach-o</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/interpose/">interpose</a>&nbsp;
+                        | <a href="/tags/%E6%A3%80%E6%9F%A5%E6%9B%B4%E6%96%B0/">检查更新</a>&nbsp;
                     </li>
                 
             </ul>
@@ -395,12 +390,12 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>1.9k 字</span>
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>1.1k 字</span>
         </span>
     
     
         <span class="article-min2read article-meta-item">
-            <i class="fa-regular fa-clock"></i>&nbsp;<span>7 分钟</span>
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>5 分钟</span>
         </span>
     
     
@@ -416,54 +411,48 @@
             
 
             <div class="article-content markdown-body">
-                <p>前面讲到如何新增一条<code>LC_LOAD_DYLIB</code>指令到二进制，以注入动态库。这种方式有一定的局限性，因为注入的前提是由于 Segment 及 Section 间的内存对齐，存在足够的空白空间可以插入一条动态库依赖指令。如果没有足够的空白空间，则强制添加指令会导致代码段（__text）被覆盖，进而造成二进制打不开或者行为异常的现象。Google Chrome 及 Microsoft Edge 浏览器 Bundle 内的二进制很多没有足够的空白空间，读者可自行验证。</p>
-<h3 id="系统库替换优势"><a href="#系统库替换优势" class="headerlink" title="系统库替换优势"></a>系统库替换优势</h3><p>那么如果没有足够的空白空间插入新的指令，如何注入动态库？一种比较麻烦的方法是人为构造空白空间：将代码段及其后的二进制数据进行后移，增大二进制的文件大小，以留出足够的空间。这种方法难度大，二进制数据偏移后还须进行修正，如各个 Segment 和 Section 的起始地址、二进制中表示函数或者其他数据地址的数据、二进制中表示地址偏移的数据等。有的 Section 数据需要修正，有的不需要；某些 Section 部分数据需要修正，部分不需要；某些表示偏移大小的数据（需要注意的是这种数据是以 uleb128 进行编码存储的）修正后其占用的空间变大了，还须单独修正。这里不展开说了。</p>
-<p>还有一种更为简单的方法：替换<code>libSystem.B.dylib</code>依赖库。在 macOS 上，基本所有的 Mach-o 文件均会依赖<code>libSystem.B.dylib</code>，那么如果把依赖该动态库的加载指令修改为依赖我们自定义的动态库，就不必关心空白空间是否足够了。这需要注意两点：</p>
-<blockquote>
-<p>1 自定义的依赖库路径不能过长；<br>2 原二进制所使用的来自 libSystem.B.dylib 的符号需要自定义的依赖库导出。</p>
-</blockquote>
-<h3 id="系统库替换实现"><a href="#系统库替换实现" class="headerlink" title="系统库替换实现"></a>系统库替换实现</h3><p>第一点目的是避免麻烦。因为字节对齐的原因，<code>/usr/lib/libSystem.B.dylib</code>路径会占用 32 个字节，如下图所示。所以自定义的依赖库路径长度不要大于 31 字节，否则需要对后续二进制内容进行偏移。<br><img  
+                <p>如果要实现应用内新版本检查，需对应用安装包和版本信息进行托管。这里所举例适用 Github 平台，但检查思路大同小异。总体步骤分为菜单配置、版本信息获取、用户窗口提示、在线下载更新。本文展示代码源自开源项目<a class="link"   target="_blank" rel="noopener" href="https://github.com/ConradSun/NuwaStone" >NuwaStone <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。</p>
+<h3 id="配置检查更新菜单"><a href="#配置检查更新菜单" class="headerlink" title="配置检查更新菜单"></a>配置检查更新菜单</h3><p>首先需要在菜单栏新增一项菜单，然后关联功能实现方法。如这里在主菜单内新增<code>Check for Updates...</code>菜单。然后在<code>ViewController</code>文件中新增相关响应函数，这里入参类型为<code>NSMenuItem</code>。<br><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/images/article-pics/Interpose-libSystem.B.dylib.png"
-                      alt="libSystem.B.dylib占用空间"
+                     data-src="/images/article-pics/Menu-update.png"
+                      alt="添加检查更新菜单"
                 ></p>
-<p>修改后的二进制依赖库情况如下图，注入的动态库路径为<code>/usr/local/lib/libinject.dylib</code>，路径长度是 30 字节。这里所举例的二进制只有一个依赖库，那么注入后能否运行？如果你编写的 demo 非常简单，简单到没有依赖<code>libSystem.B.dylib</code>的任何符号，那么即使<code>libinject.dylib</code>是个空壳动态库，修改后的二进制也是可以直接运行的。<br><img  
+<div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@IBAction</span> <span class="keyword">func</span> <span class="title function_">updateMenuItemSelected</span>(<span class="keyword">_</span> <span class="params">sender</span>: <span class="type">NSMenuItem</span>) &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>然后将新增的菜单和函数进行绑定。找到该菜单右上橘黄色的<code>1</code>图标，它表示<code>First Responder</code>，然后右击，在下拉显示的函数中找到刚刚新增的<code>updateMenuItemSelected</code>，然后鼠标移动到函数右侧圆框，等圆框内显示<code>+</code>，单击<code>+</code>并拖动到新增菜单，即可实现菜单和函数绑定，如下图所示。<br><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/images/article-pics/Interpose-libinject.dylib.png"
-                      alt="libSystem.B.dylib加载指令修改后状态"
+                     data-src="/images/article-pics/Menu-link.png"
+                      alt="绑定菜单和响应方法"
                 ></p>
-<p>如果修改的二进制比较复杂，那么修改后直接运行该二进制会崩溃，错误信息如下。日志很直白，<code>dyld</code>在链接阶段寻找<code>helloWorld-mod</code>引用的符号<code>_printf</code>，在依赖库<code>libinject.dylib</code>中没有找到。当然是找不到的，因为<code>_printf</code>符号并不在<code>libinject.dylib</code>导出符号里。这个符号本来是<code>libSystem.B.dylib</code>提供的，但因为我们把依赖库修改了，所以链接器不会去<code>libSystem.B.dylib</code>中查找。</p>
-<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">➜  Debug ./helloWorld-mod</span><br><span class="line">dyld[10541]: Symbol not found: _printf</span><br><span class="line">  Referenced from: &lt;9562BD19-769A-3AC8-83FD-7912CDB97807&gt; /Users/....../Build/Products/Debug/helloWorld-mod</span><br><span class="line">  Expected in:     &lt;499C61D6-3325-3E7F-915E-30E2A609A84B&gt; /usr/local/lib/libinject.dylib</span><br><span class="line">[1]    10541 abort      ./helloWorld-mod</span><br></pre></td></tr></table></figure></div>
+<h3 id="获取版本信息"><a href="#获取版本信息" class="headerlink" title="获取版本信息"></a>获取版本信息</h3><p>首先需要获取应用的当前版本信息和最新版本信息，两者对比即可明确是否需要更新。获取当前应用的版本非常简单，相关信息都会存储到应用包内的<code>info.plist</code>文件中，开发者可通过主<code>Bundle</code>对象获取当前版本信息，代码如下：</p>
+<div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@IBAction</span> <span class="keyword">func</span> <span class="title function_">updateMenuItemSelected</span>(<span class="keyword">_</span> <span class="params">sender</span>: <span class="type">NSMenuItem</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> infoDict <span class="operator">=</span> <span class="type">Bundle</span>.main.infoDictionary</span><br><span class="line">    <span class="keyword">let</span> currentVersion <span class="operator">=</span> infoDict<span class="operator">!</span>[<span class="string">&quot;CFBundleShortVersionString&quot;</span>] <span class="keyword">as!</span> <span class="type">String</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p>这就是第二点的注意事项，二进制引用的<code>libSystem.B.dylib</code>的导出符号需要我们自定义的动态库提供。如果修改的二进制的引用符号很简单，直接自己实现一份也可以。但如果引用符号很多，成百上千，而且符号的原型、作用也不清楚，那么只能想办法使用<code>libSystem.B.dylib</code>的导出符号。可执行文件依赖的系统动态库被修改为自定义的动态库<code>libinject.dylib</code>后，如果还想使用<code>libSystem.B.dylib</code>的导出符号，就需要在<code>dyld</code>链接<code>libinject.dylib</code>的时候去链接<code>libSystem.B.dylib</code>。这是完全可行的，因为不止可执行文件，动态库也会依赖<code>libSystem.B.dylib</code>，如下。</p>
-<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ otool -L /usr/local/lib/libinject.dylib</span><br><span class="line">/usr/local/lib/libinject.dylib:</span><br><span class="line">	/usr/local/lib/libinject.dylib (compatibility version 1.0.0, current version 1.0.0)</span><br><span class="line">	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1336.0.0)</span><br></pre></td></tr></table></figure></div>
+<p>应用的最新版本信息需通过发布页面获取，这里以 GitHub 托管网站为例进行说明。在对开源项目配置<code>Releases</code>页面后，开发者可在此发布产品（应用）更新，并对当前发布选择一个<code>tag</code>，一般选取的<code>tag</code>为版本号。而且最新的发布会被置为<code>Latest</code>，这意味着我们可以通过访问<code>https://github.com/UserName/ProjectName/releases/latest</code>查看产品的最新版本，访问该链接时，会自动跳转到<code>https://github.com/UserName/ProjectName/releases/tag/YourLatestTag</code>，<code>YourLatestTag</code>即最新的版本号。我们可以据此使用<code>curl -I</code>获取最新的版本信息，命令如下。</p>
+<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ curl -I https://github.com/ConradSun/NuwaStone/releases/latest</span><br><span class="line">HTTP/1.1 200 Connection established</span><br><span class="line"></span><br><span class="line">HTTP/2 302</span><br><span class="line">server: GitHub.com</span><br><span class="line">date: Mon, 17 Jul 2023 07:09:05 GMT</span><br><span class="line">content-type: text/html; charset=utf-8</span><br><span class="line">vary: X-PJAX, X-PJAX-Container, Turbo-Visit, Turbo-Frame, Accept-Encoding, Accept, X-Requested-With</span><br><span class="line">location: https://github.com/ConradSun/NuwaStone/releases/tag/v2.0</span><br><span class="line">cache-control: no-cache</span><br><span class="line">strict-transport-security: max-age=31536000; includeSubdomains; preload</span><br><span class="line">x-frame-options: deny</span><br><span class="line">x-content-type-options: nosniff</span><br><span class="line">x-xss-protection: 0</span><br><span class="line">......</span><br></pre></td></tr></table></figure></div>
 
-<p>所以<code>libinject.dylib</code>可以间接导出符号，即导出的符号自身没有实现，依赖其他库实现。<code>clang</code>编译器可以使用参数<code>exported_symbols_list</code>指定导出符号表，比如这里我们需要<code>libinject.dylib</code>导出<code>_printf</code>符号，可以使用如下命令实现。如需依赖其他库或者符号，可自行添加。</p>
-<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ touch symbols.txt</span><br><span class="line">➜  ~ echo _printf &gt; ./symbols.txt</span><br><span class="line">➜  ~ clang -dynamiclib -o libinject.dylib -exported_symbols_list ./symbols.txt ./inject.c -lSystem.B</span><br></pre></td></tr></table></figure></div>
+<p>上面<code>curl -I</code>输出里的<code>location</code>便是跳转后的地址。截取最后一个地址单元，便能获取到最新的版本号，代码如下：</p>
+<div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">@IBAction</span> <span class="keyword">func</span> <span class="title function_">updateMenuItemSelected</span>(<span class="keyword">_</span> <span class="params">sender</span>: <span class="type">NSMenuItem</span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> latestVersion <span class="operator">=</span> <span class="type">String</span>()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> result <span class="operator">=</span> launchTask(path: <span class="string">&quot;/usr/bin/curl&quot;</span>, args: [<span class="string">&quot;-I&quot;</span>, <span class="string">&quot;YourUrl&quot;</span>]) <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> contentList <span class="operator">=</span> result.split(separator: <span class="string">&quot;<span class="subst">\r</span><span class="subst">\n</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">for</span> contentItem <span class="keyword">in</span> contentList &#123;</span><br><span class="line">            <span class="keyword">if</span> contentItem.contains(<span class="string">&quot;location&quot;</span>) &#123;</span><br><span class="line">                <span class="keyword">let</span> tag <span class="operator">=</span> contentItem.split(separator: <span class="string">&quot;/&quot;</span>).last<span class="operator">!</span></span><br><span class="line">                <span class="keyword">if</span> tag.first <span class="operator">==</span> <span class="string">&quot;v&quot;</span> &#123;</span><br><span class="line">                    <span class="type">Logger</span>(.<span class="type">Info</span>, <span class="string">&quot;The latest version is <span class="subst">\(tag)</span>.&quot;</span>)</span><br><span class="line">                    latestVersion <span class="operator">=</span> tag.dropFirst().lowercased()</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">launchTask</span>(<span class="params">path</span>: <span class="type">String</span>, <span class="params">args</span>: [<span class="type">String</span>]) -&gt; <span class="type">String</span>? &#123;</span><br><span class="line">    <span class="keyword">let</span> task <span class="operator">=</span> <span class="type">Process</span>()</span><br><span class="line">    <span class="keyword">let</span> pipe <span class="operator">=</span> <span class="type">Pipe</span>()</span><br><span class="line">    task.arguments <span class="operator">=</span> args</span><br><span class="line">    task.standardOutput <span class="operator">=</span> pipe</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">#available</span>(<span class="keyword">macOS</span> <span class="number">10.13</span>, <span class="operator">*</span>) &#123;</span><br><span class="line">        task.executableURL <span class="operator">=</span> <span class="type">URL</span>(fileURLWithPath: path)</span><br><span class="line">        <span class="keyword">try?</span> task.run()</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        task.launchPath <span class="operator">=</span> path</span><br><span class="line">        task.launch()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> output <span class="operator">=</span> <span class="type">Data</span>()</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">#available</span>(<span class="keyword">macOS</span> <span class="number">10.15</span>.<span class="number">4</span>, <span class="operator">*</span>) &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> value <span class="operator">=</span> <span class="keyword">try?</span> pipe.fileHandleForReading.readToEnd() <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line">        output <span class="operator">=</span> value</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        output <span class="operator">=</span> pipe.fileHandleForReading.readDataToEndOfFile()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> result <span class="operator">=</span> <span class="type">String</span>(data: output, encoding: .utf8) <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
 
-<p>此时查看<code>libinject.dylib</code>的导出符号，可以发现<code>_printf</code>符号已被导出。这时再次运行被修改的二进制则可以正常运行。这里使用<code>nm</code>命令打印二进制的引用或导出符号，<code>from libSystem</code>表示符号来源为<code>libSystem.B.dylib</code>，<code>indirect</code>表示符号是间接引用或导出的。</p>
-<div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ nm -m ./libinject.dylib</span><br><span class="line">                 (undefined) external _printf (from libSystem)</span><br><span class="line">                 (indirect) external _printf (for _printf)</span><br><span class="line"></span><br><span class="line">➜  ~ mv ./libinject.dylib /usr/local/lib</span><br><span class="line">➜  ~ ./helloWorld-mod</span><br><span class="line">Hello, World!</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="符号搜集代码"><a href="#符号搜集代码" class="headerlink" title="符号搜集代码"></a>符号搜集代码</h3><p>读者可自行查看系统二进制的引用符号，如<code>zsh</code>等，其引用及导出符号相当可观，大部分的引用符号来源<code>libSystem.B.dylib</code>。那么这类二进制修改系统依赖库为自定义动态库，自定义依赖库就需要导出大量符号。如果我将<code>/bin</code>、<code>/sbin</code>、<code>/usr/bin</code>、<code>/usr/sbin</code>等系统目录下的所有的可执行文件都注入一遍，需要解决多少<code>libSystem.B.dylib</code>导出符号？大概是 2900+。如果纯靠人工搜集符号，过于浪费时间，可使用如下<code>python</code>脚本搜集符号。</p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">is_macho_executable</span>(<span class="params">file_path</span>):</span><br><span class="line">    output = subprocess.check_output([<span class="string">&#x27;file&#x27;</span>, file_path]).decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Mach-O&#x27;</span> <span class="keyword">in</span> output <span class="keyword">and</span> <span class="string">&#x27;executable&#x27;</span> <span class="keyword">in</span> output</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">collect_symbols</span>(<span class="params">binary_path, x86_symbol_file_path, arm_symbol_file_path</span>):</span><br><span class="line">    nm_output = subprocess.check_output([<span class="string">&#x27;nm&#x27;</span>, <span class="string">&#x27;-m&#x27;</span>, binary_path])</span><br><span class="line">    x86_symbols = <span class="built_in">set</span>()</span><br><span class="line">    arm_symbols = <span class="built_in">set</span>()</span><br><span class="line"></span><br><span class="line">    lines = nm_output.decode().split(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    size = <span class="built_in">len</span>(lines)</span><br><span class="line">    <span class="keyword">while</span> i &lt; size:</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27; (for architecture x86_64)&#x27;</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">            <span class="keyword">while</span> i &lt; size <span class="keyword">and</span> <span class="string">&#x27; architecture&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">                <span class="keyword">if</span> <span class="string">&#x27; (from libSystem)&#x27;</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">                    symbol = lines[i].split(<span class="string">&#x27; &#x27;</span>)[<span class="number">19</span>]</span><br><span class="line">                    x86_symbols.add(symbol)</span><br><span class="line">                i += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">elif</span> <span class="string">&#x27; (for architecture arm64e)&#x27;</span> <span class="keyword">in</span> lines[i] <span class="keyword">or</span> <span class="string">&#x27; (for architecture arm64)&#x27;</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">            <span class="keyword">while</span> i &lt; size <span class="keyword">and</span> <span class="string">&#x27; architecture&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">                <span class="keyword">if</span> <span class="string">&#x27; (from libSystem)&#x27;</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">                    symbol = lines[i].split(<span class="string">&#x27; &#x27;</span>)[<span class="number">19</span>]</span><br><span class="line">                    arm_symbols.add(symbol)</span><br><span class="line">                i += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="string">&#x27; (from libSystem)&#x27;</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">                symbol = lines[i].split(<span class="string">&#x27; &#x27;</span>)[<span class="number">19</span>]</span><br><span class="line">                x86_symbols.add(symbol)</span><br><span class="line">                arm_symbols.add(symbol)</span><br><span class="line"></span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(x86_symbol_file_path, <span class="string">&#x27;r+&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        existing_symbols = <span class="built_in">set</span>(line.strip() <span class="keyword">for</span> line <span class="keyword">in</span> f)</span><br><span class="line">        new_symbols = existing_symbols | x86_symbols</span><br><span class="line">        f.seek(<span class="number">0</span>)</span><br><span class="line">        f.truncate()</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> <span class="built_in">sorted</span>(new_symbols):</span><br><span class="line">            f.write(line + <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(arm_symbol_file_path, <span class="string">&#x27;r+&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        existing_symbols = <span class="built_in">set</span>(line.strip() <span class="keyword">for</span> line <span class="keyword">in</span> f)</span><br><span class="line">        new_symbols =  existing_symbols | arm_symbols</span><br><span class="line">        f.seek(<span class="number">0</span>)</span><br><span class="line">        f.truncate()</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> <span class="built_in">sorted</span>(new_symbols):</span><br><span class="line">            f.write(line + <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(sys.argv) != <span class="number">4</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Usage: python collect_symbols.py &lt;binary_path&gt; &lt;x86_symbol_file_path&gt; &lt;arm_symbol_file_path&gt;&#x27;</span>)</span><br><span class="line">        sys.exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    path = sys.argv[<span class="number">1</span>]</span><br><span class="line">    x86_symbol_file_path = sys.argv[<span class="number">2</span>]</span><br><span class="line">    arm_symbol_file_path = sys.argv[<span class="number">3</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> os.path.isdir(path):</span><br><span class="line">        <span class="keyword">for</span> root, dirs, files <span class="keyword">in</span> os.walk(path):</span><br><span class="line">            <span class="keyword">for</span> file <span class="keyword">in</span> files:</span><br><span class="line">                binary_path = os.path.join(root, file)</span><br><span class="line">                <span class="keyword">if</span> is_macho_executable(binary_path):</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;dump symbols for file &quot;</span>, binary_path)</span><br><span class="line">                    collect_symbols(binary_path, x86_symbol_file_path, arm_symbol_file_path)</span><br><span class="line">    <span class="keyword">elif</span> is_macho_executable(path):</span><br><span class="line">        collect_symbols(path, x86_symbol_file_path, arm_symbol_file_path)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Invalid binary path&#x27;</span>)</span><br><span class="line">        sys.exit(<span class="number">1</span>)</span><br></pre></td></tr></table></figure></div>
+<h3 id="用户提示弹窗"><a href="#用户提示弹窗" class="headerlink" title="用户提示弹窗"></a>用户提示弹窗</h3><p>当前应用的版本号和最新的版本号均获取到了，只需比较两个版本号是否相等，便可知道当前版本是否最新，然后对是否需要更新进行弹窗提示。完整代码如下：</p>
+<div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@IBAction</span> <span class="keyword">func</span> <span class="title function_">updateMenuItemSelected</span>(<span class="keyword">_</span> <span class="params">sender</span>: <span class="type">NSMenuItem</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> infoDict <span class="operator">=</span> <span class="type">Bundle</span>.main.infoDictionary</span><br><span class="line">    <span class="keyword">let</span> currentVersion <span class="operator">=</span> infoDict<span class="operator">!</span>[<span class="string">&quot;CFBundleShortVersionString&quot;</span>] <span class="keyword">as!</span> <span class="type">String</span></span><br><span class="line">    <span class="keyword">var</span> latestVersion <span class="operator">=</span> <span class="type">String</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> infoView <span class="operator">=</span> <span class="type">NSAlert</span>()</span><br><span class="line">    infoView.alertStyle <span class="operator">=</span> .informational</span><br><span class="line"></span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> result <span class="operator">=</span> launchTask(path: <span class="string">&quot;/usr/bin/curl&quot;</span>, args: [<span class="string">&quot;-I&quot;</span>, <span class="string">&quot;YourUrl&quot;</span>]) <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> contentList <span class="operator">=</span> result.split(separator: <span class="string">&quot;<span class="subst">\r</span><span class="subst">\n</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> contentItem <span class="keyword">in</span> contentList &#123;</span><br><span class="line">        <span class="keyword">if</span> contentItem.contains(<span class="string">&quot;location&quot;</span>) &#123;</span><br><span class="line">            <span class="keyword">let</span> tag <span class="operator">=</span> contentItem.split(separator: <span class="string">&quot;/&quot;</span>).last<span class="operator">!</span></span><br><span class="line">            <span class="keyword">if</span> tag.first <span class="operator">==</span> <span class="string">&quot;v&quot;</span> &#123;</span><br><span class="line">                <span class="type">Logger</span>(.<span class="type">Info</span>, <span class="string">&quot;The latest version is <span class="subst">\(tag)</span>.&quot;</span>)</span><br><span class="line">                latestVersion <span class="operator">=</span> tag.dropFirst().lowercased()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> latestVersion.isEmpty &#123;</span><br><span class="line">        infoView.alertStyle <span class="operator">=</span> .critical</span><br><span class="line">        infoView.messageText <span class="operator">=</span> <span class="string">&quot;Error&quot;</span></span><br><span class="line">        infoView.informativeText <span class="operator">=</span> <span class="string">&quot;Failed to get latest info for YourAPPName.&quot;</span></span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> latestVersion <span class="operator">==</span> currentVersion &#123;</span><br><span class="line">        infoView.messageText <span class="operator">=</span> <span class="string">&quot;You&#x27;re up-to-date!&quot;</span></span><br><span class="line">        infoView.informativeText <span class="operator">=</span> <span class="string">&quot;YourAPPName <span class="subst">\(currentVersion)</span> is the latest version.&quot;</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        infoView.messageText <span class="operator">=</span> <span class="string">&quot;You&#x27;re out-of-date!&quot;</span></span><br><span class="line">        infoView.informativeText <span class="operator">=</span> <span class="string">&quot;Newer version <span class="subst">\(currentVersion)</span> is currently avaliable.&quot;</span></span><br><span class="line">        infoView.addButton(withTitle: <span class="string">&quot;Ignore&quot;</span>)</span><br><span class="line">        infoView.addButton(withTitle: <span class="string">&quot;Update&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">let</span> resp <span class="operator">=</span> infoView.runModal()</span><br><span class="line">    <span class="keyword">if</span> resp <span class="operator">==</span> .alertSecondButtonReturn &#123;</span><br><span class="line">        <span class="keyword">let</span> siteAddr <span class="operator">=</span> <span class="type">URL</span>(string: <span class="string">&quot;YourProductsUrl&quot;</span>)</span><br><span class="line">        <span class="type">NSWorkspace</span>.shared.open(siteAddr<span class="operator">!</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
             </div>
 
             
                 <div class="post-copyright-info">
                     <div class="article-copyright-info-container">
     <ul>
-        <li><strong>标题:</strong> macOS修改MachO文件实现动态库注入（三）</li>
+        <li><strong>标题:</strong> macOS实现应用内检查更新</li>
         <li><strong>作者:</strong> 孙康</li>
-        <li><strong>创建于:</strong> 2023-06-26 15:12:57</li>
+        <li><strong>创建于:</strong> 2023-07-15 12:00:00</li>
         
             <li>
-                <strong>更新于:</strong> 2023-07-17 15:47:15
+                <strong>更新于:</strong> 2023-07-17 17:05:24
             </li>
         
         <li>
-            <strong>链接:</strong> https://conradsun.github.io/2023/06b81ddf97.html
+            <strong>链接:</strong> https://conradsun.github.io/2023/078d2ace36.html
         </li>
         <li>
             <strong>版权声明:</strong> 本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a> 进行许可。
@@ -482,11 +471,7 @@
                         </li>
                     
                         <li class="tag-item">
-                            <a href="/tags/Mach-o/">#Mach-o</a>&nbsp;
-                        </li>
-                    
-                        <li class="tag-item">
-                            <a href="/tags/interpose/">#interpose</a>&nbsp;
+                            <a href="/tags/%E6%A3%80%E6%9F%A5%E6%9B%B4%E6%96%B0/">#检查更新</a>&nbsp;
                         </li>
                     
                 </ul>
@@ -497,29 +482,14 @@
             
                 <div class="article-nav">
                     
-                        <div class="article-prev">
-                            <a class="prev"
-                            rel="prev"
-                            href="/2023/07f5dbd820.html"
-                            >
-                                <span class="left arrow-icon flex-center">
-                                    <i class="fa-solid fa-chevron-left"></i>
-                                </span>
-                                <span class="title flex-center">
-                                    <span class="post-nav-title-item">macOS应用程序坞和菜单栏设置</span>
-                                    <span class="post-nav-item">上一篇</span>
-                                </span>
-                            </a>
-                        </div>
-                    
                     
                         <div class="article-next">
                             <a class="next"
                             rel="next"
-                            href="/2023/06f5037cc5.html"
+                            href="/2023/07f5dbd820.html"
                             >
                                 <span class="title flex-center">
-                                    <span class="post-nav-title-item">macOS修改MachO文件实现动态库注入（二）</span>
+                                    <span class="post-nav-title-item">macOS应用程序坞和菜单栏设置</span>
                                     <span class="post-nav-item">下一篇</span>
                                 </span>
                                 <span class="right arrow-icon flex-center">
@@ -594,8 +564,8 @@
                 <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
-        <div class="page-title">macOS修改MachO文件实现动态库注入（三）</div>
-        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%BA%93%E6%9B%BF%E6%8D%A2%E4%BC%98%E5%8A%BF"><span class="nav-text">系统库替换优势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%BA%93%E6%9B%BF%E6%8D%A2%E5%AE%9E%E7%8E%B0"><span class="nav-text">系统库替换实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7%E6%90%9C%E9%9B%86%E4%BB%A3%E7%A0%81"><span class="nav-text">符号搜集代码</span></a></li></ol>
+        <div class="page-title">macOS实现应用内检查更新</div>
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%A3%80%E6%9F%A5%E6%9B%B4%E6%96%B0%E8%8F%9C%E5%8D%95"><span class="nav-text">配置检查更新菜单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E7%89%88%E6%9C%AC%E4%BF%A1%E6%81%AF"><span class="nav-text">获取版本信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E6%8F%90%E7%A4%BA%E5%BC%B9%E7%AA%97"><span class="nav-text">用户提示弹窗</span></a></li></ol>
 
     </div>
 </div>
