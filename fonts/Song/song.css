@@ -25,7 +25,7 @@
 
 @font-face {
   font-family: 'SimSun';
-  src: url('SimSun-Bold.ttf') format('truetype')，
+  src: url('SimSun-Bold.ttf') format('truetype'),
        url('SimSun.ttf') format('truetype');
        font-weight: 200 700;
        font-display: swap;
