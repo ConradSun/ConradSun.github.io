@@ -18,16 +18,16 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="前面讲解了修改单架构二进制文件实现动态库注入，本篇继续讲解修改胖二进制文件实现动态库注入。注入方式并无不同，不过需要注意修改文件时的地址偏移，否则修改错误会导致文件无法解析。本文所展示的代码片段来自开源项目FishHook ，更多细节可参考该项目。 如下图，胖二进制包含多种 CPU 架构，一般是 X86_64 和 ARM64，胖二进制相当于多个单二进制的组合体。使用系统自带的工具 lipo 可以添">
+        <meta name="description" content="前面 讲解了修改单架构二进制文件实现动态库注入，本篇继续讲解修改胖二进制文件实现动态库注入。注入方式并无不同，不过需要注意修改文件时的地址偏移，否则修改错误会导致文件无法解析。本文所展示的代码片段来自开源项目 FishHook ，更多细节可参考该项目。 如下图，胖二进制包含多种 CPU 架构，一般是 X86_64 和 ARM64，胖二进制相当于多个单二进制的组合体。使用系统自带的工具lipo可以添">
 <meta property="og:type" content="article">
 <meta property="og:title" content="macOS修改MachO文件实现动态库注入（二）">
 <meta property="og:url" content="https://conradsun.github.io/2023/06f5037cc5.html">
 <meta property="og:site_name" content="康的个人博客">
-<meta property="og:description" content="前面讲解了修改单架构二进制文件实现动态库注入，本篇继续讲解修改胖二进制文件实现动态库注入。注入方式并无不同，不过需要注意修改文件时的地址偏移，否则修改错误会导致文件无法解析。本文所展示的代码片段来自开源项目FishHook ，更多细节可参考该项目。 如下图，胖二进制包含多种 CPU 架构，一般是 X86_64 和 ARM64，胖二进制相当于多个单二进制的组合体。使用系统自带的工具 lipo 可以添">
+<meta property="og:description" content="前面 讲解了修改单架构二进制文件实现动态库注入，本篇继续讲解修改胖二进制文件实现动态库注入。注入方式并无不同，不过需要注意修改文件时的地址偏移，否则修改错误会导致文件无法解析。本文所展示的代码片段来自开源项目 FishHook ，更多细节可参考该项目。 如下图，胖二进制包含多种 CPU 架构，一般是 X86_64 和 ARM64，胖二进制相当于多个单二进制的组合体。使用系统自带的工具lipo可以添">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://conradsun.github.io/images/article-pics/Mach-o-Fat.png">
 <meta property="article:published_time" content="2023-06-25T07:12:57.000Z">
-<meta property="article:modified_time" content="2023-07-14T03:14:46.743Z">
+<meta property="article:modified_time" content="2023-07-24T02:01:29.190Z">
 <meta property="article:author" content="ConradSun">
 <meta property="article:tag" content="macOS">
 <meta property="article:tag" content="interpose">
@@ -345,8 +345,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-07-14 11:14:46</span>
-            <span class="mobile">2023-07-14 11:14:46</span>
+            <span class="desktop">2023-07-24 10:01:29</span>
+            <span class="mobile">2023-07-24 10:01:29</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -392,7 +392,7 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>854 字</span>
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>855 字</span>
         </span>
     
     
@@ -413,14 +413,14 @@
             
 
             <div class="article-content markdown-body">
-                <p><a href="https://conradsun.github.io/2023/0686aa5ea2.html">前面</a>讲解了修改单架构二进制文件实现动态库注入，本篇继续讲解修改胖二进制文件实现动态库注入。注入方式并无不同，不过需要注意修改文件时的地址偏移，否则修改错误会导致文件无法解析。本文所展示的代码片段来自开源项目<a class="link"   target="_blank" rel="noopener" href="https://github.com/ConradSun/FishHook" >FishHook <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，更多细节可参考该项目。</p>
-<p>如下图，胖二进制包含多种 CPU 架构，一般是 X86_64 和 ARM64，胖二进制相当于多个单二进制的组合体。使用系统自带的工具 lipo 可以添加、提取、删除以及替换胖二进制中的某个架构的二进制，这里不多做介绍。<br><figure class="image-caption"><img  
+                <p><a href="https://conradsun.github.io/2023/0686aa5ea2.html">前面</a> 讲解了修改单架构二进制文件实现动态库注入，本篇继续讲解修改胖二进制文件实现动态库注入。注入方式并无不同，不过需要注意修改文件时的地址偏移，否则修改错误会导致文件无法解析。本文所展示的代码片段来自开源项目 <a class="link"   target="_blank" rel="noopener" href="https://github.com/ConradSun/FishHook" >FishHook <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，更多细节可参考该项目。</p>
+<p>如下图，胖二进制包含多种 CPU 架构，一般是 X86_64 和 ARM64，胖二进制相当于多个单二进制的组合体。使用系统自带的工具<code>lipo</code>可以添加、提取、删除以及替换胖二进制中的某个架构的二进制，这里不多做介绍。<br><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/images/article-pics/Mach-o-Fat.png"
                       alt="胖二进制格式"
                 ><figcaption>胖二进制格式</figcaption></figure></p>
-<p>修改胖二进制首先需要解析 Fat Header，通过文件头获取所支持的架构数量及各架构描述内容的偏移地址。注意，获取数据时根据机器的大端&#x2F;小端模式不同，需要对数据进行处理。一般 PC 机都是小端模式，因此需要将高低位地址上的数据进行交换。多架构二进制的修改直接复用了单架构的代码，<code>processThinMachO</code>相关代码请参考上文或<a class="link"   target="_blank" rel="noopener" href="https://github.com/ConradSun/FishHook" >FishHook <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>项目。</p>
+<p>修改胖二进制首先需要解析 Fat Header，通过文件头获取所支持的架构数量及各架构描述内容的偏移地址。注意，获取数据时根据机器的大端&#x2F;小端模式不同，需要对数据进行处理。一般 PC 机都是小端模式，因此需要将高低位地址上的数据进行交换。多架构二进制的修改直接复用了单架构的代码，<code>processThinMachO</code>相关代码请参考上文或 <a class="link"   target="_blank" rel="noopener" href="https://github.com/ConradSun/FishHook" >FishHook <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 项目。</p>
 <div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">repackBinary</span>() -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> machOData.isEmpty &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> machOData.withUnsafeBytes &#123; pointer <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> header <span class="operator">=</span> pointer.bindMemory(to: fat_header.<span class="keyword">self</span>).baseAddress <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;[ERROR] Failed to get fat header pointer.&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> result <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">        <span class="keyword">var</span> offset <span class="operator">=</span> <span class="type">MemoryLayout</span>&lt;fat_header&gt;.size</span><br><span class="line">        <span class="keyword">let</span> archNum <span class="operator">=</span> _OSSwapInt32(header.pointee.nfat_arch)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">switch</span> header.pointee.magic &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="type">FAT_MAGIC</span>, <span class="type">FAT_CIGAM</span>:</span><br><span class="line">            <span class="keyword">if</span> archNum <span class="operator">==</span> <span class="number">0</span> &#123;</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;[ERROR] Format of Fat-MachO is invalid.&quot;</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span> <span class="operator">..&lt;</span> archNum &#123;</span><br><span class="line">                <span class="keyword">if</span> i <span class="operator">&gt;</span> <span class="number">0</span> &#123;</span><br><span class="line">                    offset <span class="operator">=</span> offset <span class="operator">+</span> <span class="type">MemoryLayout</span>&lt;fat_arch&gt;.size</span><br><span class="line">                &#125;</span><br><span class="line">                result <span class="operator">=</span> processFatMachO(offset: offset)</span><br><span class="line">                <span class="keyword">if</span> <span class="operator">!</span>result &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">case</span> <span class="type">MH_MAGIC_64</span>, <span class="type">MH_CIGAM_64</span>, <span class="type">MH_MAGIC</span>, <span class="type">MH_CIGAM</span>:</span><br><span class="line">            result <span class="operator">=</span> processThinMachO(offset: <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;[ERROR] Unknown MachO format.&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        signAdhoc()</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">processFatMachO</span>(<span class="params">offset</span>: <span class="type">Int</span>) -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> fatData <span class="operator">=</span> machOData.advanced(by: offset)</span><br><span class="line">    <span class="keyword">return</span> fatData.withUnsafeBytes &#123; pointer <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> arch <span class="operator">=</span> pointer.bindMemory(to: fat_arch.<span class="keyword">self</span>).baseAddress <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;[ERROR] Failed to get fat arch pointer.&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> offset <span class="operator">=</span> _OSSwapInt32(arch.pointee.offset)</span><br><span class="line">        <span class="keyword">return</span> processThinMachO(offset: <span class="type">Int</span>(offset))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <p>上文提到，在插入动态库注入指令时并没有判断是否有足够的空白区域容纳，如果空间不足，插入会覆盖有效数据，进而导致二进制格式错误。插入空间判断代码如下：</p>
@@ -439,7 +439,7 @@
         <li><strong>创建于:</strong> 2023-06-25 15:12:57</li>
         
             <li>
-                <strong>更新于:</strong> 2023-07-14 11:14:46
+                <strong>更新于:</strong> 2023-07-24 10:01:29
             </li>
         
         <li>

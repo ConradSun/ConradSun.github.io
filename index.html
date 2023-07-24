@@ -536,8 +536,8 @@
 
                 <div class="home-article-content markdown-body">
                     
-                        如果要实现应用内新版本检查，需对应用安装包和版本信息进行托管。这里所举例适用 Github 平台，但检查思路大同小异。总体步骤分为菜单配置、版本信息获取、用户窗口提示、在线下载更新。本文展示代码源自开源项目NuwaStone 。
-配置检查更新菜单首先...
+                        如果要实现应用内新版本检查，需对应用安装包和版本信息进行托管。这里所举例适用 Github 平台，但检查思路大同小异。总体步骤分为菜单配置、版本信息获取、用户窗口提示、在线下载更新。本文展示代码源自开源项目 NuwaStone 。
+配置检查更新菜单首...
                     
                 </div>
 
@@ -757,8 +757,7 @@
 
                 <div class="home-article-content markdown-body">
                     
-                        前面讲解了修改单架构二进制文件实现动态库注入，本篇继续讲解修改胖二进制文件实现动态库注入。注入方式并无不同，不过需要注意修改文件时的地址偏移，否则修改错误会导致文件无法解析。本文所展示的代码片段来自开源项目FishHook ，更多细节可参考该项目。
-...
+                        前面 讲解了修改单架构二进制文件实现动态库注入，本篇继续讲解修改胖二进制文件实现动态库注入。注入方式并无不同，不过需要注意修改文件时的地址偏移，否则修改错误会导致文件无法解析。本文所展示的代码片段来自开源项目 FishHook ，更多细节可参考该项目...
                     
                 </div>
 
@@ -833,7 +832,7 @@
 
                 <div class="home-article-content markdown-body">
                     
-                        前面已经提到可以通过修改环境变量DYLD_INSERT_LIBRARIES注入动态库，但这种方法具有一定的局限性，在开启 SIP 的机器上，应用程序可能无法继承该环境变量，导致注入失败。那么有没有局限性更小的注入方法？本文所展示的代码片段来自开源项目...
+                        前面 已经提到可以通过修改环境变量DYLD_INSERT_LIBRARIES注入动态库，但这种方法具有一定的局限性，在开启 SIP 的机器上，应用程序可能无法继承该环境变量，导致注入失败。那么有没有局限性更小的注入方法？本文所展示的代码片段来自开源项...
                     
                 </div>
 
@@ -984,7 +983,7 @@
 
                 <div class="home-article-content markdown-body">
                     
-                        macOS 内核与用户态进程的通信前面已经讲解过了，用户态进程间通信较为简单，Apple 官方推荐使用XPC 机制。XPC 有底层的 C API，也有封装后的上层的 objc 和 swift API，可以实现像调用自身进程的接口一样调用对端的暴露接口...
+                        macOS 内核与用户态进程的通信前面已经讲解过了，用户态进程间通信较为简单，Apple 官方推荐使用 XPC  机制。XPC 有底层的 C API，也有封装后的上层的 objc 和 swift API，可以实现像调用自身进程的接口一样调用对端的暴露...
                     
                 </div>
 
@@ -1059,7 +1058,7 @@
 
                 <div class="home-article-content markdown-body">
                     
-                        前面已经讲解了基于 KernControl API 的通信实现，该实现相对简单，但有一些缺点。内核向应用层传输消息需调用ctl_enqueuedata接口，该接口实际将数据缓存至缓冲区，当需要瞬时大量传输消息时，缓冲区容量有限，将丢弃后来的数据。如果...
+                        前面 已经讲解了基于 KernControl API 的通信实现，该实现相对简单，但有一些缺点。内核向应用层传输消息需调用ctl_enqueuedata接口，该接口实际将数据缓存至缓冲区，当需要瞬时大量传输消息时，缓冲区容量有限，将丢弃后来的数据。如...
                     
                 </div>
 
@@ -1134,7 +1133,7 @@
 
                 <div class="home-article-content markdown-body">
                     
-                        macOS 内核拓展与用户态进程通信基本依靠KernControl  API 及IOKit Fundamentals   框架。kern_control API 对 socket 进行简单封装，用户态进程调用connect建立与内核的通信机制。IOK...
+                        macOS 内核拓展与用户态进程通信基本依靠 KernControl  API 及 IOKit Fundamentals  框架。kern_control API 对 socket 进行简单封装，用户态进程调用connect建立与内核的通信机制。IO...
                     
                 </div>
 
