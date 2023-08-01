@@ -18,15 +18,15 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="macOS 内核拓展与用户态进程通信基本依靠 KernControl  API 及 IOKit Fundamentals  框架。kern_control API 对 socket 进行简单封装，用户态进程调用connect建立与内核的通信机制。IOKit 则不仅提供用户态通信接口，实际上 IOKit 提供所有内核驱动的管控能力，包含驱动的注册、资源管理和调试等。 KernControl 内核编程">
+        <meta name="description" content="基于 KernControl 实现 macOS 内核与应用层间的通信">
 <meta property="og:type" content="article">
 <meta property="og:title" content="macOS内核拓展与用户态进程的通信实现（一）">
 <meta property="og:url" content="https://conradsun.github.io/2023/06a9b0ec68.html">
 <meta property="og:site_name" content="康的个人博客">
-<meta property="og:description" content="macOS 内核拓展与用户态进程通信基本依靠 KernControl  API 及 IOKit Fundamentals  框架。kern_control API 对 socket 进行简单封装，用户态进程调用connect建立与内核的通信机制。IOKit 则不仅提供用户态通信接口，实际上 IOKit 提供所有内核驱动的管控能力，包含驱动的注册、资源管理和调试等。 KernControl 内核编程">
+<meta property="og:description" content="基于 KernControl 实现 macOS 内核与应用层间的通信">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-06-21T04:12:57.000Z">
-<meta property="article:modified_time" content="2023-07-24T01:10:58.067Z">
+<meta property="article:modified_time" content="2023-08-01T03:57:53.964Z">
 <meta property="article:author" content="ConradSun">
 <meta property="article:tag" content="macOS">
 <meta property="article:tag" content="内核通信">
@@ -78,7 +78,7 @@
     <script id="hexo-configurations">
     let Global = window.Global || {};
     Global.hexo_config = {"hostname":"conradsun.github.io","root":"/","language":"zh-CN","path":"search.xml"};
-    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":"#1890FF"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"busuanzi_counter":{"enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"pjax":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"links":{"github":"https://github.com/ConradSun","instagram":null,"zhihu":null,"twitter":null,"email":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.2.2","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"Github":"https://github.com/ConradSun","Blog":"https://ConradSun.github.io"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":"#1890FF"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"links":{"github":"https://github.com/ConradSun","instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.3.0","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"Github":"https://github.com/ConradSun","Blog":"https://ConradSun.github.io"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
     Global.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
     Global.data_config = {"masonry":false};
   </script>
@@ -117,18 +117,20 @@
 
     
         <span class="pjax-progress-bar"></span>
-        <span class="pjax-progress-icon">
+        <span class="swup-progress-icon">
             <i class="fa-solid fa-circle-notch fa-spin"></i>
         </span>
     
 </div>
 
 
-<main class="page-container">
+<main class="page-container" id="swup">
+    
 
     
 
     <div class="main-content-container">
+        
 
         <div class="main-content-header">
             <header class="navbar-container">
@@ -310,30 +312,29 @@
             <div class="main-content">
 
                 
-                    <div class="fade-in-down-animation">
-    <div class="post-page-container">
-        <div class="article-content-container">
+                    <div class="post-page-container">
+    <div class="article-content-container">
 
-            <div class="article-title">
-                
-                  <h1 class="article-title-regular">macOS内核拓展与用户态进程的通信实现（一）</h1>
-                
-              </div>
-              
-                     
+        <div class="article-title">
             
+                <h1 class="article-title-regular">macOS内核拓展与用户态进程的通信实现（一）</h1>
             
-                <div class="article-header">
-                    <div class="avatar">
-                        <img src="/images/git-avatar.svg">
+            </div>
+            
+                    
+        
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/git-avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">孙康</span>
+                        
                     </div>
-                    <div class="info">
-                        <div class="author">
-                            <span class="name">孙康</span>
-                            
-                        </div>
-                        <div class="meta-info">
-                            <div class="article-meta-info">
+                    <div class="meta-info">
+                        <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
         <span class="desktop">2023-06-21 12:12:57</span>
@@ -343,8 +344,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-07-24 09:10:58</span>
-            <span class="mobile">2023-07-24 09:10:58</span>
+            <span class="desktop">2023-08-01 11:57:53</span>
+            <span class="mobile">2023-08-01 11:57:53</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -405,31 +406,31 @@
     
 </div>
 
-                        </div>
                     </div>
                 </div>
-            
+            </div>
+        
 
-            <div class="article-content markdown-body">
-                <p>macOS 内核拓展与用户态进程通信基本依靠 <a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/NKEConceptual/control/control.html#//apple_ref/doc/uid/TP40001858-CH227-DontLinkElementID_35" >KernControl <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> API 及 <a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/kernel/iokit_fundamentals" >IOKit Fundamentals <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 框架。kern_control API 对 socket 进行简单封装，用户态进程调用<code>connect</code>建立与内核的通信机制。IOKit 则不仅提供用户态通信接口，实际上 IOKit 提供所有内核驱动的管控能力，包含驱动的注册、资源管理和调试等。</p>
+        <div class="article-content markdown-body">
+            <p>macOS 内核拓展与用户态进程通信基本依靠 <a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/NKEConceptual/control/control.html#//apple_ref/doc/uid/TP40001858-CH227-DontLinkElementID_35" >KernControl <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> API 及 <a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/kernel/iokit_fundamentals" >IOKit Fundamentals <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 框架。kern_control API 对 socket 进行简单封装，用户态进程调用<code>connect</code>建立与内核的通信机制。IOKit 则不仅提供用户态通信接口，实际上 IOKit 提供所有内核驱动的管控能力，包含驱动的注册、资源管理和调试等。</p>
 <h3 id="KernControl-内核编程"><a href="#KernControl-内核编程" class="headerlink" title="KernControl 内核编程"></a>KernControl 内核编程</h3><p>内核拓展需调用<code>ctl_register</code>进行控制器的注册。函数原型为：<code>errno_t ctl_register(struct kern_ctl_reg *userkctl, kern_ctl_ref *kctlref);</code>。其中<code>userkctl</code>存放控制器相关配置，<code>kctlref</code>用于后续的消息发送和最后的控制器注销。消息传输调用<code>ctl_enqueuedata</code>实现，函数原型为<code>errno_t ctl_enqueuedata(kern_ctl_ref kctlref, u_int32_t unit, void *data, size_t len, u_int32_t flags);</code>。需要注意的是数据传输使用到的<code>unit</code>需在连接建立时获取，详见下面<code>kext_connect</code>函数实现。<br><code>kern_ctl_reg</code>结构体包含数据分发相关的函数指针，需自行实现。</p>
 <div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @brief Kext管控运行时环境</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">kern_ctl_reg</span> <span class="title">kctl_register</span>;</span>      <span class="comment">// kext注册器</span></span><br><span class="line">    kern_ctl_ref kctl_refrance;             <span class="comment">// kext注册引用</span></span><br><span class="line">    <span class="type">uint8_t</span> kext_unit;                      <span class="comment">// kext单元号</span></span><br><span class="line">    <span class="type">bool</span> is_connected;                      <span class="comment">// kext连接状态</span></span><br><span class="line">&#125; KextControlEnv;</span><br><span class="line">KextControlEnv g_kext_ctl;                      <span class="comment">// 内核拓展控制器</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @brief   kext控制器初始化</span></span><br><span class="line"><span class="comment"> * @return  错误码</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">errno_t</span> <span class="title function_">kext_control_init</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    <span class="type">errno_t</span> error = KERN_SUCCESS;</span><br><span class="line">    bzero(&amp;g_kext_ctl, <span class="keyword">sizeof</span>(KextControlEnv));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化kext管控参数</span></span><br><span class="line">    strlcpy(g_kext_ctl.kctl_register.ctl_name, <span class="string">&quot;your kext name&quot;</span>, MAX_KCTL_NAME);</span><br><span class="line">    g_kext_ctl.kctl_register.ctl_flags = CTL_FLAG_PRIVILEGED;</span><br><span class="line">    g_kext_ctl.kctl_register.ctl_send = kext_send;</span><br><span class="line">    g_kext_ctl.kctl_register.ctl_getopt = sock_get_opt;</span><br><span class="line">    g_kext_ctl.kctl_register.ctl_setopt = sock_set_opt;</span><br><span class="line">    g_kext_ctl.kctl_register.ctl_connect = kext_connect;</span><br><span class="line">    g_kext_ctl.kctl_register.ctl_disconnect = kext_disconnect;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 注册kext控制器</span></span><br><span class="line">    error = ctl_register(&amp;g_kext_ctl.kctl_register, &amp;g_kext_ctl.kctl_refrance);</span><br><span class="line">    <span class="keyword">if</span> (error != KERN_SUCCESS) &#123;</span><br><span class="line">        LOG_C(LOG_ERROR, <span class="string">&quot;Failed to register kext controller with error code [%d].&quot;</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> error;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @brief   kext控制器反初始化</span></span><br><span class="line"><span class="comment"> * @return  错误码</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">errno_t</span> <span class="title function_">kext_control_uninit</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    <span class="type">errno_t</span> error = KERN_SUCCESS;</span><br><span class="line"></span><br><span class="line">    error = ctl_deregister(g_kext_ctl.kctl_refrance);</span><br><span class="line">    <span class="keyword">if</span> (error != KERN_SUCCESS) &#123;</span><br><span class="line">        LOG_C(LOG_ERROR, <span class="string">&quot;Failed to deregister kext controller with error code [%d].&quot;</span>, error);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> error;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @brief           客户端设置配置回调</span></span><br><span class="line"><span class="comment"> * @param ctlref    kext控制引用</span></span><br><span class="line"><span class="comment"> * @param unit      kext单元号</span></span><br><span class="line"><span class="comment"> * @param command   操作标志</span></span><br><span class="line"><span class="comment"> * @return          错误码</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">errno_t</span> <span class="title function_">sock_set_opt</span><span class="params">(kern_ctl_ref ctlref, <span class="type">unsigned</span> <span class="type">int</span> unit, <span class="type">void</span> *info, <span class="type">int</span> command, <span class="type">void</span> *data, <span class="type">size_t</span> len)</span> &#123;</span><br><span class="line">    <span class="type">errno_t</span> err_code = KERN_SUCCESS;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> (command) &#123;</span><br><span class="line">        <span class="comment">// TODO</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> err_code;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @brief           客户端获取配置回调</span></span><br><span class="line"><span class="comment"> * @param ctlref    kext控制引用</span></span><br><span class="line"><span class="comment"> * @param unit      kext单元号</span></span><br><span class="line"><span class="comment"> * @param opt       操作标志</span></span><br><span class="line"><span class="comment"> * @return          错误码</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">errno_t</span> <span class="title function_">sock_get_opt</span><span class="params">(kern_ctl_ref ctlref, <span class="type">unsigned</span> <span class="type">int</span> unit, <span class="type">void</span> *userdata, <span class="type">int</span> opt, <span class="type">void</span> *data, <span class="type">size_t</span> *len)</span> &#123;</span><br><span class="line">    <span class="comment">// 可不用实现</span></span><br><span class="line">    <span class="keyword">return</span> KERN_SUCCESS;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @brief           客户端连接回调</span></span><br><span class="line"><span class="comment"> * @param ctlref    kext控制引用</span></span><br><span class="line"><span class="comment"> * @param sac       套接字地址控制器</span></span><br><span class="line"><span class="comment"> * @return          错误码</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">errno_t</span> <span class="title function_">kext_connect</span><span class="params">(kern_ctl_ref ctlref, <span class="keyword">struct</span> sockaddr_ctl *sac, <span class="type">void</span> **unitinfo)</span> &#123;</span><br><span class="line">    <span class="type">errno_t</span> err_code = KERN_SUCCESS;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (g_kext_ctl.is_connected == <span class="literal">true</span>) &#123;</span><br><span class="line">        LOG_C(LOG_ERROR, <span class="string">&quot;Failed to accept the connection request for a connection already established.&quot;</span>);</span><br><span class="line">        err_code = EISCONN;</span><br><span class="line">        <span class="keyword">return</span> err_code;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    g_kext_ctl.is_connected = <span class="literal">true</span>;</span><br><span class="line">    g_kext_ctl.kext_unit = sac-&gt;sc_unit;</span><br><span class="line">    LOG_C(LOG_INFO, <span class="string">&quot;Connect with client successfully.&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> err_code;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @brief           客户端断开连接回调</span></span><br><span class="line"><span class="comment"> * @param ctlref    kext控制引用</span></span><br><span class="line"><span class="comment"> * @param unit      kext单元号</span></span><br><span class="line"><span class="comment"> * @return          错误码</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">errno_t</span> <span class="title function_">kext_disconnect</span><span class="params">(kern_ctl_ref ctlref, <span class="type">unsigned</span> <span class="type">int</span> unit, <span class="type">void</span> *unitinfo)</span> &#123;</span><br><span class="line">    g_kext_ctl.is_connected = <span class="literal">false</span>;</span><br><span class="line">    LOG_C(LOG_INFO, <span class="string">&quot;Disconnect with peer successfully.&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> KERN_SUCCESS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <h3 id="KernControl-用户态编程"><a href="#KernControl-用户态编程" class="headerlink" title="KernControl 用户态编程"></a>KernControl 用户态编程</h3><p>用户态进程仅需调用<code>connect</code>函数发起连接，代码如下。OS X 专门为内核通信定义了<code>PF_SYSTEM</code>域，该域支持<code>SYSPROTO_CONTROL</code>和<code>SYSPROTO_EVENT</code>两个协议。使用<code>SYSPROTO_CONTROL</code>协议的内核控制（kern_control）API 允许应用程序配置和控制 KEXT。使用<code>SYSPROTO_EVENT</code>协议的内核事件（kern_event）API 允许在某些内核事件发生时通知应用程序和其他 KEXT。一般来说，内核控制 API 是首选，因为它提供双向通信。</p>
 <div class="highlight-container" data-rel="Objc"><figure class="iseeu highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @brief  连接内核拓展</span></span><br><span class="line"><span class="comment"> * @return NO表示失败，否则成功</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">- (<span class="type">BOOL</span>)establishConnection &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.socketFD != <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建kext管控套接字</span></span><br><span class="line">    _socketFD = socket(PF_SYSTEM, SOCK_DGRAM, SYSPROTO_CONTROL);</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.socketFD == <span class="number">-1</span>) &#123;</span><br><span class="line">        LOG_OC(LOG_ERROR, <span class="string">&quot;Could not create socket.&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化kext控制信息</span></span><br><span class="line">    <span class="keyword">struct</span> ctl_info info;</span><br><span class="line">    bzero(&amp;info, <span class="keyword">sizeof</span>(info));</span><br><span class="line">    strlcpy(info.ctl_name, <span class="string">&quot;your kext name&quot;</span>, MAX_KCTL_NAME);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取动态设置的kext ID</span></span><br><span class="line">    <span class="keyword">if</span> (ioctl(<span class="keyword">self</span>.socketFD, <span class="built_in">CTLIOCGINFO</span>, &amp;info)) &#123;</span><br><span class="line">        LOG_OC(LOG_ERROR, <span class="string">&quot;Could not get ID for kernel control.&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化套接字连接地址</span></span><br><span class="line">    <span class="keyword">struct</span> sockaddr_ctl addr;</span><br><span class="line">    bzero(&amp;addr, <span class="keyword">sizeof</span>(addr));</span><br><span class="line">    addr.sc_len = <span class="keyword">sizeof</span>(addr);</span><br><span class="line">    addr.sc_family = AF_SYSTEM;</span><br><span class="line">    addr.ss_sysaddr = AF_SYS_CONTROL;</span><br><span class="line">    addr.sc_id = info.ctl_id;</span><br><span class="line">    addr.sc_unit = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> result = connect(<span class="keyword">self</span>.socketFD, (<span class="keyword">struct</span> sockaddr *)&amp;addr, <span class="keyword">sizeof</span>(addr));</span><br><span class="line">    <span class="keyword">if</span> (result) &#123;</span><br><span class="line">        LOG_OC(LOG_ERROR, <span class="string">&quot;Connect failed with error code [%d].&quot;</span>, result);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    LOG_OC(LOG_INFO, <span class="string">&quot;Connect with kext successfully.&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @brief 断开内核拓展连接</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">- (<span class="type">void</span>)destroyConnection &#123;</span><br><span class="line">    <span class="comment">// 关闭套接字</span></span><br><span class="line">    close(<span class="keyword">self</span>.socketFD);</span><br><span class="line">    _socketFD = <span class="number">-1</span>;</span><br><span class="line">    LOG_OC(LOG_INFO, <span class="string">&quot;Disconnect with kext successfully.&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-            </div>
+        </div>
 
-            
-                <div class="post-copyright-info">
-                    <div class="article-copyright-info-container">
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
     <ul>
         <li><strong>标题:</strong> macOS内核拓展与用户态进程的通信实现（一）</li>
         <li><strong>作者:</strong> 孙康</li>
         <li><strong>创建于:</strong> 2023-06-21 12:12:57</li>
         
             <li>
-                <strong>更新于:</strong> 2023-07-24 09:10:58
+                <strong>更新于:</strong> 2023-08-01 11:57:53
             </li>
         
         <li>
@@ -441,55 +442,55 @@
     </ul>
 </div>
 
-                </div>
-            
+            </div>
+        
 
-            
-                <ul class="post-tags-box">
-                    
-                        <li class="tag-item">
-                            <a href="/tags/macOS/">#macOS</a>&nbsp;
-                        </li>
-                    
-                        <li class="tag-item">
-                            <a href="/tags/%E5%86%85%E6%A0%B8%E9%80%9A%E4%BF%A1/">#内核通信</a>&nbsp;
-                        </li>
-                    
-                        <li class="tag-item">
-                            <a href="/tags/socket/">#socket</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/macOS/">#macOS</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/%E5%86%85%E6%A0%B8%E9%80%9A%E4%BF%A1/">#内核通信</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/socket/">#socket</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
 
-            
+        
 
-            
-                <div class="article-nav">
-                    
-                        <div class="article-prev">
-                            <a class="prev"
-                            rel="prev"
-                            href="/2023/0699a600b0.html"
-                            >
-                                <span class="left arrow-icon flex-center">
-                                    <i class="fa-solid fa-chevron-left"></i>
-                                </span>
-                                <span class="title flex-center">
-                                    <span class="post-nav-title-item">macOS内核拓展与用户态进程的通信实现（二）</span>
-                                    <span class="post-nav-item">上一篇</span>
-                                </span>
-                            </a>
-                        </div>
-                    
-                    
-                </div>
-            
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                        rel="prev"
+                        href="/2023/0699a600b0.html"
+                        >
+                            <span class="left arrow-icon flex-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">macOS内核拓展与用户态进程的通信实现（二）</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+            </div>
+        
 
 
-            
-                <div class="comment-container">
-                    <div class="comments-container">
+        
+            <div class="comment-container">
+                <div class="comments-container pjax">
     <div id="comment-anchor"></div>
     <div class="comment-area-title">
         <i class="fa-solid fa-comments"></i>&nbsp;评论
@@ -499,7 +500,7 @@
         
             
     <div id="giscus-container"></div>
-    <script data-pjax defer>
+    <script data-swup-reload-script defer>
         async function loadGiscus() {
             const giscusConfig = {
                 'src': 'https://giscus.app/client.js',
@@ -540,13 +541,13 @@
     
 </div>
 
-                </div>
-            
-        </div>
-
+            </div>
         
-            <div class="toc-content-container">
-                <div class="post-toc-wrap">
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
         <div class="page-title">macOS内核拓展与用户态进程的通信实现（一）</div>
@@ -554,10 +555,10 @@
 
     </div>
 </div>
-            </div>
-        
-    </div>
+        </div>
+    
 </div>
+
 
 
                 
@@ -580,7 +581,7 @@
             2023&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">孙康</a>
         </div>
         
-            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
             <div class="website-count info-item">
                 
                     <span id="busuanzi_container_site_uv" class="busuanzi_container_site_uv">
@@ -597,9 +598,8 @@
         <div class="theme-info info-item">
             <span class="powered-by-container">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" href="https://hexo.io">Hexo</a> 驱动</span>
                 <br>
-            <span class="theme-version-container">主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.2.2</a>
+            <span class="theme-version-container">主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.3.0</a></span>
         </div>
-        
         
         
             <div>
@@ -608,7 +608,7 @@
         
         
         
-            <script async data-pjax>
+            <script data-swup-reload-script>
                 try {
                     function odometer_init() {
                     const elements = document.querySelectorAll('.odometer');
@@ -739,6 +739,46 @@
 </main>
 
 
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+        ],
+        containers: ["#swup"],
+    });
+
+    swup.on("pageView", () => {
+        Global.refresh();
+    });
+
+    // if (document.readyState === "complete") {
+    //
+    // } else {
+    //     document.addEventListener("DOMContentLoaded", () => init());
+    // }
+</script>
+
+
+
 
 
 <script src="/js/utils.js"></script>
@@ -750,6 +790,8 @@
 <script src="/js/tools/scrollTopBottom.js"></script>
 
 <script src="/js/tools/lightDarkSwitch.js"></script>
+
+<script src="/js/layouts/categoryList.js"></script>
 
 
 
@@ -795,55 +837,19 @@
 
 
 
-<div class="post-scripts pjax">
+<div class="post-scripts" data-swup-reload-script>
     
         
 <script src="/js/tools/tocToggle.js"></script>
 
-<script src="/js/libs/anime.min.js"></script>
-
 <script src="/js/layouts/toc.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
 
 <script src="/js/plugins/tabs.js"></script>
 
     
 </div>
-
-
-    
-<script src="/js/libs/pjax.min.js"></script>
-
-<script>
-    window.addEventListener('DOMContentLoaded', () => {
-        window.pjax = new Pjax({
-            selectors: [
-                'head title',
-                '.page-container',
-                '.pjax',
-            ],
-            history: true,
-            debug: false,
-            cacheBust: false,
-            timeout: 0,
-            analytics: false,
-            currentUrlFullReload: false,
-            scrollRestoration: false,
-            // scrollTo: true,
-        });
-
-        document.addEventListener('pjax:send', () => {
-            Global.utils.pjaxProgressBarStart();
-        });
-
-        document.addEventListener('pjax:complete', () => {
-            Global.utils.pjaxProgressBarEnd();
-            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
-            Global.refresh();
-        });
-    });
-</script>
-
-
 
 
 </body>

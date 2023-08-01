@@ -18,15 +18,15 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="前面 已经讲解了基于 KernControl API 的通信实现，该实现相对简单，但有一些缺点。内核向应用层传输消息需调用ctl_enqueuedata接口，该接口实际将数据缓存至缓冲区，当需要瞬时大量传输消息时，缓冲区容量有限，将丢弃后来的数据。如果传输的数据有优先级，则需对ctl_enqueuedata接口进行二次封装，避免高优先级数据丢失。 IOKit Fundamentals  框架提供更">
+        <meta name="description" content="基于 IOKit 实现 macOS 内核与应用层间的通信">
 <meta property="og:type" content="article">
 <meta property="og:title" content="macOS内核拓展与用户态进程的通信实现（二）">
 <meta property="og:url" content="https://conradsun.github.io/2023/0699a600b0.html">
 <meta property="og:site_name" content="康的个人博客">
-<meta property="og:description" content="前面 已经讲解了基于 KernControl API 的通信实现，该实现相对简单，但有一些缺点。内核向应用层传输消息需调用ctl_enqueuedata接口，该接口实际将数据缓存至缓冲区，当需要瞬时大量传输消息时，缓冲区容量有限，将丢弃后来的数据。如果传输的数据有优先级，则需对ctl_enqueuedata接口进行二次封装，避免高优先级数据丢失。 IOKit Fundamentals  框架提供更">
+<meta property="og:description" content="基于 IOKit 实现 macOS 内核与应用层间的通信">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-06-21T05:12:57.000Z">
-<meta property="article:modified_time" content="2023-07-24T01:13:14.684Z">
+<meta property="article:modified_time" content="2023-08-01T03:58:25.390Z">
 <meta property="article:author" content="ConradSun">
 <meta property="article:tag" content="macOS">
 <meta property="article:tag" content="内核通信">
@@ -78,7 +78,7 @@
     <script id="hexo-configurations">
     let Global = window.Global || {};
     Global.hexo_config = {"hostname":"conradsun.github.io","root":"/","language":"zh-CN","path":"search.xml"};
-    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":"#1890FF"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"busuanzi_counter":{"enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"pjax":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"links":{"github":"https://github.com/ConradSun","instagram":null,"zhihu":null,"twitter":null,"email":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.2.2","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"Github":"https://github.com/ConradSun","Blog":"https://ConradSun.github.io"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":"#1890FF"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"links":{"github":"https://github.com/ConradSun","instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.3.0","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"Github":"https://github.com/ConradSun","Blog":"https://ConradSun.github.io"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
     Global.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
     Global.data_config = {"masonry":false};
   </script>
@@ -117,18 +117,20 @@
 
     
         <span class="pjax-progress-bar"></span>
-        <span class="pjax-progress-icon">
+        <span class="swup-progress-icon">
             <i class="fa-solid fa-circle-notch fa-spin"></i>
         </span>
     
 </div>
 
 
-<main class="page-container">
+<main class="page-container" id="swup">
+    
 
     
 
     <div class="main-content-container">
+        
 
         <div class="main-content-header">
             <header class="navbar-container">
@@ -310,30 +312,29 @@
             <div class="main-content">
 
                 
-                    <div class="fade-in-down-animation">
-    <div class="post-page-container">
-        <div class="article-content-container">
+                    <div class="post-page-container">
+    <div class="article-content-container">
 
-            <div class="article-title">
-                
-                  <h1 class="article-title-regular">macOS内核拓展与用户态进程的通信实现（二）</h1>
-                
-              </div>
-              
-                     
+        <div class="article-title">
             
+                <h1 class="article-title-regular">macOS内核拓展与用户态进程的通信实现（二）</h1>
             
-                <div class="article-header">
-                    <div class="avatar">
-                        <img src="/images/git-avatar.svg">
+            </div>
+            
+                    
+        
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/git-avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">孙康</span>
+                        
                     </div>
-                    <div class="info">
-                        <div class="author">
-                            <span class="name">孙康</span>
-                            
-                        </div>
-                        <div class="meta-info">
-                            <div class="article-meta-info">
+                    <div class="meta-info">
+                        <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
         <span class="desktop">2023-06-21 13:12:57</span>
@@ -343,8 +344,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-07-24 09:13:14</span>
-            <span class="mobile">2023-07-24 09:13:14</span>
+            <span class="desktop">2023-08-01 11:58:25</span>
+            <span class="mobile">2023-08-01 11:58:25</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -405,13 +406,13 @@
     
 </div>
 
-                        </div>
                     </div>
                 </div>
-            
+            </div>
+        
 
-            <div class="article-content markdown-body">
-                <p><a href="https://conradsun.github.io/2023/06a9b0ec68.html">前面</a> 已经讲解了基于 KernControl API 的通信实现，该实现相对简单，但有一些缺点。内核向应用层传输消息需调用<code>ctl_enqueuedata</code>接口，该接口实际将数据缓存至缓冲区，当需要瞬时大量传输消息时，缓冲区容量有限，将丢弃后来的数据。如果传输的数据有优先级，则需对<code>ctl_enqueuedata</code>接口进行二次封装，避免高优先级数据丢失。</p>
+        <div class="article-content markdown-body">
+            <p><a href="https://conradsun.github.io/2023/06a9b0ec68.html">前面</a> 已经讲解了基于 KernControl API 的通信实现，该实现相对简单，但有一些缺点。内核向应用层传输消息需调用<code>ctl_enqueuedata</code>接口，该接口实际将数据缓存至缓冲区，当需要瞬时大量传输消息时，缓冲区容量有限，将丢弃后来的数据。如果传输的数据有优先级，则需对<code>ctl_enqueuedata</code>接口进行二次封装，避免高优先级数据丢失。</p>
 <p><a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/kernel/iokit_fundamentals" >IOKit Fundamentals <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 框架提供更加全面且方便的内核驱动 API。<a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/kernel/ioservice-1g" >IOService <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 是大多数内核驱动的基类，提供驱动实例化相关的各项服务。<a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/kernel/iouserclient" >IOUserClient <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 是与用户态应用程序间通信的基类，通过继承并实现该类，可与客户端应用程序建立通信机制。<a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/kernel/ioshareddataqueue" >IOSharedDataQueue <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>是非常便于使用的内核与用户态进程进行数据交换的通用队列，用户可自行设置队列大小。基于 IOKit 中的 IOService、IOUserClient、IOSharedDataQueue 可方便的实现内核与用户进程的通信和数据传输。下面结合代码进行简单实现，更多代码细节和工程配置可参考 <a class="link"   target="_blank" rel="noopener" href="https://github.com/ConradSun/NuwaStone" >NuwaStone <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 项目。</p>
 <h3 id="IOService-内核编程"><a href="#IOService-内核编程" class="headerlink" title="IOService 内核编程"></a>IOService 内核编程</h3><p>由于本次编写的为内核拓展，仅需要 IOService 进行驱动的加载与卸载管理，这里的代码实现很简单，仅需重写<code>start</code>、<code>stop</code>方法。如有加载卸载时的自定义操作可在函数中实现。</p>
 <div class="highlight-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">DriverService.hpp</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DriverService</span> : <span class="keyword">public</span> IOService &#123;</span><br><span class="line">    <span class="built_in">OSDeclareDefaultStructors</span>(DriverService);</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// Called by the kernel when the kext is loaded</span></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">start</span><span class="params">(IOService *provider)</span> <span class="keyword">override</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Called by the kernel when the kext is unloaded</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">stop</span><span class="params">(IOService *provider)</span> <span class="keyword">override</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">clearInstances</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
@@ -427,18 +428,18 @@
 
 <p>我们通过调用<code>IOServiceOpen</code>存放<code>io_connect_t</code>类型的对象建立了与内核驱动的连接，相应的，断开连接时需调用<code>IOServiceClose</code>接口。</p>
 <div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">stopProvider</span>() -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> result <span class="operator">=</span> <span class="type">IOServiceClose</span>(connection)</span><br><span class="line">    <span class="keyword">if</span> result <span class="operator">!=</span> <span class="type">KERN_SUCCESS</span> &#123;</span><br><span class="line">        <span class="type">Logger</span>(.<span class="type">Error</span>, <span class="string">&quot;Failed to close IOService [<span class="subst">\(String.<span class="keyword">init</span>(format: <span class="string">&quot;0x%x&quot;</span>, result))</span>].&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    connection <span class="operator">=</span> <span class="type">IO_OBJECT_NULL</span></span><br><span class="line">    isConnected <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-            </div>
+        </div>
 
-            
-                <div class="post-copyright-info">
-                    <div class="article-copyright-info-container">
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
     <ul>
         <li><strong>标题:</strong> macOS内核拓展与用户态进程的通信实现（二）</li>
         <li><strong>作者:</strong> 孙康</li>
         <li><strong>创建于:</strong> 2023-06-21 13:12:57</li>
         
             <li>
-                <strong>更新于:</strong> 2023-07-24 09:13:14
+                <strong>更新于:</strong> 2023-08-01 11:58:25
             </li>
         
         <li>
@@ -450,70 +451,70 @@
     </ul>
 </div>
 
-                </div>
-            
+            </div>
+        
 
-            
-                <ul class="post-tags-box">
-                    
-                        <li class="tag-item">
-                            <a href="/tags/macOS/">#macOS</a>&nbsp;
-                        </li>
-                    
-                        <li class="tag-item">
-                            <a href="/tags/%E5%86%85%E6%A0%B8%E9%80%9A%E4%BF%A1/">#内核通信</a>&nbsp;
-                        </li>
-                    
-                        <li class="tag-item">
-                            <a href="/tags/IOService/">#IOService</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/macOS/">#macOS</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/%E5%86%85%E6%A0%B8%E9%80%9A%E4%BF%A1/">#内核通信</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/IOService/">#IOService</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
 
-            
+        
 
-            
-                <div class="article-nav">
-                    
-                        <div class="article-prev">
-                            <a class="prev"
-                            rel="prev"
-                            href="/2023/06b3e3d734.html"
-                            >
-                                <span class="left arrow-icon flex-center">
-                                    <i class="fa-solid fa-chevron-left"></i>
-                                </span>
-                                <span class="title flex-center">
-                                    <span class="post-nav-title-item">macOS用户态进程间的通信实现</span>
-                                    <span class="post-nav-item">上一篇</span>
-                                </span>
-                            </a>
-                        </div>
-                    
-                    
-                        <div class="article-next">
-                            <a class="next"
-                            rel="next"
-                            href="/2023/06a9b0ec68.html"
-                            >
-                                <span class="title flex-center">
-                                    <span class="post-nav-title-item">macOS内核拓展与用户态进程的通信实现（一）</span>
-                                    <span class="post-nav-item">下一篇</span>
-                                </span>
-                                <span class="right arrow-icon flex-center">
-                                    <i class="fa-solid fa-chevron-right"></i>
-                                </span>
-                            </a>
-                        </div>
-                    
-                </div>
-            
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                        rel="prev"
+                        href="/2023/06b3e3d734.html"
+                        >
+                            <span class="left arrow-icon flex-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">macOS用户态进程间的通信实现</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                        rel="next"
+                        href="/2023/06a9b0ec68.html"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">macOS内核拓展与用户态进程的通信实现（一）</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
 
 
-            
-                <div class="comment-container">
-                    <div class="comments-container">
+        
+            <div class="comment-container">
+                <div class="comments-container pjax">
     <div id="comment-anchor"></div>
     <div class="comment-area-title">
         <i class="fa-solid fa-comments"></i>&nbsp;评论
@@ -523,7 +524,7 @@
         
             
     <div id="giscus-container"></div>
-    <script data-pjax defer>
+    <script data-swup-reload-script defer>
         async function loadGiscus() {
             const giscusConfig = {
                 'src': 'https://giscus.app/client.js',
@@ -564,13 +565,13 @@
     
 </div>
 
-                </div>
-            
-        </div>
-
+            </div>
         
-            <div class="toc-content-container">
-                <div class="post-toc-wrap">
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
         <div class="page-title">macOS内核拓展与用户态进程的通信实现（二）</div>
@@ -578,10 +579,10 @@
 
     </div>
 </div>
-            </div>
-        
-    </div>
+        </div>
+    
 </div>
+
 
 
                 
@@ -604,7 +605,7 @@
             2023&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">孙康</a>
         </div>
         
-            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
             <div class="website-count info-item">
                 
                     <span id="busuanzi_container_site_uv" class="busuanzi_container_site_uv">
@@ -621,9 +622,8 @@
         <div class="theme-info info-item">
             <span class="powered-by-container">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" href="https://hexo.io">Hexo</a> 驱动</span>
                 <br>
-            <span class="theme-version-container">主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.2.2</a>
+            <span class="theme-version-container">主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.3.0</a></span>
         </div>
-        
         
         
             <div>
@@ -632,7 +632,7 @@
         
         
         
-            <script async data-pjax>
+            <script data-swup-reload-script>
                 try {
                     function odometer_init() {
                     const elements = document.querySelectorAll('.odometer');
@@ -763,6 +763,46 @@
 </main>
 
 
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+        ],
+        containers: ["#swup"],
+    });
+
+    swup.on("pageView", () => {
+        Global.refresh();
+    });
+
+    // if (document.readyState === "complete") {
+    //
+    // } else {
+    //     document.addEventListener("DOMContentLoaded", () => init());
+    // }
+</script>
+
+
+
 
 
 <script src="/js/utils.js"></script>
@@ -774,6 +814,8 @@
 <script src="/js/tools/scrollTopBottom.js"></script>
 
 <script src="/js/tools/lightDarkSwitch.js"></script>
+
+<script src="/js/layouts/categoryList.js"></script>
 
 
 
@@ -819,55 +861,19 @@
 
 
 
-<div class="post-scripts pjax">
+<div class="post-scripts" data-swup-reload-script>
     
         
 <script src="/js/tools/tocToggle.js"></script>
 
-<script src="/js/libs/anime.min.js"></script>
-
 <script src="/js/layouts/toc.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
 
 <script src="/js/plugins/tabs.js"></script>
 
     
 </div>
-
-
-    
-<script src="/js/libs/pjax.min.js"></script>
-
-<script>
-    window.addEventListener('DOMContentLoaded', () => {
-        window.pjax = new Pjax({
-            selectors: [
-                'head title',
-                '.page-container',
-                '.pjax',
-            ],
-            history: true,
-            debug: false,
-            cacheBust: false,
-            timeout: 0,
-            analytics: false,
-            currentUrlFullReload: false,
-            scrollRestoration: false,
-            // scrollTo: true,
-        });
-
-        document.addEventListener('pjax:send', () => {
-            Global.utils.pjaxProgressBarStart();
-        });
-
-        document.addEventListener('pjax:complete', () => {
-            Global.utils.pjaxProgressBarEnd();
-            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
-            Global.refresh();
-        });
-    });
-</script>
-
-
 
 
 </body>

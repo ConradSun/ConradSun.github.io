@@ -18,17 +18,17 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="前面 已经提到可以通过修改环境变量DYLD_INSERT_LIBRARIES注入动态库，但这种方法具有一定的局限性，在开启 SIP 的机器上，应用程序可能无法继承该环境变量，导致注入失败。那么有没有局限性更小的注入方法？本文所展示的代码片段来自开源项目 FishHook ，更多细节可参考该项目。 引入可以找个 Mach-o (Mach Object File Format)文件先分析一下。和 Li">
+        <meta name="description" content="修改单架构 Mach-o 文件，插入 Load Commands 指令实现自定义动态库注入">
 <meta property="og:type" content="article">
 <meta property="og:title" content="macOS修改Mach-o文件实现动态库注入（一）">
 <meta property="og:url" content="https://conradsun.github.io/2023/0686aa5ea2.html">
 <meta property="og:site_name" content="康的个人博客">
-<meta property="og:description" content="前面 已经提到可以通过修改环境变量DYLD_INSERT_LIBRARIES注入动态库，但这种方法具有一定的局限性，在开启 SIP 的机器上，应用程序可能无法继承该环境变量，导致注入失败。那么有没有局限性更小的注入方法？本文所展示的代码片段来自开源项目 FishHook ，更多细节可参考该项目。 引入可以找个 Mach-o (Mach Object File Format)文件先分析一下。和 Li">
+<meta property="og:description" content="修改单架构 Mach-o 文件，插入 Load Commands 指令实现自定义动态库注入">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://conradsun.github.io/images/article-pics/Mach-o-helloWorld.png">
 <meta property="og:image" content="https://conradsun.github.io/images/article-pics/Mach-o-libSystem.B.dylib.png">
 <meta property="article:published_time" content="2023-06-25T05:12:57.000Z">
-<meta property="article:modified_time" content="2023-07-24T01:58:04.147Z">
+<meta property="article:modified_time" content="2023-08-01T03:55:47.853Z">
 <meta property="article:author" content="ConradSun">
 <meta property="article:tag" content="macOS">
 <meta property="article:tag" content="interpose">
@@ -81,7 +81,7 @@
     <script id="hexo-configurations">
     let Global = window.Global || {};
     Global.hexo_config = {"hostname":"conradsun.github.io","root":"/","language":"zh-CN","path":"search.xml"};
-    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":"#1890FF"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"busuanzi_counter":{"enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"pjax":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"links":{"github":"https://github.com/ConradSun","instagram":null,"zhihu":null,"twitter":null,"email":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.2.2","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"Github":"https://github.com/ConradSun","Blog":"https://ConradSun.github.io"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":"#1890FF"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"links":{"github":"https://github.com/ConradSun","instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.3.0","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"Github":"https://github.com/ConradSun","Blog":"https://ConradSun.github.io"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
     Global.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
     Global.data_config = {"masonry":false};
   </script>
@@ -120,18 +120,20 @@
 
     
         <span class="pjax-progress-bar"></span>
-        <span class="pjax-progress-icon">
+        <span class="swup-progress-icon">
             <i class="fa-solid fa-circle-notch fa-spin"></i>
         </span>
     
 </div>
 
 
-<main class="page-container">
+<main class="page-container" id="swup">
+    
 
     
 
     <div class="main-content-container">
+        
 
         <div class="main-content-header">
             <header class="navbar-container">
@@ -313,30 +315,29 @@
             <div class="main-content">
 
                 
-                    <div class="fade-in-down-animation">
-    <div class="post-page-container">
-        <div class="article-content-container">
+                    <div class="post-page-container">
+    <div class="article-content-container">
 
-            <div class="article-title">
-                
-                  <h1 class="article-title-regular">macOS修改Mach-o文件实现动态库注入（一）</h1>
-                
-              </div>
-              
-                     
+        <div class="article-title">
             
+                <h1 class="article-title-regular">macOS修改Mach-o文件实现动态库注入（一）</h1>
             
-                <div class="article-header">
-                    <div class="avatar">
-                        <img src="/images/git-avatar.svg">
+            </div>
+            
+                    
+        
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/git-avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">孙康</span>
+                        
                     </div>
-                    <div class="info">
-                        <div class="author">
-                            <span class="name">孙康</span>
-                            
-                        </div>
-                        <div class="meta-info">
-                            <div class="article-meta-info">
+                    <div class="meta-info">
+                        <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
         <span class="desktop">2023-06-25 13:12:57</span>
@@ -346,8 +347,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-07-24 09:58:04</span>
-            <span class="mobile">2023-07-24 09:58:04</span>
+            <span class="desktop">2023-08-01 11:55:47</span>
+            <span class="mobile">2023-08-01 11:55:47</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -408,13 +409,13 @@
     
 </div>
 
-                        </div>
                     </div>
                 </div>
-            
+            </div>
+        
 
-            <div class="article-content markdown-body">
-                <p><a href="https://conradsun.github.io/2023/0676d00749.html">前面</a> 已经提到可以通过修改环境变量<code>DYLD_INSERT_LIBRARIES</code>注入动态库，但这种方法具有一定的局限性，在开启 SIP 的机器上，应用程序可能无法继承该环境变量，导致注入失败。那么有没有局限性更小的注入方法？本文所展示的代码片段来自开源项目 <a class="link"   target="_blank" rel="noopener" href="https://github.com/ConradSun/FishHook" >FishHook <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，更多细节可参考该项目。</p>
+        <div class="article-content markdown-body">
+            <p><a href="https://conradsun.github.io/2023/0676d00749.html">前面</a> 已经提到可以通过修改环境变量<code>DYLD_INSERT_LIBRARIES</code>注入动态库，但这种方法具有一定的局限性，在开启 SIP 的机器上，应用程序可能无法继承该环境变量，导致注入失败。那么有没有局限性更小的注入方法？本文所展示的代码片段来自开源项目 <a class="link"   target="_blank" rel="noopener" href="https://github.com/ConradSun/FishHook" >FishHook <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，更多细节可参考该项目。</p>
 <h3 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h3><p>可以找个 Mach-o (Mach Object File Format)文件先分析一下。和 Linux 系统上的 ELF (Extensible Firmware Interface)、Windows 系统上的 PE (Portable Executable) 文件相比，Mach-o 文件结构大体与之类似，可分为 Header、Segment、Section 等部分，使用 <a class="link"   target="_blank" rel="noopener" href="https://sourceforge.net/projects/machoview/" >MachOView <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 工具可以方便查看二进制内容。</p>
 <p>Mach-o 文件可分为瘦二进制和胖二进制（Fat Binary），即支持多处理器架构的二进制文件，使用<code>file</code>命令可查看文件支持的架构，如下：</p>
 <div class="highlight-container" data-rel="Shell"><figure class="iseeu highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">➜  ~ file /usr/bin/python3</span><br><span class="line">/usr/bin/python3: Mach-O universal binary with 2 architectures: [x86_64:Mach-O 64-bit executable x86_64</span><br><span class="line">- Mach-O 64-bit executable x86_64] [arm64e:Mach-O 64-bit executable arm64e</span><br><span class="line">- Mach-O 64-bit executable arm64e]</span><br><span class="line">/usr/bin/python3 (for architecture x86_64):	Mach-O 64-bit executable x86_64</span><br><span class="line">/usr/bin/python3 (for architecture arm64e):	Mach-O 64-bit executable arm64e</span><br></pre></td></tr></table></figure></div>
@@ -441,18 +442,18 @@
 <p><code>processThinMachO</code>仅分析二进制的格式是 64bit 还是 32bit，<code>injectDylib</code>用于添加依赖库。首先生成了<code>dylibCmd</code>动态库加载指令，指令中的<code>cmdsize</code>对 dylib 的路径长度进行了 8 字节对齐取整。指令插入的位置为 Header+CmdsSize 之后，即 Load Commands 最后一条指令之后，这里没有判断是否可以插入。注意，还需要修改 Header 中的指令数量和大小信息，不然新增的指令不会被解析。</p>
 <p>修改完成后，修改后的文件直接覆盖原文件，所以测试前请将原文件备份。</p>
 
-            </div>
+        </div>
 
-            
-                <div class="post-copyright-info">
-                    <div class="article-copyright-info-container">
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
     <ul>
         <li><strong>标题:</strong> macOS修改Mach-o文件实现动态库注入（一）</li>
         <li><strong>作者:</strong> 孙康</li>
         <li><strong>创建于:</strong> 2023-06-25 13:12:57</li>
         
             <li>
-                <strong>更新于:</strong> 2023-07-24 09:58:04
+                <strong>更新于:</strong> 2023-08-01 11:55:47
             </li>
         
         <li>
@@ -464,70 +465,70 @@
     </ul>
 </div>
 
-                </div>
-            
+            </div>
+        
 
-            
-                <ul class="post-tags-box">
-                    
-                        <li class="tag-item">
-                            <a href="/tags/macOS/">#macOS</a>&nbsp;
-                        </li>
-                    
-                        <li class="tag-item">
-                            <a href="/tags/interpose/">#interpose</a>&nbsp;
-                        </li>
-                    
-                        <li class="tag-item">
-                            <a href="/tags/Mach-o/">#Mach-o</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/macOS/">#macOS</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/interpose/">#interpose</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Mach-o/">#Mach-o</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
 
-            
+        
 
-            
-                <div class="article-nav">
-                    
-                        <div class="article-prev">
-                            <a class="prev"
-                            rel="prev"
-                            href="/2023/06f5037cc5.html"
-                            >
-                                <span class="left arrow-icon flex-center">
-                                    <i class="fa-solid fa-chevron-left"></i>
-                                </span>
-                                <span class="title flex-center">
-                                    <span class="post-nav-title-item">macOS修改MachO文件实现动态库注入（二）</span>
-                                    <span class="post-nav-item">上一篇</span>
-                                </span>
-                            </a>
-                        </div>
-                    
-                    
-                        <div class="article-next">
-                            <a class="next"
-                            rel="next"
-                            href="/2023/0676d00749.html"
-                            >
-                                <span class="title flex-center">
-                                    <span class="post-nav-title-item">macOS Hook系统调用</span>
-                                    <span class="post-nav-item">下一篇</span>
-                                </span>
-                                <span class="right arrow-icon flex-center">
-                                    <i class="fa-solid fa-chevron-right"></i>
-                                </span>
-                            </a>
-                        </div>
-                    
-                </div>
-            
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                        rel="prev"
+                        href="/2023/06f5037cc5.html"
+                        >
+                            <span class="left arrow-icon flex-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">macOS修改MachO文件实现动态库注入（二）</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                        rel="next"
+                        href="/2023/0676d00749.html"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">macOS Hook系统调用</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
 
 
-            
-                <div class="comment-container">
-                    <div class="comments-container">
+        
+            <div class="comment-container">
+                <div class="comments-container pjax">
     <div id="comment-anchor"></div>
     <div class="comment-area-title">
         <i class="fa-solid fa-comments"></i>&nbsp;评论
@@ -537,7 +538,7 @@
         
             
     <div id="giscus-container"></div>
-    <script data-pjax defer>
+    <script data-swup-reload-script defer>
         async function loadGiscus() {
             const giscusConfig = {
                 'src': 'https://giscus.app/client.js',
@@ -578,13 +579,13 @@
     
 </div>
 
-                </div>
-            
-        </div>
-
+            </div>
         
-            <div class="toc-content-container">
-                <div class="post-toc-wrap">
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
         <div class="page-title">macOS修改Mach-o文件实现动态库注入（一）</div>
@@ -592,10 +593,10 @@
 
     </div>
 </div>
-            </div>
-        
-    </div>
+        </div>
+    
 </div>
+
 
 
                 
@@ -618,7 +619,7 @@
             2023&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">孙康</a>
         </div>
         
-            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
             <div class="website-count info-item">
                 
                     <span id="busuanzi_container_site_uv" class="busuanzi_container_site_uv">
@@ -635,9 +636,8 @@
         <div class="theme-info info-item">
             <span class="powered-by-container">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" href="https://hexo.io">Hexo</a> 驱动</span>
                 <br>
-            <span class="theme-version-container">主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.2.2</a>
+            <span class="theme-version-container">主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.3.0</a></span>
         </div>
-        
         
         
             <div>
@@ -646,7 +646,7 @@
         
         
         
-            <script async data-pjax>
+            <script data-swup-reload-script>
                 try {
                     function odometer_init() {
                     const elements = document.querySelectorAll('.odometer');
@@ -777,6 +777,46 @@
 </main>
 
 
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+        ],
+        containers: ["#swup"],
+    });
+
+    swup.on("pageView", () => {
+        Global.refresh();
+    });
+
+    // if (document.readyState === "complete") {
+    //
+    // } else {
+    //     document.addEventListener("DOMContentLoaded", () => init());
+    // }
+</script>
+
+
+
 
 
 <script src="/js/utils.js"></script>
@@ -788,6 +828,8 @@
 <script src="/js/tools/scrollTopBottom.js"></script>
 
 <script src="/js/tools/lightDarkSwitch.js"></script>
+
+<script src="/js/layouts/categoryList.js"></script>
 
 
 
@@ -833,55 +875,19 @@
 
 
 
-<div class="post-scripts pjax">
+<div class="post-scripts" data-swup-reload-script>
     
         
 <script src="/js/tools/tocToggle.js"></script>
 
-<script src="/js/libs/anime.min.js"></script>
-
 <script src="/js/layouts/toc.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
 
 <script src="/js/plugins/tabs.js"></script>
 
     
 </div>
-
-
-    
-<script src="/js/libs/pjax.min.js"></script>
-
-<script>
-    window.addEventListener('DOMContentLoaded', () => {
-        window.pjax = new Pjax({
-            selectors: [
-                'head title',
-                '.page-container',
-                '.pjax',
-            ],
-            history: true,
-            debug: false,
-            cacheBust: false,
-            timeout: 0,
-            analytics: false,
-            currentUrlFullReload: false,
-            scrollRestoration: false,
-            // scrollTo: true,
-        });
-
-        document.addEventListener('pjax:send', () => {
-            Global.utils.pjaxProgressBarStart();
-        });
-
-        document.addEventListener('pjax:complete', () => {
-            Global.utils.pjaxProgressBarEnd();
-            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
-            Global.refresh();
-        });
-    });
-</script>
-
-
 
 
 </body>

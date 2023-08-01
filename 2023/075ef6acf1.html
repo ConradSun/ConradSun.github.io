@@ -18,15 +18,15 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="macOS 每次发布新的操作系统版本，其内核 xnu 代码都会有所变化，但execsw符号已经多年没变了。用户态可以通过调用fork+execve或者posix_spawn的方式实现进程创建和执行，对应到内核态实现 Mach-o 文件执行的关键函数为exec_activate_image，相关源码请参考 kern_exec.c 。 可执行文件加载分析exec_activate_image函数部分代">
+        <meta name="description" content="macOS14 新变化：内核 execsw 符号不再使用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="macOS xnu execsw 符号或将废弃">
 <meta property="og:url" content="https://conradsun.github.io/2023/075ef6acf1.html">
 <meta property="og:site_name" content="康的个人博客">
-<meta property="og:description" content="macOS 每次发布新的操作系统版本，其内核 xnu 代码都会有所变化，但execsw符号已经多年没变了。用户态可以通过调用fork+execve或者posix_spawn的方式实现进程创建和执行，对应到内核态实现 Mach-o 文件执行的关键函数为exec_activate_image，相关源码请参考 kern_exec.c 。 可执行文件加载分析exec_activate_image函数部分代">
+<meta property="og:description" content="macOS14 新变化：内核 execsw 符号不再使用">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-07-22T04:00:00.000Z">
-<meta property="article:modified_time" content="2023-07-24T01:52:49.776Z">
+<meta property="article:modified_time" content="2023-08-01T03:55:58.448Z">
 <meta property="article:author" content="ConradSun">
 <meta property="article:tag" content="macOS">
 <meta property="article:tag" content="xnu">
@@ -78,7 +78,7 @@
     <script id="hexo-configurations">
     let Global = window.Global || {};
     Global.hexo_config = {"hostname":"conradsun.github.io","root":"/","language":"zh-CN","path":"search.xml"};
-    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":"#1890FF"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"busuanzi_counter":{"enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"pjax":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"links":{"github":"https://github.com/ConradSun","instagram":null,"zhihu":null,"twitter":null,"email":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.2.2","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"Github":"https://github.com/ConradSun","Blog":"https://ConradSun.github.io"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":"#1890FF"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"links":{"github":"https://github.com/ConradSun","instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.3.0","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"Github":"https://github.com/ConradSun","Blog":"https://ConradSun.github.io"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
     Global.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
     Global.data_config = {"masonry":false};
   </script>
@@ -117,18 +117,20 @@
 
     
         <span class="pjax-progress-bar"></span>
-        <span class="pjax-progress-icon">
+        <span class="swup-progress-icon">
             <i class="fa-solid fa-circle-notch fa-spin"></i>
         </span>
     
 </div>
 
 
-<main class="page-container">
+<main class="page-container" id="swup">
+    
 
     
 
     <div class="main-content-container">
+        
 
         <div class="main-content-header">
             <header class="navbar-container">
@@ -310,30 +312,29 @@
             <div class="main-content">
 
                 
-                    <div class="fade-in-down-animation">
-    <div class="post-page-container">
-        <div class="article-content-container">
+                    <div class="post-page-container">
+    <div class="article-content-container">
 
-            <div class="article-title">
-                
-                  <h1 class="article-title-regular">macOS xnu execsw 符号或将废弃</h1>
-                
-              </div>
-              
-                     
+        <div class="article-title">
             
+                <h1 class="article-title-regular">macOS xnu execsw 符号或将废弃</h1>
             
-                <div class="article-header">
-                    <div class="avatar">
-                        <img src="/images/git-avatar.svg">
+            </div>
+            
+                    
+        
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/git-avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">孙康</span>
+                        
                     </div>
-                    <div class="info">
-                        <div class="author">
-                            <span class="name">孙康</span>
-                            
-                        </div>
-                        <div class="meta-info">
-                            <div class="article-meta-info">
+                    <div class="meta-info">
+                        <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
         <span class="desktop">2023-07-22 12:00</span>
@@ -343,8 +344,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-07-24 09:52:49</span>
-            <span class="mobile">2023-07-24 09:52:49</span>
+            <span class="desktop">2023-08-01 11:55:58</span>
+            <span class="mobile">2023-08-01 11:55:58</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -405,13 +406,13 @@
     
 </div>
 
-                        </div>
                     </div>
                 </div>
-            
+            </div>
+        
 
-            <div class="article-content markdown-body">
-                <p>macOS 每次发布新的操作系统版本，其内核 xnu 代码都会有所变化，但<code>execsw</code>符号已经多年没变了。用户态可以通过调用<code>fork</code>+<code>execve</code>或者<code>posix_spawn</code>的方式实现进程创建和执行，对应到内核态实现 Mach-o 文件执行的关键函数为<code>exec_activate_image</code>，相关源码请参考 <a class="link"   target="_blank" rel="noopener" href="https://github.com/apple/darwin-xnu/blob/main/bsd/kern/kern_exec.c" >kern_exec.c <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。</p>
+        <div class="article-content markdown-body">
+            <p>macOS 每次发布新的操作系统版本，其内核 xnu 代码都会有所变化，但<code>execsw</code>符号已经多年没变了。用户态可以通过调用<code>fork</code>+<code>execve</code>或者<code>posix_spawn</code>的方式实现进程创建和执行，对应到内核态实现 Mach-o 文件执行的关键函数为<code>exec_activate_image</code>，相关源码请参考 <a class="link"   target="_blank" rel="noopener" href="https://github.com/apple/darwin-xnu/blob/main/bsd/kern/kern_exec.c" >kern_exec.c <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。</p>
 <h3 id="可执行文件加载分析"><a href="#可执行文件加载分析" class="headerlink" title="可执行文件加载分析"></a>可执行文件加载分析</h3><p><code>exec_activate_image</code>函数部分代码摘抄如下，xnu 版本为[8792.81.2]，最新版本情况可查看 <a class="link"   target="_blank" rel="noopener" href="https://github.com/apple-oss-distributions/xnu" >opensource-xnu <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。函数起始部分有一些有关加锁的操作，因为在执行映像替换时，要保证当前进程不能被杀死。函数结尾处有调用<code>kauth_authorize_fileop</code>，作用是通知进程执行事件的发生。Kauth 框架包含通知事件 FileOP 域以及授权事件 Vnode 域，这里便是创建通知事件，授权事件的创建在<code>exec_check_permissions</code>函数内，可以看出授权事件创建的时机非常早。<code>encapsulated_binary</code> 标签位置，有一处循环，循环体是<code>execsw</code>结构体数组里的函数地址调用。这里便是 xnu 内核唯一一处使用<code>execsw</code>符号的位置。</p>
 <div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">exec_activate_image</span><span class="params">(<span class="keyword">struct</span> image_params *imgp)</span> &#123;</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * For exec, the translock needs to be taken on old proc and not</span></span><br><span class="line"><span class="comment">	 * on new shadow proc.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">if</span> (imgp-&gt;ip_flags &amp; IMGPF_EXEC) &#123;</span><br><span class="line">		p = current_proc();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	error = execargs_alloc(imgp);</span><br><span class="line">	<span class="keyword">if</span> (error) &#123;</span><br><span class="line">		<span class="keyword">goto</span> bad_notrans;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	error = exec_save_path(imgp, imgp-&gt;ip_user_fname, imgp-&gt;ip_seg, &amp;excpath);</span><br><span class="line">	<span class="keyword">if</span> (error) &#123;</span><br><span class="line">		<span class="keyword">goto</span> bad_notrans;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Before we start the transition from binary A to binary B, make</span></span><br><span class="line"><span class="comment">	 * sure another thread hasn&#x27;t started exiting the process.  We grab</span></span><br><span class="line"><span class="comment">	 * the proc lock to check p_lflag initially, and the transition</span></span><br><span class="line"><span class="comment">	 * mechanism ensures that the value doesn&#x27;t change after we release</span></span><br><span class="line"><span class="comment">	 * the lock.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	proc_lock(p);</span><br><span class="line">	<span class="keyword">if</span> (p-&gt;p_lflag &amp; P_LEXIT) &#123;</span><br><span class="line">		error = EDEADLK;</span><br><span class="line">		proc_unlock(p);</span><br><span class="line">		<span class="keyword">goto</span> bad_notrans;</span><br><span class="line">	&#125;</span><br><span class="line">	error = proc_transstart(p, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">	proc_unlock(p);</span><br><span class="line">	<span class="keyword">if</span> (error) &#123;</span><br><span class="line">		<span class="keyword">goto</span> bad_notrans;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	error = exec_check_permissions(imgp);</span><br><span class="line">	<span class="keyword">if</span> (error) &#123;</span><br><span class="line">		<span class="keyword">goto</span> bad;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">encapsulated_binary:</span><br><span class="line">	<span class="comment">/* Limit the number of iterations we will attempt on each binary */</span></span><br><span class="line">	<span class="keyword">if</span> (++itercount &gt; EAI_ITERLIMIT) &#123;</span><br><span class="line">		error = EBADEXEC;</span><br><span class="line">		<span class="keyword">goto</span> bad;</span><br><span class="line">	&#125;</span><br><span class="line">	error = <span class="number">-1</span>;</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; error == <span class="number">-1</span> &amp;&amp; execsw[i].ex_imgact != <span class="literal">NULL</span>; i++) &#123;</span><br><span class="line">		error = (*execsw[i].ex_imgact)(imgp);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">switch</span> (error) &#123;</span><br><span class="line">		<span class="comment">/* case -1: not claimed: continue */</span></span><br><span class="line">		<span class="keyword">case</span> <span class="number">-2</span>:                <span class="comment">/* Encapsulated binary, imgp-&gt;ip_XXX set for next iteration */</span></span><br><span class="line">			<span class="keyword">goto</span> encapsulated_binary;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">case</span> <span class="number">-3</span>:                <span class="comment">/* Interpreter */</span></span><br><span class="line">		......</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (error == <span class="number">-1</span>) &#123;</span><br><span class="line">		error = ENOEXEC;</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (error == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> (imgp-&gt;ip_flags &amp; IMGPF_INTERPRET &amp;&amp; ndp-&gt;ni_vp) &#123;</span><br><span class="line">			AUDIT_ARG(vnpath, ndp-&gt;ni_vp, ARG_VNODE2);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/*</span></span><br><span class="line"><span class="comment">		 * Call out to allow 3rd party notification of exec.</span></span><br><span class="line"><span class="comment">		 * Ignore result of kauth_authorize_fileop call.</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">if</span> (kauth_authorize_fileop_has_listeners()) &#123;</span><br><span class="line">			kauth_authorize_fileop(vfs_context_ucred(imgp-&gt;ip_vfs_context),</span><br><span class="line">			    KAUTH_FILEOP_EXEC,</span><br><span class="line">			    (<span class="type">uintptr_t</span>)ndp-&gt;ni_vp, <span class="number">0</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> error;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
@@ -425,18 +426,18 @@
 <p>os14.0 的<code>kernel.development</code>相关位置的汇编代码则不同了，这里直接使用<code>call</code>指令调用了<code>exec_mach_imgact</code>函数，查看<code>execsw</code>符号的交叉引用结果为空。表示虽然<code>execsw</code>符号依然存在，但已经不再使用了，可能不久的将来<code>execsw</code>符号便会成为历史。</p>
 <div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">; 14.0 kernel</span><br><span class="line">__text:FFFFFF8000933E3D loc_FFFFFF8000933E3D:                   ; CODE XREF: _exec_activate_image+4FD↑j</span><br><span class="line">__text:FFFFFF8000933E3D                 mov     rdi, rbx</span><br><span class="line">__text:FFFFFF8000933E40                 call    _exec_mach_imgact</span><br><span class="line">__text:FFFFFF8000933E45                 mov     r13d, eax</span><br><span class="line">__text:FFFFFF8000933E48                 lea     eax, [r13+3]</span><br><span class="line">__text:FFFFFF8000933E4C                 cmp     eax, 3          ; switch 4 cases</span><br><span class="line">__text:FFFFFF8000933E4F                 ja      loc_FFFFFF8000934118 ; jumptable FFFFFF8000933E5C default case</span><br><span class="line">__text:FFFFFF8000933E55                 movsxd  rax, dword ptr [r15+rax*4]</span><br><span class="line">__text:FFFFFF8000933E59                 add     rax, r15</span><br><span class="line">__text:FFFFFF8000933E5C                 jmp     rax             ; switch jump</span><br><span class="line">......</span><br></pre></td></tr></table></figure></div>
 
-            </div>
+        </div>
 
-            
-                <div class="post-copyright-info">
-                    <div class="article-copyright-info-container">
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
     <ul>
         <li><strong>标题:</strong> macOS xnu execsw 符号或将废弃</li>
         <li><strong>作者:</strong> 孙康</li>
         <li><strong>创建于:</strong> 2023-07-22 12:00:00</li>
         
             <li>
-                <strong>更新于:</strong> 2023-07-24 09:52:49
+                <strong>更新于:</strong> 2023-08-01 11:55:58
             </li>
         
         <li>
@@ -448,70 +449,70 @@
     </ul>
 </div>
 
-                </div>
-            
+            </div>
+        
 
-            
-                <ul class="post-tags-box">
-                    
-                        <li class="tag-item">
-                            <a href="/tags/macOS/">#macOS</a>&nbsp;
-                        </li>
-                    
-                        <li class="tag-item">
-                            <a href="/tags/xnu/">#xnu</a>&nbsp;
-                        </li>
-                    
-                        <li class="tag-item">
-                            <a href="/tags/execsw/">#execsw</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/macOS/">#macOS</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/xnu/">#xnu</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/execsw/">#execsw</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
 
-            
+        
 
-            
-                <div class="article-nav">
-                    
-                        <div class="article-prev">
-                            <a class="prev"
-                            rel="prev"
-                            href="/2023/0734337142.html"
-                            >
-                                <span class="left arrow-icon flex-center">
-                                    <i class="fa-solid fa-chevron-left"></i>
-                                </span>
-                                <span class="title flex-center">
-                                    <span class="post-nav-title-item">汇编语言入门之call指令</span>
-                                    <span class="post-nav-item">上一篇</span>
-                                </span>
-                            </a>
-                        </div>
-                    
-                    
-                        <div class="article-next">
-                            <a class="next"
-                            rel="next"
-                            href="/2023/078d2ace36.html"
-                            >
-                                <span class="title flex-center">
-                                    <span class="post-nav-title-item">macOS实现应用内检查更新</span>
-                                    <span class="post-nav-item">下一篇</span>
-                                </span>
-                                <span class="right arrow-icon flex-center">
-                                    <i class="fa-solid fa-chevron-right"></i>
-                                </span>
-                            </a>
-                        </div>
-                    
-                </div>
-            
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                        rel="prev"
+                        href="/2023/0734337142.html"
+                        >
+                            <span class="left arrow-icon flex-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">汇编语言入门之call指令</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                        rel="next"
+                        href="/2023/078d2ace36.html"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">macOS应用内更新检查</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
 
 
-            
-                <div class="comment-container">
-                    <div class="comments-container">
+        
+            <div class="comment-container">
+                <div class="comments-container pjax">
     <div id="comment-anchor"></div>
     <div class="comment-area-title">
         <i class="fa-solid fa-comments"></i>&nbsp;评论
@@ -521,7 +522,7 @@
         
             
     <div id="giscus-container"></div>
-    <script data-pjax defer>
+    <script data-swup-reload-script defer>
         async function loadGiscus() {
             const giscusConfig = {
                 'src': 'https://giscus.app/client.js',
@@ -562,13 +563,13 @@
     
 </div>
 
-                </div>
-            
-        </div>
-
+            </div>
         
-            <div class="toc-content-container">
-                <div class="post-toc-wrap">
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
         <div class="page-title">macOS xnu execsw 符号或将废弃</div>
@@ -576,10 +577,10 @@
 
     </div>
 </div>
-            </div>
-        
-    </div>
+        </div>
+    
 </div>
+
 
 
                 
@@ -602,7 +603,7 @@
             2023&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">孙康</a>
         </div>
         
-            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
             <div class="website-count info-item">
                 
                     <span id="busuanzi_container_site_uv" class="busuanzi_container_site_uv">
@@ -619,9 +620,8 @@
         <div class="theme-info info-item">
             <span class="powered-by-container">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" href="https://hexo.io">Hexo</a> 驱动</span>
                 <br>
-            <span class="theme-version-container">主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.2.2</a>
+            <span class="theme-version-container">主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.3.0</a></span>
         </div>
-        
         
         
             <div>
@@ -630,7 +630,7 @@
         
         
         
-            <script async data-pjax>
+            <script data-swup-reload-script>
                 try {
                     function odometer_init() {
                     const elements = document.querySelectorAll('.odometer');
@@ -761,6 +761,46 @@
 </main>
 
 
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+        ],
+        containers: ["#swup"],
+    });
+
+    swup.on("pageView", () => {
+        Global.refresh();
+    });
+
+    // if (document.readyState === "complete") {
+    //
+    // } else {
+    //     document.addEventListener("DOMContentLoaded", () => init());
+    // }
+</script>
+
+
+
 
 
 <script src="/js/utils.js"></script>
@@ -772,6 +812,8 @@
 <script src="/js/tools/scrollTopBottom.js"></script>
 
 <script src="/js/tools/lightDarkSwitch.js"></script>
+
+<script src="/js/layouts/categoryList.js"></script>
 
 
 
@@ -817,55 +859,19 @@
 
 
 
-<div class="post-scripts pjax">
+<div class="post-scripts" data-swup-reload-script>
     
         
 <script src="/js/tools/tocToggle.js"></script>
 
-<script src="/js/libs/anime.min.js"></script>
-
 <script src="/js/layouts/toc.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
 
 <script src="/js/plugins/tabs.js"></script>
 
     
 </div>
-
-
-    
-<script src="/js/libs/pjax.min.js"></script>
-
-<script>
-    window.addEventListener('DOMContentLoaded', () => {
-        window.pjax = new Pjax({
-            selectors: [
-                'head title',
-                '.page-container',
-                '.pjax',
-            ],
-            history: true,
-            debug: false,
-            cacheBust: false,
-            timeout: 0,
-            analytics: false,
-            currentUrlFullReload: false,
-            scrollRestoration: false,
-            // scrollTo: true,
-        });
-
-        document.addEventListener('pjax:send', () => {
-            Global.utils.pjaxProgressBarStart();
-        });
-
-        document.addEventListener('pjax:complete', () => {
-            Global.utils.pjaxProgressBarEnd();
-            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
-            Global.refresh();
-        });
-    });
-</script>
-
-
 
 
 </body>

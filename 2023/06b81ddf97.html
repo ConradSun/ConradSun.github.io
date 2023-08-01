@@ -18,17 +18,17 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="前面讲到如何新增一条LC_LOAD_DYLIB指令到二进制，以注入动态库。这种方式有一定的局限性，因为注入的前提是由于 Segment 及 Section 间的内存对齐，存在足够的空白空间可以插入一条动态库依赖指令。如果没有足够的空白空间，则强制添加指令会导致代码段（__text）被覆盖，进而造成二进制打不开或者行为异常的现象。Google Chrome 及 Microsoft Edge 浏览器">
+        <meta name="description" content="修改 Mach-o 文件，不新增 Load Commands 指令实现动态库注入">
 <meta property="og:type" content="article">
 <meta property="og:title" content="macOS修改MachO文件实现动态库注入（三）">
 <meta property="og:url" content="https://conradsun.github.io/2023/06b81ddf97.html">
 <meta property="og:site_name" content="康的个人博客">
-<meta property="og:description" content="前面讲到如何新增一条LC_LOAD_DYLIB指令到二进制，以注入动态库。这种方式有一定的局限性，因为注入的前提是由于 Segment 及 Section 间的内存对齐，存在足够的空白空间可以插入一条动态库依赖指令。如果没有足够的空白空间，则强制添加指令会导致代码段（__text）被覆盖，进而造成二进制打不开或者行为异常的现象。Google Chrome 及 Microsoft Edge 浏览器">
+<meta property="og:description" content="修改 Mach-o 文件，不新增 Load Commands 指令实现动态库注入">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://conradsun.github.io/images/article-pics/Interpose-libSystem.B.dylib.png">
 <meta property="og:image" content="https://conradsun.github.io/images/article-pics/Interpose-libinject.dylib.png">
 <meta property="article:published_time" content="2023-06-26T07:12:57.000Z">
-<meta property="article:modified_time" content="2023-07-17T07:47:15.434Z">
+<meta property="article:modified_time" content="2023-08-01T03:55:31.973Z">
 <meta property="article:author" content="ConradSun">
 <meta property="article:tag" content="macOS">
 <meta property="article:tag" content="interpose">
@@ -81,7 +81,7 @@
     <script id="hexo-configurations">
     let Global = window.Global || {};
     Global.hexo_config = {"hostname":"conradsun.github.io","root":"/","language":"zh-CN","path":"search.xml"};
-    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":"#1890FF"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"busuanzi_counter":{"enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"pjax":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"links":{"github":"https://github.com/ConradSun","instagram":null,"zhihu":null,"twitter":null,"email":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.2.2","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"Github":"https://github.com/ConradSun","Blog":"https://ConradSun.github.io"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":"#1890FF"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"links":{"github":"https://github.com/ConradSun","instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.3.0","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"Github":"https://github.com/ConradSun","Blog":"https://ConradSun.github.io"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
     Global.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
     Global.data_config = {"masonry":false};
   </script>
@@ -120,18 +120,20 @@
 
     
         <span class="pjax-progress-bar"></span>
-        <span class="pjax-progress-icon">
+        <span class="swup-progress-icon">
             <i class="fa-solid fa-circle-notch fa-spin"></i>
         </span>
     
 </div>
 
 
-<main class="page-container">
+<main class="page-container" id="swup">
+    
 
     
 
     <div class="main-content-container">
+        
 
         <div class="main-content-header">
             <header class="navbar-container">
@@ -313,30 +315,29 @@
             <div class="main-content">
 
                 
-                    <div class="fade-in-down-animation">
-    <div class="post-page-container">
-        <div class="article-content-container">
+                    <div class="post-page-container">
+    <div class="article-content-container">
 
-            <div class="article-title">
-                
-                  <h1 class="article-title-regular">macOS修改MachO文件实现动态库注入（三）</h1>
-                
-              </div>
-              
-                     
+        <div class="article-title">
             
+                <h1 class="article-title-regular">macOS修改MachO文件实现动态库注入（三）</h1>
             
-                <div class="article-header">
-                    <div class="avatar">
-                        <img src="/images/git-avatar.svg">
+            </div>
+            
+                    
+        
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/git-avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">孙康</span>
+                        
                     </div>
-                    <div class="info">
-                        <div class="author">
-                            <span class="name">孙康</span>
-                            
-                        </div>
-                        <div class="meta-info">
-                            <div class="article-meta-info">
+                    <div class="meta-info">
+                        <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
         <span class="desktop">2023-06-26 15:12:57</span>
@@ -346,8 +347,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-07-17 15:47:15</span>
-            <span class="mobile">2023-07-17 15:47:15</span>
+            <span class="desktop">2023-08-01 11:55:31</span>
+            <span class="mobile">2023-08-01 11:55:31</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -408,13 +409,13 @@
     
 </div>
 
-                        </div>
                     </div>
                 </div>
-            
+            </div>
+        
 
-            <div class="article-content markdown-body">
-                <p>前面讲到如何新增一条<code>LC_LOAD_DYLIB</code>指令到二进制，以注入动态库。这种方式有一定的局限性，因为注入的前提是由于 Segment 及 Section 间的内存对齐，存在足够的空白空间可以插入一条动态库依赖指令。如果没有足够的空白空间，则强制添加指令会导致代码段（__text）被覆盖，进而造成二进制打不开或者行为异常的现象。Google Chrome 及 Microsoft Edge 浏览器 Bundle 内的二进制很多没有足够的空白空间，读者可自行验证。</p>
+        <div class="article-content markdown-body">
+            <p>前面讲到如何新增一条<code>LC_LOAD_DYLIB</code>指令到二进制，以注入动态库。这种方式有一定的局限性，因为注入的前提是由于 Segment 及 Section 间的内存对齐，存在足够的空白空间可以插入一条动态库依赖指令。如果没有足够的空白空间，则强制添加指令会导致代码段（__text）被覆盖，进而造成二进制打不开或者行为异常的现象。Google Chrome 及 Microsoft Edge 浏览器 Bundle 内的二进制很多没有足够的空白空间，读者可自行验证。</p>
 <h3 id="系统库替换优势"><a href="#系统库替换优势" class="headerlink" title="系统库替换优势"></a>系统库替换优势</h3><p>那么如果没有足够的空白空间插入新的指令，如何注入动态库？一种比较麻烦的方法是人为构造空白空间：将代码段及其后的二进制数据进行后移，增大二进制的文件大小，以留出足够的空间。这种方法难度大，二进制数据偏移后还须进行修正，如各个 Segment 和 Section 的起始地址、二进制中表示函数或者其他数据地址的数据、二进制中表示地址偏移的数据等。有的 Section 数据需要修正，有的不需要；某些 Section 部分数据需要修正，部分不需要；某些表示偏移大小的数据（需要注意的是这种数据是以 uleb128 进行编码存储的）修正后其占用的空间变大了，还须单独修正。这里不展开说了。</p>
 <p>还有一种更为简单的方法：替换<code>libSystem.B.dylib</code>依赖库。在 macOS 上，基本所有的 Mach-o 文件均会依赖<code>libSystem.B.dylib</code>，那么如果把依赖该动态库的加载指令修改为依赖我们自定义的动态库，就不必关心空白空间是否足够了。这需要注意两点：</p>
 <blockquote>
@@ -446,18 +447,18 @@
 
 <h3 id="符号搜集代码"><a href="#符号搜集代码" class="headerlink" title="符号搜集代码"></a>符号搜集代码</h3><p>读者可自行查看系统二进制的引用符号，如<code>zsh</code>等，其引用及导出符号相当可观，大部分的引用符号来源<code>libSystem.B.dylib</code>。那么这类二进制修改系统依赖库为自定义动态库，自定义依赖库就需要导出大量符号。如果我将<code>/bin</code>、<code>/sbin</code>、<code>/usr/bin</code>、<code>/usr/sbin</code>等系统目录下的所有的可执行文件都注入一遍，需要解决多少<code>libSystem.B.dylib</code>导出符号？大概是 2900+。如果纯靠人工搜集符号，过于浪费时间，可使用如下<code>python</code>脚本搜集符号。</p>
 <div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">is_macho_executable</span>(<span class="params">file_path</span>):</span><br><span class="line">    output = subprocess.check_output([<span class="string">&#x27;file&#x27;</span>, file_path]).decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Mach-O&#x27;</span> <span class="keyword">in</span> output <span class="keyword">and</span> <span class="string">&#x27;executable&#x27;</span> <span class="keyword">in</span> output</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">collect_symbols</span>(<span class="params">binary_path, x86_symbol_file_path, arm_symbol_file_path</span>):</span><br><span class="line">    nm_output = subprocess.check_output([<span class="string">&#x27;nm&#x27;</span>, <span class="string">&#x27;-m&#x27;</span>, binary_path])</span><br><span class="line">    x86_symbols = <span class="built_in">set</span>()</span><br><span class="line">    arm_symbols = <span class="built_in">set</span>()</span><br><span class="line"></span><br><span class="line">    lines = nm_output.decode().split(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    size = <span class="built_in">len</span>(lines)</span><br><span class="line">    <span class="keyword">while</span> i &lt; size:</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27; (for architecture x86_64)&#x27;</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">            <span class="keyword">while</span> i &lt; size <span class="keyword">and</span> <span class="string">&#x27; architecture&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">                <span class="keyword">if</span> <span class="string">&#x27; (from libSystem)&#x27;</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">                    symbol = lines[i].split(<span class="string">&#x27; &#x27;</span>)[<span class="number">19</span>]</span><br><span class="line">                    x86_symbols.add(symbol)</span><br><span class="line">                i += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">elif</span> <span class="string">&#x27; (for architecture arm64e)&#x27;</span> <span class="keyword">in</span> lines[i] <span class="keyword">or</span> <span class="string">&#x27; (for architecture arm64)&#x27;</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">            <span class="keyword">while</span> i &lt; size <span class="keyword">and</span> <span class="string">&#x27; architecture&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">                <span class="keyword">if</span> <span class="string">&#x27; (from libSystem)&#x27;</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">                    symbol = lines[i].split(<span class="string">&#x27; &#x27;</span>)[<span class="number">19</span>]</span><br><span class="line">                    arm_symbols.add(symbol)</span><br><span class="line">                i += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="string">&#x27; (from libSystem)&#x27;</span> <span class="keyword">in</span> lines[i]:</span><br><span class="line">                symbol = lines[i].split(<span class="string">&#x27; &#x27;</span>)[<span class="number">19</span>]</span><br><span class="line">                x86_symbols.add(symbol)</span><br><span class="line">                arm_symbols.add(symbol)</span><br><span class="line"></span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(x86_symbol_file_path, <span class="string">&#x27;r+&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        existing_symbols = <span class="built_in">set</span>(line.strip() <span class="keyword">for</span> line <span class="keyword">in</span> f)</span><br><span class="line">        new_symbols = existing_symbols | x86_symbols</span><br><span class="line">        f.seek(<span class="number">0</span>)</span><br><span class="line">        f.truncate()</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> <span class="built_in">sorted</span>(new_symbols):</span><br><span class="line">            f.write(line + <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(arm_symbol_file_path, <span class="string">&#x27;r+&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        existing_symbols = <span class="built_in">set</span>(line.strip() <span class="keyword">for</span> line <span class="keyword">in</span> f)</span><br><span class="line">        new_symbols =  existing_symbols | arm_symbols</span><br><span class="line">        f.seek(<span class="number">0</span>)</span><br><span class="line">        f.truncate()</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> <span class="built_in">sorted</span>(new_symbols):</span><br><span class="line">            f.write(line + <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(sys.argv) != <span class="number">4</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Usage: python collect_symbols.py &lt;binary_path&gt; &lt;x86_symbol_file_path&gt; &lt;arm_symbol_file_path&gt;&#x27;</span>)</span><br><span class="line">        sys.exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    path = sys.argv[<span class="number">1</span>]</span><br><span class="line">    x86_symbol_file_path = sys.argv[<span class="number">2</span>]</span><br><span class="line">    arm_symbol_file_path = sys.argv[<span class="number">3</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> os.path.isdir(path):</span><br><span class="line">        <span class="keyword">for</span> root, dirs, files <span class="keyword">in</span> os.walk(path):</span><br><span class="line">            <span class="keyword">for</span> file <span class="keyword">in</span> files:</span><br><span class="line">                binary_path = os.path.join(root, file)</span><br><span class="line">                <span class="keyword">if</span> is_macho_executable(binary_path):</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;dump symbols for file &quot;</span>, binary_path)</span><br><span class="line">                    collect_symbols(binary_path, x86_symbol_file_path, arm_symbol_file_path)</span><br><span class="line">    <span class="keyword">elif</span> is_macho_executable(path):</span><br><span class="line">        collect_symbols(path, x86_symbol_file_path, arm_symbol_file_path)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Invalid binary path&#x27;</span>)</span><br><span class="line">        sys.exit(<span class="number">1</span>)</span><br></pre></td></tr></table></figure></div>
-            </div>
+        </div>
 
-            
-                <div class="post-copyright-info">
-                    <div class="article-copyright-info-container">
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
     <ul>
         <li><strong>标题:</strong> macOS修改MachO文件实现动态库注入（三）</li>
         <li><strong>作者:</strong> 孙康</li>
         <li><strong>创建于:</strong> 2023-06-26 15:12:57</li>
         
             <li>
-                <strong>更新于:</strong> 2023-07-17 15:47:15
+                <strong>更新于:</strong> 2023-08-01 11:55:31
             </li>
         
         <li>
@@ -469,70 +470,70 @@
     </ul>
 </div>
 
-                </div>
-            
+            </div>
+        
 
-            
-                <ul class="post-tags-box">
-                    
-                        <li class="tag-item">
-                            <a href="/tags/macOS/">#macOS</a>&nbsp;
-                        </li>
-                    
-                        <li class="tag-item">
-                            <a href="/tags/interpose/">#interpose</a>&nbsp;
-                        </li>
-                    
-                        <li class="tag-item">
-                            <a href="/tags/Mach-o/">#Mach-o</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/macOS/">#macOS</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/interpose/">#interpose</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/Mach-o/">#Mach-o</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
 
-            
+        
 
-            
-                <div class="article-nav">
-                    
-                        <div class="article-prev">
-                            <a class="prev"
-                            rel="prev"
-                            href="/2023/07f5dbd820.html"
-                            >
-                                <span class="left arrow-icon flex-center">
-                                    <i class="fa-solid fa-chevron-left"></i>
-                                </span>
-                                <span class="title flex-center">
-                                    <span class="post-nav-title-item">macOS应用程序坞和菜单栏设置</span>
-                                    <span class="post-nav-item">上一篇</span>
-                                </span>
-                            </a>
-                        </div>
-                    
-                    
-                        <div class="article-next">
-                            <a class="next"
-                            rel="next"
-                            href="/2023/06f5037cc5.html"
-                            >
-                                <span class="title flex-center">
-                                    <span class="post-nav-title-item">macOS修改MachO文件实现动态库注入（二）</span>
-                                    <span class="post-nav-item">下一篇</span>
-                                </span>
-                                <span class="right arrow-icon flex-center">
-                                    <i class="fa-solid fa-chevron-right"></i>
-                                </span>
-                            </a>
-                        </div>
-                    
-                </div>
-            
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                        rel="prev"
+                        href="/2023/07f5dbd820.html"
+                        >
+                            <span class="left arrow-icon flex-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">macOS应用程序坞和菜单栏设置</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                        rel="next"
+                        href="/2023/06f5037cc5.html"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">macOS修改MachO文件实现动态库注入（二）</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
 
 
-            
-                <div class="comment-container">
-                    <div class="comments-container">
+        
+            <div class="comment-container">
+                <div class="comments-container pjax">
     <div id="comment-anchor"></div>
     <div class="comment-area-title">
         <i class="fa-solid fa-comments"></i>&nbsp;评论
@@ -542,7 +543,7 @@
         
             
     <div id="giscus-container"></div>
-    <script data-pjax defer>
+    <script data-swup-reload-script defer>
         async function loadGiscus() {
             const giscusConfig = {
                 'src': 'https://giscus.app/client.js',
@@ -583,13 +584,13 @@
     
 </div>
 
-                </div>
-            
-        </div>
-
+            </div>
         
-            <div class="toc-content-container">
-                <div class="post-toc-wrap">
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">此页目录</div>
         <div class="page-title">macOS修改MachO文件实现动态库注入（三）</div>
@@ -597,10 +598,10 @@
 
     </div>
 </div>
-            </div>
-        
-    </div>
+        </div>
+    
 </div>
+
 
 
                 
@@ -623,7 +624,7 @@
             2023&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">孙康</a>
         </div>
         
-            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
             <div class="website-count info-item">
                 
                     <span id="busuanzi_container_site_uv" class="busuanzi_container_site_uv">
@@ -640,9 +641,8 @@
         <div class="theme-info info-item">
             <span class="powered-by-container">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" href="https://hexo.io">Hexo</a> 驱动</span>
                 <br>
-            <span class="theme-version-container">主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.2.2</a>
+            <span class="theme-version-container">主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.3.0</a></span>
         </div>
-        
         
         
             <div>
@@ -651,7 +651,7 @@
         
         
         
-            <script async data-pjax>
+            <script data-swup-reload-script>
                 try {
                     function odometer_init() {
                     const elements = document.querySelectorAll('.odometer');
@@ -782,6 +782,46 @@
 </main>
 
 
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+        ],
+        containers: ["#swup"],
+    });
+
+    swup.on("pageView", () => {
+        Global.refresh();
+    });
+
+    // if (document.readyState === "complete") {
+    //
+    // } else {
+    //     document.addEventListener("DOMContentLoaded", () => init());
+    // }
+</script>
+
+
+
 
 
 <script src="/js/utils.js"></script>
@@ -793,6 +833,8 @@
 <script src="/js/tools/scrollTopBottom.js"></script>
 
 <script src="/js/tools/lightDarkSwitch.js"></script>
+
+<script src="/js/layouts/categoryList.js"></script>
 
 
 
@@ -838,55 +880,19 @@
 
 
 
-<div class="post-scripts pjax">
+<div class="post-scripts" data-swup-reload-script>
     
         
 <script src="/js/tools/tocToggle.js"></script>
 
-<script src="/js/libs/anime.min.js"></script>
-
 <script src="/js/layouts/toc.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
 
 <script src="/js/plugins/tabs.js"></script>
 
     
 </div>
-
-
-    
-<script src="/js/libs/pjax.min.js"></script>
-
-<script>
-    window.addEventListener('DOMContentLoaded', () => {
-        window.pjax = new Pjax({
-            selectors: [
-                'head title',
-                '.page-container',
-                '.pjax',
-            ],
-            history: true,
-            debug: false,
-            cacheBust: false,
-            timeout: 0,
-            analytics: false,
-            currentUrlFullReload: false,
-            scrollRestoration: false,
-            // scrollTo: true,
-        });
-
-        document.addEventListener('pjax:send', () => {
-            Global.utils.pjaxProgressBarStart();
-        });
-
-        document.addEventListener('pjax:complete', () => {
-            Global.utils.pjaxProgressBarEnd();
-            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
-            Global.refresh();
-        });
-    });
-</script>
-
-
 
 
 </body>
