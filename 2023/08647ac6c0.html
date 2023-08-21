@@ -13,26 +13,27 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="https://ConradSun.github.io/2023/0734337142.html"/>
+    <link rel="canonical" href="https://ConradSun.github.io/2023/08647ac6c0.html"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="理解汇编语言是逆向必须掌握的一项技能。本文基于逆向 xnu 内核的发现，谈一下对 call 指令的学习理解，涉及到 call near 和 call far。">
+        <meta name="description" content="使用 NSPasteboard 类提供的各项方法实现对系统通用剪切板的查看和控制。在剪切板数据变更时获取当前拷贝的数据内容，根据需要修改或者删除相关类型的数据。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="汇编语言入门之call指令">
-<meta property="og:url" content="https://conradsun.github.io/2023/0734337142.html">
+<meta property="og:title" content="macOS 剪切板数据查看与修改">
+<meta property="og:url" content="https://conradsun.github.io/2023/08647ac6c0.html">
 <meta property="og:site_name" content="康的个人博客">
-<meta property="og:description" content="理解汇编语言是逆向必须掌握的一项技能。本文基于逆向 xnu 内核的发现，谈一下对 call 指令的学习理解，涉及到 call near 和 call far。">
+<meta property="og:description" content="使用 NSPasteboard 类提供的各项方法实现对系统通用剪切板的查看和控制。在剪切板数据变更时获取当前拷贝的数据内容，根据需要修改或者删除相关类型的数据。">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://conradsun.github.io/images/article-pics/Call-ModR:M.png">
-<meta property="article:published_time" content="2023-07-28T14:12:00.000Z">
-<meta property="article:modified_time" content="2023-08-15T01:56:17.933Z">
+<meta property="og:image" content="https://conradsun.github.io/images/article-pics/Pasteboard-items.png">
+<meta property="article:published_time" content="2023-08-20T11:57:41.000Z">
+<meta property="article:modified_time" content="2023-08-21T09:40:48.872Z">
 <meta property="article:author" content="ConradSun">
-<meta property="article:tag" content="asm">
-<meta property="article:tag" content="call">
+<meta property="article:tag" content="macOS">
+<meta property="article:tag" content="剪切板">
+<meta property="article:tag" content="pasteboard">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://conradsun.github.io/images/article-pics/Call-ModR:M.png">
+<meta name="twitter:image" content="https://conradsun.github.io/images/article-pics/Pasteboard-items.png">
     
     
     <!--- Icon Part-->
@@ -44,7 +45,7 @@
     
     <title>
         
-            汇编语言入门之call指令 -
+            macOS 剪切板数据查看与修改 -
         
         Kang&#39;s Blog
     </title>
@@ -327,7 +328,7 @@
 
         <div class="article-title">
             
-                <h1 class="article-title-regular">汇编语言入门之call指令</h1>
+                <h1 class="article-title-regular">macOS 剪切板数据查看与修改</h1>
             
             </div>
             
@@ -347,15 +348,15 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
-        <span class="desktop">2023-07-28 22:12</span>
-        <span class="mobile">2023-07-28 22:12</span>
+        <span class="desktop">2023-08-20 19:57:41</span>
+        <span class="mobile">2023-08-20 19:57:41</span>
         <span class="hover-info">Created</span>
     </span>
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-08-15 09:56:17</span>
-            <span class="mobile">2023-08-15 09:56:17</span>
+            <span class="desktop">2023-08-21 17:40:48</span>
+            <span class="mobile">2023-08-21 17:40:48</span>
             <span class="hover-info">Updated</span>
         </span>
     
@@ -369,7 +370,7 @@
                     
                         
                         <li>
-                            <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>&nbsp;
+                            <a href="/categories/macOS%E5%BC%80%E5%8F%91/">macOS开发</a>&nbsp;
                         </li>
                     
                     
@@ -383,11 +384,15 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/asm/">asm</a>&nbsp;
+                        <a href="/tags/macOS/">macOS</a>&nbsp;
                     </li>
                 
                     <li>
-                        | <a href="/tags/call/">call</a>&nbsp;
+                        | <a href="/tags/%E5%89%AA%E5%88%87%E6%9D%BF/">剪切板</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/pasteboard/">pasteboard</a>&nbsp;
                     </li>
                 
             </ul>
@@ -397,12 +402,12 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>1.4k Words</span>
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>1k Words</span>
         </span>
     
     
         <span class="article-min2read article-meta-item">
-            <i class="fa-regular fa-clock"></i>&nbsp;<span>5 Mins</span>
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>4 Mins</span>
         </span>
     
     
@@ -418,57 +423,24 @@
         
 
         <div class="article-content markdown-body">
-            <p>汇编语言作为最为底层的语言，是逆向无法绕过的一个门槛。在逆向 macOS 内核二进制的时候，发现<code>execsw</code>符号调用发生变化，<a href="https://conradsun.github.io/2023/075ef6acf1.html">上文</a> 已对此进行说明，os14 不再间接使用<code>execsw</code>结构体常量数组进行函数调用，而是直接调用相关函数。虽然这两处函数调用均反汇编为<code>call</code>指令，但对应的操作码并不一样。实际上<code>call</code>指令的操作码有多个。</p>
-<h3 id="call-指令"><a href="#call-指令" class="headerlink" title="call 指令"></a>call 指令</h3><p><code>call</code>指令的操作码及对应含义如下表。主要分为相对近调用、绝对间接近调用、绝对远调用等。表中<code>cd</code>表示 4 字节，<code>/2</code>表示所在字节为<code>ModR/M</code>，用于指定存储操作数的寄存器或内存地址。这里的 near、far 是指针对当前代码段而言，近调用即段内调用，指 CS 寄存器在调用中不会发生更改，远调用即段间调用。另外近调用的过程返回时使用<code>retn</code>操作码，远调用的过程返回时使用<code>retf</code>操作码。感兴趣的可以阅读<a class="link"   target="_blank" rel="noopener" href="https://www.intel.com/content/www/us/en/architecture-and-technology/64-ia-32-architectures-software-developer-instruction-set-reference-manual-325383.html" >《Intel® 64 and IA-32 Architectures Software Developer’s Manual》 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。</p>
-<table>
-<thead>
-<tr>
-<th>Opcode</th>
-<th>Instruction</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>E8 cd</td>
-<td>call re&#x2F;32</td>
-<td>Call near, relative, displacement relative to next instruction.</td>
-</tr>
-<tr>
-<td>FF &#x2F;2</td>
-<td>call r&#x2F;m32</td>
-<td>Call near, absolute indirect, address given in register or memory.</td>
-</tr>
-<tr>
-<td>9A cd</td>
-<td>call ptr16:16</td>
-<td>Call far, absolute, address given in operand.</td>
-</tr>
-<tr>
-<td>FF &#x2F;3</td>
-<td>call m16:32</td>
-<td>If selector points to a gate, then RIP &#x3D; 64-bit displacement taken from gate; else RIP &#x3D; zero extended 32-bit offset from far pointer referenced in the instruction.</td>
-</tr>
-</tbody></table>
-<p>这里贴一下手册的 [Table 2-2. 32-Bit Addressing Forms with the ModR&#x2F;M Byte]，便于了解<code>FF</code>开头的调用指令如何解释。注意红框圈出的部分，本文将涉及该指令。从表可知，<code>FF15</code>和<code>FF1D</code>指令的操作数均为 32 位立即数，只不过前者是近调用，后者是远调用。<br><figure class="image-caption"><img src="/images/article-pics/Call-ModR:M.png" alt="ModR/M 32位寻址表"><figcaption>ModR/M 32位寻址表</figcaption></figure></p>
-<h3 id="call-near"><a href="#call-near" class="headerlink" title="call near"></a>call near</h3><p>首先关注一下近调用。执行近调用时，处理器将 EIP 寄存器的值（包含当前<code>call</code>指令到下一条指令的偏移）压栈，然后处理器执行目标地址的代码，目标地址的计算如下。</p>
-<blockquote>
-<p>目标地址 &#x3D; 下一条指令地址（当前指令地址 + 当前指令长度） + 相对偏移量</p>
-</blockquote>
-<p>这里写一个 demo 查看两种近调用指令，代码如下。代码很简单，主要测试直接调用函数和使用结构体偏移间接调用函数最终的编码有何不同。</p>
-<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">func</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;call func\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">user_func</span> &#123;</span></span><br><span class="line">    <span class="type">int</span>(*<span class="type">const</span> func)(<span class="type">void</span>);</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span> *func_name;</span><br><span class="line">&#125; <span class="type">const</span> user_func[] = &#123;</span><br><span class="line">    &#123; func, <span class="string">&quot;func&quot;</span> &#125;,</span><br><span class="line">    &#123; <span class="literal">NULL</span>, <span class="literal">NULL</span>&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> * argv[])</span> &#123;</span><br><span class="line">    func();</span><br><span class="line">    user_func[<span class="number">0</span>].func();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+            <p>macOS 系统没有内置的剪切板查看器，这对普通用户实际并没有什么影响，多数时候 <code>⌘ + C</code> 和 <code>⌘ + V</code> 就够用了。但对于一些开发者群体，可能需要查看当前拷贝内容的格式及数据是否正确，或者使用特定格式的数据完成某项工作，那么没有剪切板查看器会严重影响工作效率。<a class="link"   target="_blank" rel="noopener" href="https://github.com/ConradSun/PasteShow" >PasteShow <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 是一款开源的系统剪切板查看器，本文展示的代码源于该项目。</p>
+<p>macOS 实现一款剪切板查看器是不难的，借助 <a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/appkit" >AppKit <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 提供的 <a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/appkit/nspasteboard" >NSPasteboard <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 类可以很轻松的实现。系统标准剪切板分为几类，包括 general、font、ruler、find、drag，不同剪切板名称的含义请查看官方文档 <a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/appkit/nspasteboard/name" >NSPasteboard.Name <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，这里我们只涉及用于执行普通剪切、复制、粘贴操作的通用剪切板。</p>
+<h3 id="检查数据变更"><a href="#检查数据变更" class="headerlink" title="检查数据变更"></a>检查数据变更</h3><p>在获取剪切板最新拷贝内容之前，需要知道内容更新的时机。macOS 系统并没有提供一种通知机制可以让开发者知道何时剪切板发生了变更事件，所以这里我们只能使用定时器轮询，检查剪切板是否发生数据变更。</p>
+<div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">CopiedInfo</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> changeCount <span class="operator">=</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">var</span> copiedItems <span class="operator">=</span> [[<span class="type">String</span>: <span class="type">Data</span>]]()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PasteboardManager</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> shared <span class="operator">=</span> <span class="type">PasteboardManager</span>()</span><br><span class="line">    <span class="keyword">var</span> copiedInfo <span class="operator">=</span> <span class="type">CopiedInfo</span>()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">let</span> pasteboard <span class="operator">=</span> <span class="type">NSPasteboard</span>.general</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> observerTimer <span class="operator">=</span> <span class="type">Timer</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">init</span>() &#123;</span><br><span class="line">        setupObserverTimer()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">setupObserverTimer</span>() &#123;</span><br><span class="line">        observerTimer <span class="operator">=</span> <span class="type">Timer</span>.scheduledTimer(withTimeInterval: <span class="number">0.25</span>, repeats: <span class="literal">true</span>, block: &#123; [<span class="keyword">self</span>] <span class="keyword">_</span> <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">guard</span> copiedInfo.changeCount <span class="operator">!=</span> pasteboard.changeCount <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            onPasteboardChanged()</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p>编译出的二进制使用 ida 反汇编，结果如下。<code>main</code>函数中的两处函数调用的指令操作码是不同的，其中直接调用是<code>E8</code>，通过结构体偏移调用是<code>FF15</code>。<code>E8C5FFFFFF</code>表示相对近调用，相对偏移量为<code>FFFFFFC5</code>，这里高地址表示高字节，所以类似<code>0x1234</code>在二进制中是以<code>3412</code>显示的。偏移量高字节均是 F，说明偏移量为负，实际地址为<code>0x100003F86+5+0xFFFFFFC5</code>，然后把进位抹掉，结果是<code>0x100003F50</code>，即<code>_func</code>自定义函数所在地址。</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">__text:</span>0000000100003F50                 <span class="meta">public</span> _func</span><br><span class="line"><span class="symbol">__text:</span>0000000100003F50 _func           proc <span class="built_in">near</span>               <span class="comment">; CODE XREF: _main+16↓p</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F50                 <span class="keyword">push</span>    <span class="built_in">rbp</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F51                 <span class="keyword">mov</span>     <span class="built_in">rbp</span>, <span class="built_in">rsp</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F54                 <span class="keyword">lea</span>     <span class="built_in">rdi</span>, aCallFunc  <span class="comment">; &quot;call func\n&quot;</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F5B                 <span class="keyword">mov</span>     <span class="built_in">al</span>, <span class="number">0</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F5D                 <span class="keyword">call</span>    _printf</span><br><span class="line"><span class="symbol">__text:</span>0000000100003F62                 <span class="keyword">xor</span>     <span class="built_in">eax</span>, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F64                 <span class="keyword">pop</span>     <span class="built_in">rbp</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F65                 <span class="keyword">retn</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F65 _func           endp</span><br><span class="line"><span class="symbol"></span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F70                 <span class="meta">public</span> _main</span><br><span class="line"><span class="symbol">__text:</span>0000000100003F70 _main           proc <span class="built_in">near</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F70                 <span class="keyword">push</span>    <span class="built_in">rbp</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F71                 <span class="keyword">mov</span>     <span class="built_in">rbp</span>, <span class="built_in">rsp</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F74                 <span class="keyword">sub</span>     <span class="built_in">rsp</span>, <span class="number">10h</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F78                 <span class="keyword">mov</span>     [<span class="built_in">rbp</span>+var_4], <span class="number">0</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F7F                 <span class="keyword">mov</span>     [<span class="built_in">rbp</span>+var_8], <span class="built_in">edi</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F82                 <span class="keyword">mov</span>     [<span class="built_in">rbp</span>+var_10], <span class="built_in">rsi</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F86                 <span class="keyword">call</span>    _func                 <span class="comment">; Hex: E8C5FFFFFF</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F8B                 <span class="keyword">call</span>    <span class="built_in">cs</span>:_user_func         <span class="comment">; Hex: FF157F000000</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F91                 <span class="keyword">xor</span>     <span class="built_in">eax</span>, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F93                 <span class="keyword">add</span>     <span class="built_in">rsp</span>, <span class="number">10h</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F97                 <span class="keyword">pop</span>     <span class="built_in">rbp</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F98                 <span class="keyword">retn</span></span><br><span class="line"><span class="symbol">__text:</span>0000000100003F98 _main           endp</span><br><span class="line"><span class="symbol"></span></span><br><span class="line"><span class="symbol">__got:</span><span class="number">0000000100004000</span> _printf_ptr     <span class="built_in">dq</span> <span class="number">8020000100004030h</span>    <span class="comment">; DATA XREF: _printf↑r</span></span><br><span class="line"><span class="symbol"></span></span><br><span class="line"><span class="symbol">__const:</span><span class="number">0000000100004010</span>                 <span class="meta">public</span> _user_func</span><br><span class="line"><span class="symbol">__const:</span><span class="number">0000000100004010</span> _user_func      <span class="built_in">dq</span> <span class="number">10000000003F50h</span>      <span class="comment">; DATA XREF: _main+1B↑r</span></span><br></pre></td></tr></table></figure>
+<p>这里设置了一个定时器，0.25s 触发一次，用于检查剪切板数据是否发生变更。是否发生变更很好判断，检查保存的 <code>changeCount</code> 是否和剪切板当前的变更次数一致即可。如果不一致则表明定时器间隔时间内发生了剪切或者复制事件。然后获取剪切板中存储的待粘贴数据。</p>
+<h3 id="获取待粘贴数据"><a href="#获取待粘贴数据" class="headerlink" title="获取待粘贴数据"></a>获取待粘贴数据</h3><div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">onPasteboardChanged</span>() &#123;</span><br><span class="line">    copiedInfo.copiedItems.removeAll()</span><br><span class="line">    copiedInfo.changeCount <span class="operator">=</span> pasteboard.changeCount</span><br><span class="line"></span><br><span class="line">    <span class="keyword">guard</span> pasteboard.pasteboardItems <span class="operator">!=</span> <span class="literal">nil</span> <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> pasteboard.pasteboardItems<span class="operator">!</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> itemInfo <span class="operator">=</span> [<span class="type">String</span>: <span class="type">Data</span>]()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> type <span class="keyword">in</span> item.types &#123;</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">let</span> value <span class="operator">=</span> item.data(forType: type) &#123;</span><br><span class="line">                itemInfo[type.rawValue] <span class="operator">=</span> value</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        copiedInfo.copiedItems.append(itemInfo)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p><code>FF15</code>也表示近调用。根据官方解释，<code>FF15</code>和<code>E8</code>调用指令的区别在于，<code>FF15</code>是间接函数调用，其中要调用的函数的地址是从内存或者寄存器加载的绝对地址，而<code>E8</code>是一个直接函数调用，其中要调用的函数的地址通过相对 EIP 的偏移量指定。但在 macOS 中，感觉这两者都是通过偏移量指定函数地址，不同点在于<code>FF15</code>可以调用非<code>__text</code>代码段的符号。</p>
-<p>感兴趣的可以尝试计算偏移，将这里的<code>E8</code>指令后的偏移改为<code>_user_func</code>结构体符号的偏移，运行后会报错 <strong>bus error</strong>。上文所提旧版本的 macOS 内核调用<code>execsw</code>符号便是使用<code>FF15</code>，os14 则是使用<code>E8</code>直接调用。</p>
-<h3 id="call-far"><a href="#call-far" class="headerlink" title="call far"></a>call far</h3><p>远调用正常的编码不太容易实现，这里使用汇编语言写一个最简的远调用例程。这里显式指定调用方式为<code>call far</code>，需要注意被调用函数应使用<code>retf</code>作为返回值。编译命令为<code>nasm -fmacho64 ./far_call.asm</code>，生成 Mach-o 格式的 64 位二进制。</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">default</span> <span class="built_in">rel</span></span><br><span class="line"><span class="symbol">func:</span></span><br><span class="line">    <span class="keyword">retf</span></span><br><span class="line"></span><br><span class="line"><span class="meta">global</span> _start</span><br><span class="line"><span class="symbol">_start:</span></span><br><span class="line">    <span class="keyword">call</span> <span class="built_in">far</span> [func]</span><br></pre></td></tr></table></figure>
+<p>使用 <code>data(forType:)</code> 接口可以获取指定类型的剪切板数据，至此待粘贴的所有类型的数据全部获取到了。如果把剪切板数据简单作为字符串打印显示，可以将使用的接口换成 <code>string(forType:)</code>，这将强制返回 <code>String</code> 类型的数据。如果需要显示带格式的数据，则需要绘制界面。</p>
+<h3 id="修改剪切板存储的数据"><a href="#修改剪切板存储的数据" class="headerlink" title="修改剪切板存储的数据"></a>修改剪切板存储的数据</h3><p>NSPasteboard 不仅提供了剪切板数据读取接口，也提供了数据设置接口。<strong>不过在修改（增加或者删除同理）数据前需将剪切板存储的数据全部清空，否则设置无法成功</strong>。此处为本人实际操作发现，没看到官方文档对此有说明，读者可自行尝试。下面举例说明删除某项数据的代码实现。</p>
+<div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">removeDataWithReserve</span>(<span class="params">data</span>: <span class="type">Data</span>, <span class="params">forType</span> <span class="params">type</span>: <span class="type">String</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> pasteItems <span class="operator">=</span> [<span class="type">NSPasteboardItem</span>]()</span><br><span class="line">    pasteboard.clearContents()</span><br><span class="line">    <span class="keyword">for</span> items <span class="keyword">in</span> copiedInfo.copiedItems &#123;</span><br><span class="line">        <span class="keyword">let</span> pasteItem <span class="operator">=</span> <span class="type">NSPasteboardItem</span>()</span><br><span class="line">        <span class="keyword">for</span> pair <span class="keyword">in</span> items &#123;</span><br><span class="line">            <span class="keyword">if</span> pair.key <span class="operator">==</span> type <span class="operator">&amp;&amp;</span> pair.value <span class="operator">==</span> data &#123;</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">            pasteItem.setData(pair.value, forType: <span class="type">NSPasteboard</span>.<span class="type">PasteboardType</span>(pair.key))</span><br><span class="line">        &#125;</span><br><span class="line">        pasteItems.append(pasteItem)</span><br><span class="line">    &#125;</span><br><span class="line">    pasteboard.writeObjects(pasteItems)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p>编译后结果如下。这里使用的<code>call far</code>被编译为<code>FF1D</code>，从上表可知，指令表示远调用，且操作数为 32 位立即数。实际上上述代码实际编译出来的二进制很短，代码段数据仅有 8 字节：<code>DB48FF1DF8FFFFFF</code>，那么根据上述计算，执行调用命令后 IP 寄存器位置是 0x8，加上偏移量-8，则函数地址为 0，符合编译结果。</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">__text:</span><span class="number">0000000000000000</span> func            proc <span class="built_in">far</span>                <span class="comment">; DATA XREF: _start↓r</span></span><br><span class="line"><span class="symbol">__text:</span><span class="number">0000000000000000</span>                 <span class="keyword">retf</span></span><br><span class="line"><span class="symbol">__text:</span><span class="number">0000000000000000</span> func            endp</span><br><span class="line"><span class="symbol"></span></span><br><span class="line"><span class="symbol">__text:</span><span class="number">0000000000000001</span>                 <span class="meta">public</span> _start</span><br><span class="line"><span class="symbol">__text:</span><span class="number">0000000000000001</span> _start          proc <span class="built_in">near</span></span><br><span class="line"><span class="symbol">__text:</span><span class="number">0000000000000001</span>                 <span class="keyword">call</span>    <span class="built_in">qword</span> <span class="built_in">ptr</span> <span class="built_in">cs</span>:func     <span class="comment">; Hex: FF1DF8FFFFFF</span></span><br><span class="line"><span class="symbol">__text:</span><span class="number">0000000000000001</span> _start          endp</span><br></pre></td></tr></table></figure>
-
-<p>以上为个人学习总结，其中解释可能有错误之处，欢迎读者指出。</p>
+<p>实际上删除某项数据仅仅是清空所有数据，然后把不需要删除的数据添加回去。这里调用了两个接口：<code>setData(_:forType:)</code>、<code>writeObjects()</code>。虽然大多数情况下一次复制或者剪切的数据是一项（如复制一段文字、网页、图片等），一项数据内包含多个格式的数据，但类似一次复制多项文件（使用 <code>⌘</code> 或 <code>⇪</code> 多选）的情况，剪切板会设置多项数据，如下图所示。所以这里需要把各个项目的剪切板数据使用 <code>setData(_:forType:)</code> 接口设置完毕，再使用 <code>writeObjects()</code> 接口将所有项目的数据添加到剪切板。<br><figure class="image-caption"><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/article-pics/Pasteboard-items.png"
+                      alt="同时拷贝多个文件"
+                ><figcaption>同时拷贝多个文件</figcaption></figure></p>
 
         </div>
 
@@ -476,16 +448,16 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li><strong>Title:</strong> 汇编语言入门之call指令</li>
+        <li><strong>Title:</strong> macOS 剪切板数据查看与修改</li>
         <li><strong>Author:</strong> 孙康</li>
-        <li><strong>Created at:</strong> 2023-07-28 22:12:00</li>
+        <li><strong>Created at:</strong> 2023-08-20 19:57:41</li>
         
             <li>
-                <strong>Updated at:</strong> 2023-08-15 09:56:17
+                <strong>Updated at:</strong> 2023-08-21 17:40:48
             </li>
         
         <li>
-            <strong>Link:</strong> https://conradsun.github.io/2023/0734337142.html
+            <strong>Link:</strong> https://conradsun.github.io/2023/08647ac6c0.html
         </li>
         <li>
             <strong>License:</strong> This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a>.
@@ -500,11 +472,15 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/asm/">#asm</a>&nbsp;
+                        <a href="/tags/macOS/">#macOS</a>&nbsp;
                     </li>
                 
                     <li class="tag-item">
-                        <a href="/tags/call/">#call</a>&nbsp;
+                        <a href="/tags/%E5%89%AA%E5%88%87%E6%9D%BF/">#剪切板</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/pasteboard/">#pasteboard</a>&nbsp;
                     </li>
                 
             </ul>
@@ -515,29 +491,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                        rel="prev"
-                        href="/2023/08647ac6c0.html"
-                        >
-                            <span class="left arrow-icon flex-center">
-                                <i class="fa-solid fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">macOS 剪切板数据查看与修改</span>
-                                <span class="post-nav-item">Prev posts</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                         rel="next"
-                        href="/2023/075ef6acf1.html"
+                        href="/2023/0734337142.html"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">macOS xnu execsw 符号或将废弃</span>
+                                <span class="post-nav-title-item">汇编语言入门之call指令</span>
                                 <span class="post-nav-item">Next posts</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -612,8 +573,8 @@
             <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">On this page</div>
-        <div class="page-title">汇编语言入门之call指令</div>
-        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#call-%E6%8C%87%E4%BB%A4"><span class="nav-text">call 指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#call-near"><span class="nav-text">call near</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#call-far"><span class="nav-text">call far</span></a></li></ol>
+        <div class="page-title">macOS 剪切板数据查看与修改</div>
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E6%95%B0%E6%8D%AE%E5%8F%98%E6%9B%B4"><span class="nav-text">检查数据变更</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%BE%85%E7%B2%98%E8%B4%B4%E6%95%B0%E6%8D%AE"><span class="nav-text">获取待粘贴数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%89%AA%E5%88%87%E6%9D%BF%E5%AD%98%E5%82%A8%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="nav-text">修改剪切板存储的数据</span></a></li></ol>
 
     </div>
 </div>
