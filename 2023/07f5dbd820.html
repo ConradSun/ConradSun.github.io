@@ -20,13 +20,13 @@
     
         <meta name="description" content="macOS 应用开发小技巧：应用窗口关闭后重新显示、自定义程序坞应用图标状态、设置桌面右上角常驻菜单栏。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="macOS应用程序坞和菜单栏设置">
+<meta property="og:title" content="macOS 应用程序坞和菜单栏设置">
 <meta property="og:url" content="https://conradsun.github.io/2023/07f5dbd820.html">
 <meta property="og:site_name" content="康的个人博客">
 <meta property="og:description" content="macOS 应用开发小技巧：应用窗口关闭后重新显示、自定义程序坞应用图标状态、设置桌面右上角常驻菜单栏。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2023-07-09T04:13:25.000Z">
-<meta property="article:modified_time" content="2023-08-15T01:58:10.537Z">
+<meta property="article:modified_time" content="2023-08-31T11:55:52.102Z">
 <meta property="article:author" content="ConradSun">
 <meta property="article:tag" content="macOS">
 <meta property="article:tag" content="程序坞">
@@ -44,12 +44,19 @@
     
     <title>
         
-            macOS应用程序坞和菜单栏设置 -
+            macOS 应用程序坞和菜单栏设置 -
         
         Kang&#39;s Blog
     </title>
     
 <link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/styles.css">
+
+    
 
     
 <link rel="stylesheet" href="/fonts/fonts.css">
@@ -79,7 +86,7 @@
     <script id="hexo-configurations">
     let Global = window.Global || {};
     Global.hexo_config = {"hostname":"conradsun.github.io","root":"/","language":"en","path":"search.xml"};
-    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"https://img1.imgtp.com/2023/08/18/tnLnrEwU.jpg","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":"#1890FF"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"https://img1.imgtp.com/2023/08/18/tnLnrEwU.jpg","dark":"https://img1.imgtp.com/2023/08/18/n7owRUPI.jpg"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"links":{"github":"https://github.com/ConradSun","bilibili":"https://space.bilibili.com/91647922?spm_id_from=333.1007.0.0","zhihu":null,"email":"sunkangnuaa@163.com"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.3.0","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"ME":"/me","Github":"https://github.com/ConradSun","Friends":"/links"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"https://img1.imgtp.com/2023/08/18/tnLnrEwU.jpg","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":"#1890FF"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"https://img1.imgtp.com/2023/08/18/tnLnrEwU.jpg","dark":"https://img1.imgtp.com/2023/08/18/n7owRUPI.jpg"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"links":{"github":"https://github.com/ConradSun","bilibili":"https://space.bilibili.com/91647922?spm_id_from=333.1007.0.0","zhihu":null,"email":"sunkangnuaa@163.com"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.4.4","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"ME":"/me","Github":"https://github.com/ConradSun","Friends":"/links"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
     Global.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
     Global.data_config = {"masonry":false};
   </script>
@@ -126,12 +133,11 @@
 
 
 <main class="page-container" id="swup">
-    
 
     
 
     <div class="main-content-container">
-        
+
 
         <div class="main-content-header">
             <header class="navbar-container">
@@ -139,11 +145,11 @@
     <div class="navbar-content">
         <div class="left">
             
-                <a class="logo-image" href="/">
+                <a class="logo-image" href="https://ConradSun.github.io/">
                     <img src="https://img1.imgtp.com/2023/08/18/VKUPywF2.svg">
                 </a>
             
-            <a class="logo-title" href="/">
+            <a class="logo-title" href="https://ConradSun.github.io/">
                 
                 Kang&#39;s Blog
                 
@@ -242,12 +248,12 @@
     </div>
 
     <!-- Mobile drawer -->
-    <div class="navbar-drawer">
-        <ul class="drawer-navbar-list">
+    <div class="navbar-drawer w-full absolute top-0 left-0 bg-background-color">
+        <ul class="drawer-navbar-list flex flex-col justify-start items-center">
             
                 
-                    <li class="drawer-navbar-item flex-center">
-                        <a class="" 
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
                         href="/"  >
                              
                                 
@@ -261,8 +267,8 @@
                     
             
                 
-                    <li class="drawer-navbar-item flex-center">
-                        <a class="" 
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
                         href="/archives"  >
                              
                                 
@@ -276,30 +282,30 @@
                     
             
                 
-                    <li class="drawer-navbar-item flex-center">
-                        <a class="has-dropdown" 
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group has-dropdown" 
                         href="#" onClick="return false;">
                             
                                 
                                     <i class="fa-regular fa-user"></i>
                                 
-                                ABOUT&nbsp;<i class="fa-solid fa-chevron-down"></i>
+                                ABOUT&nbsp;<i class="group-hover:rotate-180 transition-transform fa-solid fa-chevron-down"></i>
                             
                         </a>
                     </li>
                     <!-- Submenu -->
                               
                         
-                            <li class="dropdown-item flex-center">
-                                <a class="dropdown-item" href="/me">ME</a>
+                            <li class="text-base flex justify-center items-center hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                <a class="py-0.5" href="/me">ME</a>
                             </li>
                         
-                            <li class="dropdown-item flex-center">
-                                <a class="dropdown-item" target="_blank" rel="noopener" href="https://github.com/ConradSun">GITHUB</a>
+                            <li class="text-base flex justify-center items-center hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                <a class="py-0.5" target="_blank" rel="noopener" href="https://github.com/ConradSun">GITHUB</a>
                             </li>
                         
-                            <li class="dropdown-item flex-center">
-                                <a class="dropdown-item" href="/links">FRIENDS</a>
+                            <li class="text-base flex justify-center items-center hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                <a class="py-0.5" href="/links">FRIENDS</a>
                             </li>
                         
                     
@@ -327,7 +333,7 @@
 
         <div class="article-title">
             
-                <h1 class="article-title-regular">macOS应用程序坞和菜单栏设置</h1>
+                <h1 class="article-title-regular">macOS 应用程序坞和菜单栏设置</h1>
             
             </div>
             
@@ -354,8 +360,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-08-15 09:58:10</span>
-            <span class="mobile">2023-08-15 09:58:10</span>
+            <span class="desktop">2023-08-31 19:55:52</span>
+            <span class="mobile">2023-08-31 19:55:52</span>
             <span class="hover-info">Updated</span>
         </span>
     
@@ -425,6 +431,9 @@
             </div>
         
 
+        
+
+
         <div class="article-content markdown-body">
             <p>和 Windows 操作系统有所不同的是，macOS 中多数应用程序关闭窗口后并不会退出，程序坞（Dock）还会显示该应用的图标，图标下的黑点也表示该应用处于打开状态。造成这种差异的原因是 Windows 使用的是 Single Document Interface (SDI) 式 GUI ，应用、窗口和文档具有一对一的关系；而 macOS 使用的是 Multiple Document Interface (MDI) 式 GUI，应用、窗体、文档具有一对多的关系。macOS 作为更古老的操作系统，在早期计算机算力不强时使用 MDI 可减少应用启动关闭造成的资源消耗。更多细节可阅读 <a class="link"   target="_blank" rel="noopener" href="https://www.zhihu.com/question/21143701" >知乎问答 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>。本文展示的代码片段出自开源项目 <a class="link"   target="_blank" rel="noopener" href="https://github.com/ConradSun/NuwaStone" >NuwaStone <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，如需了解更多细节可参考该项目。</p>
 <h3 id="窗体重新显示"><a href="#窗体重新显示" class="headerlink" title="窗体重新显示"></a>窗体重新显示</h3><p>使用 Xcode 默认创建的 app 便是 MDI，虽然窗体关闭后应用并未退出，但点击程序坞应用图标并不会重新显示窗体，如需实现该功能需重写<code>AppDelegate</code>类的相关函数，代码如下。入参中的<code>flag</code>表示当前窗体是否关闭，如果关闭需查找当前系统所持有的窗体，将其置于前台。</p>
@@ -442,19 +451,27 @@
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li><strong>Title:</strong> macOS应用程序坞和菜单栏设置</li>
+        <li><strong>Title:</strong> macOS 应用程序坞和菜单栏设置</li>
         <li><strong>Author:</strong> 孙康</li>
-        <li><strong>Created at:</strong> 2023-07-09 12:13:25</li>
+        <li><strong>Created at
+                :</strong> 2023-07-09 12:13:25</li>
         
             <li>
-                <strong>Updated at:</strong> 2023-08-15 09:58:10
+                <strong>Updated at
+                    :</strong> 2023-08-31 19:55:52
             </li>
         
         <li>
             <strong>Link:</strong> https://conradsun.github.io/2023/07f5dbd820.html
         </li>
         <li>
-            <strong>License:</strong> This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a>.
+            <strong>
+                License:
+            </strong>
+            
+            This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a>.
+            
+
         </li>
     </ul>
 </div>
@@ -494,11 +511,11 @@
                         rel="prev"
                         href="/2023/078d2ace36.html"
                         >
-                            <span class="left arrow-icon flex-center">
+                            <span class="left arrow-icon flex justify-center items-center">
                                 <i class="fa-solid fa-chevron-left"></i>
                             </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">macOS应用内更新检查</span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">macOS 应用内更新检查</span>
                                 <span class="post-nav-item">Prev posts</span>
                             </span>
                         </a>
@@ -510,11 +527,11 @@
                         rel="next"
                         href="/2023/06b81ddf97.html"
                         >
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">macOS修改MachO文件实现动态库注入（三）</span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">macOS 修改 MachO 文件实现动态库注入（三）</span>
                                 <span class="post-nav-item">Next posts</span>
                             </span>
-                            <span class="right arrow-icon flex-center">
+                            <span class="right arrow-icon flex justify-center items-center">
                                 <i class="fa-solid fa-chevron-right"></i>
                             </span>
                         </a>
@@ -567,7 +584,7 @@
                 clearTimeout(loadGiscusTimeout);
             }, 1000);
         } else {
-            window.addEventListener('DOMContentLoaded', loadGiscus);
+            document.addEventListener('DOMContentLoaded', loadGiscus);
         }
     </script>
 
@@ -586,7 +603,7 @@
             <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">On this page</div>
-        <div class="page-title">macOS应用程序坞和菜单栏设置</div>
+        <div class="page-title">macOS 应用程序坞和菜单栏设置</div>
         <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AA%97%E4%BD%93%E9%87%8D%E6%96%B0%E6%98%BE%E7%A4%BA"><span class="nav-text">窗体重新显示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E5%9D%9E%E5%9B%BE%E6%A0%87%E9%9A%90%E8%97%8F"><span class="nav-text">程序坞图标隐藏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E9%A9%BB%E8%8F%9C%E5%8D%95%E6%A0%8F%E8%AE%BE%E7%BD%AE"><span class="nav-text">常驻菜单栏设置</span></a></li></ol>
 
     </div>
@@ -600,15 +617,16 @@
                 
 
             </div>
-            
+
             
 
         </div>
 
         <div class="main-content-footer">
-            <footer class="footer">
-    <div class="info-container">
-        <div class="copyright-info">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
             &copy;
             
               <span>2022</span>
@@ -618,30 +636,30 @@
         </div>
         
             <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-            <div class="website-count info-item">
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
                 
-                    <span id="busuanzi_container_site_uv" class="busuanzi_container_site_uv">
-                        VISITOR COUNT&nbsp;<span id="busuanzi_value_site_uv" class="busuanzi_value_site_uv"></span>
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">VISITOR COUNT</span>
+                        <span id="busuanzi_value_site_uv"></span>
                     </span>
                 
                 
-                    <span id="busuanzi_container_site_pv" class="busuanzi_container_site_pv">
-                        TOTAL PAGE VIEWS&nbsp;<span id="busuanzi_value_site_pv" class="busuanzi_value_site_pv"></span>
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">TOTAL PAGE VIEWS</span>
+                        <span id="busuanzi_value_site_pv"></span>
                     </span>
                 
             </div>
         
-        <div class="theme-info info-item">
-            <span class="powered-by-container">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" href="https://hexo.io">Hexo</a></span>
-                <br>
-            <span class="theme-version-container">THEME&nbsp;<a class="theme-version" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.3.0</a></span>
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.4.4</a></span>
         </div>
         
         
             <div>
                 Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
             </div>
-        
         
         
             <script data-swup-reload-script>
@@ -693,19 +711,19 @@
     <div class="right-side-tools-container">
         <div class="side-tools-container">
     <ul class="hidden-tools-list">
-        <li class="right-bottom-tools tool-font-adjust-plus flex-center">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
             <i class="fa-regular fa-magnifying-glass-plus"></i>
         </li>
 
-        <li class="right-bottom-tools tool-font-adjust-minus flex-center">
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
             <i class="fa-regular fa-magnifying-glass-minus"></i>
         </li>
 
-        <li class="right-bottom-tools tool-expand-width flex-center">
+        <li class="right-bottom-tools tool-expand-width flex justify-center items-center">
             <i class="fa-regular fa-expand"></i>
         </li>
 
-        <li class="right-bottom-tools tool-dark-light-toggle flex-center">
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
             <i class="fa-regular fa-moon"></i>
         </li>
 
@@ -714,17 +732,17 @@
 
         
 
-        <li class="right-bottom-tools tool-scroll-to-bottom flex-center">
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
             <i class="fa-regular fa-arrow-down"></i>
         </li>
     </ul>
 
     <ul class="visible-tools-list">
-        <li class="right-bottom-tools toggle-tools-list flex-center">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
             <i class="fa-regular fa-cog fa-spin"></i>
         </li>
         
-            <li class="right-bottom-tools tool-scroll-to-top flex-center">
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
                 <i class="arrow-up fas fa-arrow-up"></i>
                 <span class="percent"></span>
             </li>
@@ -771,10 +789,10 @@
 
     
 
-
 </main>
 
 
+    
 <script src="/js/libs/Swup.min.js"></script>
 
 <script src="/js/libs/SwupSlideTheme.min.js"></script>
@@ -802,7 +820,7 @@
         containers: ["#swup"],
     });
 
-    swup.on("pageView", () => {
+    swup.hooks.on("page:view", () => {
         Global.refresh();
     });
 
@@ -817,17 +835,18 @@
 
 
 
-<script src="/js/utils.js"></script>
 
-<script src="/js/main.js"></script>
+<script src="/js/utils.js" type="module"></script>
 
-<script src="/js/layouts/navbarShrink.js"></script>
+<script src="/js/main.js" type="module"></script>
 
-<script src="/js/tools/scrollTopBottom.js"></script>
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
 
-<script src="/js/tools/lightDarkSwitch.js"></script>
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
 
-<script src="/js/layouts/categoryList.js"></script>
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
 
 
 
@@ -876,13 +895,14 @@
 <div class="post-scripts" data-swup-reload-script>
     
         
-<script src="/js/tools/tocToggle.js"></script>
-
-<script src="/js/layouts/toc.js"></script>
-
 <script src="/js/libs/anime.min.js"></script>
 
-<script src="/js/plugins/tabs.js"></script>
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
 
     
 </div>
