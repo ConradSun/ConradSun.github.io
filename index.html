@@ -38,6 +38,165 @@
         
         Kang&#39;s Blog
     </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+
+    
+        <style>
+    :root {
+        --preloader-background-color: #fff;
+        --preloader-text-color: #000;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --preloader-background-color: #202124;
+            --preloader-text-color: #fff;
+        }
+    }
+
+    @media (prefers-color-scheme: light) {
+        :root {
+            --preloader-background-color: #fff;
+            --preloader-text-color: #000;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .ml13 {
+            font-size: 2.6rem !important; /* Adjust this value as needed */
+        }
+    }
+
+    .preloader {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem; /* Tailwind 'gap-4' is 1rem */
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        padding: 12px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh; /* 'h-screen' is 100% of the viewport height */
+        background-color: var(--preloader-background-color);
+        z-index: 1100; /* 'z-[1100]' sets the z-index */
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .ml13 {
+        font-size: 3.2rem;
+        /* text-transform: uppercase; */
+        color: var(--preloader-text-color);
+        letter-spacing: -1px;
+        font-weight: 500;
+        font-family: 'Chillax-Variable', sans-serif;
+        text-align: center;
+    }
+
+    .ml13 .word {
+        display: inline-flex;
+        flex-wrap: wrap;
+        white-space: nowrap;
+    }
+
+    .ml13 .letter {
+        display: inline-block;
+        line-height: 1em;
+    }
+</style>
+
+<div class="preloader">
+    
+<script src="/js/libs/anime.min.js"></script>
+
+    <h1 class="ml13">
+        Kang&#39;s Blog
+    </h1>
+    <script>
+        var textWrapper = document.querySelector('.ml13');
+        // Split text into words
+        var words = textWrapper.textContent.trim().split(' ');
+
+        // Clear the existing content
+        textWrapper.innerHTML = '';
+
+        // Wrap each word and its letters in spans
+        words.forEach(function(word) {
+            var wordSpan = document.createElement('span');
+            wordSpan.classList.add('word');
+            wordSpan.innerHTML = word.replace(/\S/g, "<span class='letter'>$&</span>");
+            textWrapper.appendChild(wordSpan);
+            textWrapper.appendChild(document.createTextNode(' ')); // Add space between words
+        });
+
+
+        anime.timeline({loop: true})
+            .add({
+                targets: '.ml13 .letter',
+                translateY: [100,0],
+                translateZ: 0,
+                opacity: [0,1],
+                easing: "easeOutExpo",
+                duration: 1400,
+                delay: (el, i) => 300 + 30 * i
+            }).add({
+            targets: '.ml13 .letter',
+            translateY: [0,-100],
+            opacity: [1,0],
+            easing: "easeInExpo",
+            duration: 1200,
+            delay: (el, i) => 100 + 30 * i
+        });
+
+        let themeStatus = JSON.parse(localStorage.getItem('REDEFINE-THEME-STATUS'))?.isDark;
+
+        // If the theme status is not found in local storage, check the preferred color scheme
+        if (themeStatus === undefined || themeStatus === null) {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                themeStatus = 'dark';
+            } else {
+                themeStatus = 'light';
+            }
+        }
+
+        // Now you can use the themeStatus variable in your code
+        if (themeStatus) {
+            document.documentElement.style.setProperty('--preloader-background-color', '#202124');
+            document.documentElement.style.setProperty('--preloader-text-color', '#fff');
+        } else {
+            document.documentElement.style.setProperty('--preloader-background-color', '#fff');
+            document.documentElement.style.setProperty('--preloader-text-color', '#000');
+        }
+
+        window.addEventListener('load', function () {
+            hidePreloaderAfterTimeout(1000); // Hide after 1000 milliseconds once the window has loaded
+        });
+
+        // Backup failsafe: Hide preloader after a maximum of 5000 milliseconds, regardless of the window load event
+        hidePreloaderAfterTimeout(5000);
+
+        function hidePreloaderAfterTimeout(delay) {
+            setTimeout(function () {
+                var preloader = document.querySelector('.preloader');
+                preloader.style.opacity = '0';
+                setTimeout(function () {
+                    preloader.style.display = 'none';
+                }, 200);
+            }, delay);
+        }
+    </script>
+</div>
+    
+
     
 <link rel="stylesheet" href="/css/style.css">
 
@@ -54,9 +213,6 @@
     
 <link rel="stylesheet" href="/fonts/Satoshi/satoshi.css">
 
-    
-<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
-
     <!--- Font Part-->
     
         <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap" rel="stylesheet">
@@ -71,11 +227,10 @@
         <link href="https://fonts.googleapis.com/css2?family=Lora" rel="stylesheet">
     
 
-    <!--- Inject Part-->
-    
+
     <script id="hexo-configurations">
     window.config = {"hostname":"conradsun.github.io","root":"/","language":"en","path":"search.xml"};
-    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":"#1890FF"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"links":{"github":"https://github.com/ConradSun","bilibili":"https://space.bilibili.com/91647922?spm_id_from=333.1007.0.0","zhihu":null,"email":"sunkangnuaa@163.com"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.5.0","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"ME":"/me","Github":"https://github.com/ConradSun","Friends":"/links"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true,"title_alignment":"left","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/ConradSun","bilibili":"https://space.bilibili.com/91647922?spm_id_from=333.1007.0.0","zhihu":null,"email":"sunkangnuaa@163.com"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.6.1","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"ME":"/me","Github":"https://github.com/ConradSun","Friends":"/links"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
     window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
     window.data = {"masonry":false};
   </script>
@@ -114,9 +269,9 @@
 
     
         <span class="pjax-progress-bar"></span>
-        <span class="swup-progress-icon">
-            <i class="fa-solid fa-circle-notch fa-spin"></i>
-        </span>
+<!--        <span class="swup-progress-icon">-->
+<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+<!--        </span>-->
     
 </div>
 
@@ -127,9 +282,8 @@
         
     <style>
         .home-banner-container {
-            background: transparent !important;
+            background: none !important;
         }
-
         .home-article-item,
         .sidebar-links,
         .sidebar-content,
@@ -140,30 +294,29 @@
         footer.footer {
             background-color: var(--background-color-transparent-80) !important;
         }
-
         .right-bottom-tools:hover,
         a.page-number:hover,
         a.extend:hover {
             background-color: var(--primary-color) !important;
         }
-
         .site-info,
         .home-article-sticky-label {
             background-color: var(--background-color-transparent-15) !important;
         }
-
         .home-article-sticky-label {
             backdrop-filter: none !important;
         }
     </style>
-
-    <div class="home-banner-background transition-fade">
+    <div class="home-banner-background transition-fade fixed top-0 left-0 w-screen h-screen scale-125 sm:scale-110 box-border will-change-transform bg-cover">
+        <img src="/images/wlop-wind.webp" alt="home-banner-background" class="w-full h-full object-cover dark:hidden">
+        <img src="/images/wlop-light.webp" alt="home-banner-background" class="w-full h-full object-cover hidden dark:block">
     </div>
 
 
-<div class="home-banner-container flex justify-center items-center transition-fade">
-    <div class="content flex justify-center items-center">
-        <div class="description flex flex-col justify-center items-center"
+<div class="home-banner-container flex justify-center items-center transition-fade relative">
+    
+    <div class="content mt-8 flex flex-col justify-center items-center">
+        <div class="description flex flex-col justify-center items-center w-screen font-medium text-center"
         
              style="font-family: 'Lora', sans-serif; !important;"
                 
@@ -175,60 +328,66 @@
             
         </div>
         
-            <div class="social-contacts">
-                
+            
+            <div class="absolute bottom-0.5 flex flex-row justify-between max-w-[1340px] items-center w-full px-8 sm:px-12">
+                <div class="flex p-3 bg-gray-300/50 dark:bg-gray-500/40 backdrop-blur-lg border border-white/20 dark:border-gray-500/30 group rounded-full cursor-pointer flex justify-center items-center aspect-square h-full shadow-redefine-flat hover:shadow-redefine-flat-hover transition-shadow" onclick="scrollToMain()" >
+                    <i class="fa-solid fa-arrow-down fa-fw fa-lg group-hover:translate-y-1 transition-transform"></i>
+                </div>
+                <div class="social-contacts px-6 py-3 bg-gray-300/50 dark:bg-gray-500/40 backdrop-blur-lg border border-white/20 dark:border-gray-500/30 shadow-redefine-flat rounded-full flex flex-row gap-3 items-center">
                     
                         
-                            <span class="social-contact-item github">
-                                <a target="_blank" href="https://github.com/ConradSun">
-                                    <i class="fa-brands fa-github"></i>
-                                </a>
-                            </span>
+                            
+                                <span class="social-contact-item github">
+                                    <a target="_blank" href="https://github.com/ConradSun">
+                                        <i class="fa-brands fa-fw fa-lg fa-github"></i>
+                                    </a>
+                                </span>
+                            
                         
                     
-                
-                    
                         
-                            <span class="social-contact-item bilibili">
-                                <a target="_blank" href="https://space.bilibili.com/91647922?spm_id_from=333.1007.0.0">
-                                    <i class="fa-brands fa-bilibili"></i>
-                                </a>
-                            </span>
+                            
+                                <span class="social-contact-item bilibili">
+                                    <a target="_blank" href="https://space.bilibili.com/91647922?spm_id_from=333.1007.0.0">
+                                        <i class="fa-brands fa-fw fa-lg fa-bilibili"></i>
+                                    </a>
+                                </span>
+                            
                         
-                    
-                
-                    
-                
-                    
-                        
-                            <span class="social-contact-item email">
-                                <a href="mailto:sunkangnuaa@163.com">
-                                    <i class="fa-solid fa-envelope"></i>
-                                </a>
-                            </span>
-                        
-                    
-                
-                
                     
                         
                     
-                
+                        
+                            
+                                <span class="social-contact-item email ">
+                                    <a href="mailto:sunkangnuaa@163.com">
+                                        <i class="fa-solid fa-fw fa-at fa-lg"></i>
+                                    </a>
+                                </span>
+                            
+                        
+                    
+                    
+                </div>
             </div>
         
     </div>
+    <script>
+        const scrollToMain = ()=> {
+            console.log('scroll');
+            const target = document.querySelector('.main-content-container');
+            target.scrollIntoView({ behavior: 'smooth'});
+        }
+    </script>
 </div>
-
-
-
     
 
     <div class="main-content-container">
 
 
         <div class="main-content-header">
-            <header class="navbar-container">
-    
+            <header class="navbar-container px-6 md:px-12">
+
     <div class="navbar-content has-home-banner">
         <div class="left">
             
@@ -249,68 +408,74 @@
                 <ul class="navbar-list">
                     
                         
+                            
+
                             <li class="navbar-item">
                                 <!-- Menu -->
-                                <a class="active" 
-                                    href="/"  >
-                                    
-                                        
-                                            <i class="fa-regular fa-house"></i>
-                                        
-                                        HOME
+                                <a class="active"
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
                                     
                                 </a>
+
                                 <!-- Submenu -->
                                 
                             </li>
                     
                         
+                            
+
                             <li class="navbar-item">
                                 <!-- Menu -->
-                                <a class="" 
-                                    href="/archives"  >
-                                    
-                                        
-                                            <i class="fa-regular fa-archive"></i>
-                                        
-                                        ARCHIVES
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    ARCHIVES
                                     
                                 </a>
+
                                 <!-- Submenu -->
                                 
                             </li>
                     
                         
+                            
+
                             <li class="navbar-item">
                                 <!-- Menu -->
-                                <a class="has-dropdown" 
-                                    href="#" onClick="return false;">
-                                    
-                                        
-                                            <i class="fa-regular fa-user"></i>
-                                        
-                                        ABOUT&nbsp;<i class="fa-solid fa-chevron-down"></i>
-                                    
+                                <a class="has-dropdown"
+                                   href="#"
+                                        onClick=&#34;return false;&#34;>
+                                    <i class="fa-regular fa-user fa-fw"></i>
+                                    ABOUT
+                                    <i class="fa-solid fa-chevron-down fa-fw"></i>
                                 </a>
+
                                 <!-- Submenu -->
                                 
                                     <ul class="sub-menu">
-                                    
-                                        <li>
-                                        <a href="/me">ME
-                                        </a>
-                                        </li>
-                                    
-                                        <li>
-                                        <a target="_blank" rel="noopener" href="https://github.com/ConradSun">GITHUB
-                                        </a>
-                                        </li>
-                                    
-                                        <li>
-                                        <a href="/links">FRIENDS
-                                        </a>
-                                        </li>
-                                    
+                                        
+                                            <li>
+                                                <a href="/me">
+                                                    ME
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a target="_blank" rel="noopener" href="https://github.com/ConradSun">
+                                                    GITHUB
+                                                </a>
+                                            </li>
+                                        
+                                            <li>
+                                                <a href="/links">
+                                                    FRIENDS
+                                                </a>
+                                            </li>
+                                        
                                     </ul>
                                 
                             </li>
@@ -325,7 +490,8 @@
             <!-- Mobile -->
             <div class="mobile">
                 
-                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
                 
                 <div class="icon-item navbar-bar">
                     <div class="navbar-bar-middle"></div>
@@ -334,71 +500,131 @@
         </div>
     </div>
 
-    <!-- Mobile drawer -->
-    <div class="navbar-drawer w-full absolute top-0 left-0 bg-background-color">
-        <ul class="drawer-navbar-list flex flex-col justify-start items-center">
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-screen w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
             
                 
-                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
-                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group active" 
-                        href="/"  >
-                             
-                                
-                                    <i class="fa-regular fa-house"></i>
-                                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/"
+                        >
+                            <span>
                                 HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
                             
                         </a>
+                        
+
+                        
                     </li>
-                    <!-- Submenu -->
-                    
             
                 
-                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
-                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
-                        href="/archives"  >
-                             
-                                
-                                    <i class="fa-regular fa-archive"></i>
-                                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
                                 ARCHIVES
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
                             
                         </a>
+                        
+
+                        
                     </li>
-                    <!-- Submenu -->
-                    
             
                 
-                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
-                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group has-dropdown" 
-                        href="#" onClick="return false;">
-                            
-                                
-                                    <i class="fa-regular fa-user"></i>
-                                
-                                ABOUT&nbsp;<i class="group-hover:rotate-180 transition-transform fa-solid fa-chevron-down"></i>
-                            
-                        </a>
-                    </li>
-                    <!-- Submenu -->
-                              
-                        
-                            <li class="drawer-navbar-item text-base flex justify-center items-center hover:underline active:underline hover:underline-offset-1 rounded-3xl">
-                                <a class="py-0.5" href="/me">ME</a>
-                            </li>
-                        
-                            <li class="drawer-navbar-item text-base flex justify-center items-center hover:underline active:underline hover:underline-offset-1 rounded-3xl">
-                                <a class="py-0.5" target="_blank" rel="noopener" href="https://github.com/ConradSun">GITHUB</a>
-                            </li>
-                        
-                            <li class="drawer-navbar-item text-base flex justify-center items-center hover:underline active:underline hover:underline-offset-1 rounded-3xl">
-                                <a class="py-0.5" href="/links">FRIENDS</a>
-                            </li>
-                        
                     
+
+                    <li class="drawer-navbar-item-sub text-base my-1.5 flex flex-col w-full">
+                        
+                        <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                             navbar-data-toggle="submenu-About"
+                        >
+                            <span>
+                                ABOUT
+                            </span>
+                            
+                                <i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i>
+                            
+                        </div>
+                        
+
+                        
+                            <div class="flex-col items-start px-2 py-2 hidden" data-target="submenu-About">
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/me">ME</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           target="_blank" rel="noopener" href="https://github.com/ConradSun">GITHUB</a>
+                                    </div>
+                                
+                                    <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
+                                        <a class=" text-third-text-color text-xl"
+                                           href="/links">FRIENDS</a>
+                                    </div>
+                                
+                            </div>
+                        
+                    </li>
             
 
+            
+            
+                
+                    
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/tags"
+                        >
+                            <span>Tags</span>
+                            <i class="fa-regular fa-tags fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/categories"
+                        >
+                            <span>Categories</span>
+                            <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+            
         </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">21</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">4</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">13</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
     </div>
 
     <div class="window-mask"></div>
@@ -413,6 +639,7 @@
             
                 <div class="home-sidebar-container">
     <div class="sticky-container sticky">
+        
         
             
                 <div class="sidebar-links">
@@ -454,26 +681,26 @@
             
             <div class="sidebar-content"  marginTop >
                 <div class="avatar flex justify-center">
-                    <img src="/images/git-avatar.svg">
-                </div>
+    <img src="/images/git-avatar.svg">
+</div>
                 <div class="author flex flex-col justify-center my-2.5 mx-0">
-                    <div class="name">孙康</div>
-                    
-                </div>
-                <div class="statistics">
-                    <a class="item" href="/tags">
-                        <div class="number">21</div>
-                        <div class="label">Tags</div>
-                    </a>
-                    <a class="item" href="/categories">
-                        <div class="number">4</div>
-                        <div class="label">Categories</div>
-                    </a>
-                    <a class="item" href="/archives">
-                        <div class="number">13</div>
-                        <div class="label">Posts</div>
-                    </a>
-                </div>
+    <div class="name">孙康</div>
+    
+</div>
+                <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">21</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">4</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">13</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
             </div>
         
 
@@ -495,21 +722,21 @@
                 
 
                 
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2023/09e9decc83.html">
+                            SwiftUI 入门之 NavigationSplitView 应用
+                        </a>
+                    </h3>
 
-                <h3 class="home-article-title">
-                    <a href="/2023/09e9decc83.html">
-                        SwiftUI 入门之 NavigationSplitView 应用
-                    </a>
-                </h3>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p>NavigationSplitView 是 macOS 和 iPadOS 系统常用的布局容器。虽然入门简单，但在 NavigationSplitView 里混合使用 List、Section 等容器可能会造成列表元素选择异常的问题，需要对元素标识符进行处理。</p>
 
-                <div class="home-article-content markdown-body">
-                    
-                        <p>NavigationSplitView 是 macOS 和 iPadOS 系统常用的布局容器。虽然入门简单，但在 NavigationSplitView 里混合使用 List、Section 等容器可能会造成列表元素选择异常的问题，需要对元素标识符进行处理。</p>
+                        
+                    </div>
 
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
+                    <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
         <span><i class="fa-solid fa-calendars"></i>&nbsp;
             <span class="home-article-date" data-date="Fri Sep 01 2023 22:31:41 GMT+0800">
@@ -558,6 +785,7 @@
     <a href="/2023/09e9decc83.html">Read more<span class="seo-reader-text">SwiftUI 入门之 NavigationSplitView 应用</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
             </li>
         
             <li class="home-article-item">
@@ -567,21 +795,21 @@
                 
 
                 
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2023/08647ac6c0.html">
+                            macOS 剪切板数据查看与修改
+                        </a>
+                    </h3>
 
-                <h3 class="home-article-title">
-                    <a href="/2023/08647ac6c0.html">
-                        macOS 剪切板数据查看与修改
-                    </a>
-                </h3>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p>使用 NSPasteboard 类提供的各项方法实现对系统通用剪切板的查看和控制。在剪切板数据变更时获取当前拷贝的数据内容，根据需要修改或者删除相关类型的数据。</p>
 
-                <div class="home-article-content markdown-body">
-                    
-                        <p>使用 NSPasteboard 类提供的各项方法实现对系统通用剪切板的查看和控制。在剪切板数据变更时获取当前拷贝的数据内容，根据需要修改或者删除相关类型的数据。</p>
+                        
+                    </div>
 
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
+                    <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
         <span><i class="fa-solid fa-calendars"></i>&nbsp;
             <span class="home-article-date" data-date="Sun Aug 20 2023 19:57:41 GMT+0800">
@@ -635,6 +863,7 @@
     <a href="/2023/08647ac6c0.html">Read more<span class="seo-reader-text">macOS 剪切板数据查看与修改</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
             </li>
         
             <li class="home-article-item">
@@ -644,21 +873,21 @@
                 
 
                 
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2023/0734337142.html">
+                            汇编语言入门之 call 指令
+                        </a>
+                    </h3>
 
-                <h3 class="home-article-title">
-                    <a href="/2023/0734337142.html">
-                        汇编语言入门之 call 指令
-                    </a>
-                </h3>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p>理解汇编语言是逆向必须掌握的一项技能。本文基于逆向 xnu 内核的发现，谈一下对 call 指令的学习理解，涉及到 call near 和 call far。</p>
 
-                <div class="home-article-content markdown-body">
-                    
-                        <p>理解汇编语言是逆向必须掌握的一项技能。本文基于逆向 xnu 内核的发现，谈一下对 call 指令的学习理解，涉及到 call near 和 call far。</p>
+                        
+                    </div>
 
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
+                    <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
         <span><i class="fa-solid fa-calendars"></i>&nbsp;
             <span class="home-article-date" data-date="Fri Jul 28 2023 22:12:00 GMT+0800">
@@ -707,6 +936,7 @@
     <a href="/2023/0734337142.html">Read more<span class="seo-reader-text">汇编语言入门之 call 指令</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
             </li>
         
             <li class="home-article-item">
@@ -716,21 +946,21 @@
                 
 
                 
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2023/075ef6acf1.html">
+                            macOS xnu execsw 符号或将废弃
+                        </a>
+                    </h3>
 
-                <h3 class="home-article-title">
-                    <a href="/2023/075ef6acf1.html">
-                        macOS xnu execsw 符号或将废弃
-                    </a>
-                </h3>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p>逆向 macOS14 xnu 内核时，发现一个较大的变化：内核 execsw 符号已不再使用。</p>
 
-                <div class="home-article-content markdown-body">
-                    
-                        <p>逆向 macOS14 xnu 内核时，发现一个较大的变化：内核 execsw 符号已不再使用。</p>
+                        
+                    </div>
 
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
+                    <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
         <span><i class="fa-solid fa-calendars"></i>&nbsp;
             <span class="home-article-date" data-date="Sat Jul 22 2023 12:00:00 GMT+0800">
@@ -784,6 +1014,7 @@
     <a href="/2023/075ef6acf1.html">Read more<span class="seo-reader-text">macOS xnu execsw 符号或将废弃</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
             </li>
         
             <li class="home-article-item">
@@ -793,21 +1024,21 @@
                 
 
                 
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2023/078d2ace36.html">
+                            macOS 应用内更新检查
+                        </a>
+                    </h3>
 
-                <h3 class="home-article-title">
-                    <a href="/2023/078d2ace36.html">
-                        macOS 应用内更新检查
-                    </a>
-                </h3>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p>macOS 应用开发小技巧：基于 Github 托管平台实现应用内更新检查。</p>
 
-                <div class="home-article-content markdown-body">
-                    
-                        <p>macOS 应用开发小技巧：基于 Github 托管平台实现应用内更新检查。</p>
+                        
+                    </div>
 
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
+                    <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
         <span><i class="fa-solid fa-calendars"></i>&nbsp;
             <span class="home-article-date" data-date="Sat Jul 15 2023 12:00:00 GMT+0800">
@@ -856,6 +1087,7 @@
     <a href="/2023/078d2ace36.html">Read more<span class="seo-reader-text">macOS 应用内更新检查</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
             </li>
         
             <li class="home-article-item">
@@ -865,21 +1097,21 @@
                 
 
                 
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2023/07f5dbd820.html">
+                            macOS 应用程序坞和菜单栏设置
+                        </a>
+                    </h3>
 
-                <h3 class="home-article-title">
-                    <a href="/2023/07f5dbd820.html">
-                        macOS 应用程序坞和菜单栏设置
-                    </a>
-                </h3>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p>macOS 应用开发小技巧：应用窗口关闭后重新显示、自定义程序坞应用图标状态、设置桌面右上角常驻菜单栏。</p>
 
-                <div class="home-article-content markdown-body">
-                    
-                        <p>macOS 应用开发小技巧：应用窗口关闭后重新显示、自定义程序坞应用图标状态、设置桌面右上角常驻菜单栏。</p>
+                        
+                    </div>
 
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
+                    <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
         <span><i class="fa-solid fa-calendars"></i>&nbsp;
             <span class="home-article-date" data-date="Sun Jul 09 2023 12:13:25 GMT+0800">
@@ -933,6 +1165,7 @@
     <a href="/2023/07f5dbd820.html">Read more<span class="seo-reader-text">macOS 应用程序坞和菜单栏设置</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
             </li>
         
             <li class="home-article-item">
@@ -942,21 +1175,21 @@
                 
 
                 
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2023/06b81ddf97.html">
+                            macOS 修改 MachO 文件实现动态库注入（三）
+                        </a>
+                    </h3>
 
-                <h3 class="home-article-title">
-                    <a href="/2023/06b81ddf97.html">
-                        macOS 修改 MachO 文件实现动态库注入（三）
-                    </a>
-                </h3>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p>通过在 Mach-o 文件中插入 Load Commands 指令实现动态库注入的方法有一定局限性，因为如果没有足够的空白的空间，则不便插入新指令。本文讲解在不新增 Load Commands 指令的前提下实现自定义动态库的注入。</p>
 
-                <div class="home-article-content markdown-body">
-                    
-                        <p>通过在 Mach-o 文件中插入 Load Commands 指令实现动态库注入的方法有一定局限性，因为如果没有足够的空白的空间，则不便插入新指令。本文讲解在不新增 Load Commands 指令的前提下实现自定义动态库的注入。</p>
+                        
+                    </div>
 
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
+                    <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
         <span><i class="fa-solid fa-calendars"></i>&nbsp;
             <span class="home-article-date" data-date="Mon Jun 26 2023 15:12:57 GMT+0800">
@@ -1010,6 +1243,7 @@
     <a href="/2023/06b81ddf97.html">Read more<span class="seo-reader-text">macOS 修改 MachO 文件实现动态库注入（三）</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
             </li>
         
             <li class="home-article-item">
@@ -1019,21 +1253,21 @@
                 
 
                 
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2023/06f5037cc5.html">
+                            macOS 修改 MachO 文件实现动态库注入（二）
+                        </a>
+                    </h3>
 
-                <h3 class="home-article-title">
-                    <a href="/2023/06f5037cc5.html">
-                        macOS 修改 MachO 文件实现动态库注入（二）
-                    </a>
-                </h3>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p>macOS 上大部分 Mach-o 文件是多架构的。了解如何修改单架构二进制文件后，还需进一步实现多架构 Mach-o 文件 Load Commands 指令的插入方法。</p>
 
-                <div class="home-article-content markdown-body">
-                    
-                        <p>macOS 上大部分 Mach-o 文件是多架构的。了解如何修改单架构二进制文件后，还需进一步实现多架构 Mach-o 文件 Load Commands 指令的插入方法。</p>
+                        
+                    </div>
 
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
+                    <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
         <span><i class="fa-solid fa-calendars"></i>&nbsp;
             <span class="home-article-date" data-date="Sun Jun 25 2023 15:12:57 GMT+0800">
@@ -1087,6 +1321,7 @@
     <a href="/2023/06f5037cc5.html">Read more<span class="seo-reader-text">macOS 修改 MachO 文件实现动态库注入（二）</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
             </li>
         
             <li class="home-article-item">
@@ -1096,21 +1331,21 @@
                 
 
                 
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2023/0686aa5ea2.html">
+                            macOS 修改 Mach-o 文件实现动态库注入（一）
+                        </a>
+                    </h3>
 
-                <h3 class="home-article-title">
-                    <a href="/2023/0686aa5ea2.html">
-                        macOS 修改 Mach-o 文件实现动态库注入（一）
-                    </a>
-                </h3>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p>开启 SIP 的机器上可能无法使用环境变量注入动态库。这里讲解修改单架构 Mach-o 文件，通过插入 Load Commands 指令的方式，实现自定义动态库的注入。</p>
 
-                <div class="home-article-content markdown-body">
-                    
-                        <p>开启 SIP 的机器上可能无法使用环境变量注入动态库。这里讲解修改单架构 Mach-o 文件，通过插入 Load Commands 指令的方式，实现自定义动态库的注入。</p>
+                        
+                    </div>
 
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
+                    <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
         <span><i class="fa-solid fa-calendars"></i>&nbsp;
             <span class="home-article-date" data-date="Sun Jun 25 2023 13:12:57 GMT+0800">
@@ -1164,6 +1399,7 @@
     <a href="/2023/0686aa5ea2.html">Read more<span class="seo-reader-text">macOS 修改 Mach-o 文件实现动态库注入（一）</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
             </li>
         
             <li class="home-article-item">
@@ -1173,21 +1409,21 @@
                 
 
                 
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2023/0676d00749.html">
+                            macOS Hook 系统调用
+                        </a>
+                    </h3>
 
-                <h3 class="home-article-title">
-                    <a href="/2023/0676d00749.html">
-                        macOS Hook 系统调用
-                    </a>
-                </h3>
+                    <div class="home-article-content markdown-body">
+                        
+                            <p>使用 Apple 提供的 dyld-interposing 方法，实现 macOS 系统调用的钩子。</p>
 
-                <div class="home-article-content markdown-body">
-                    
-                        <p>使用 Apple 提供的 dyld-interposing 方法，实现 macOS 系统调用的钩子。</p>
+                        
+                    </div>
 
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
+                    <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
         <span><i class="fa-solid fa-calendars"></i>&nbsp;
             <span class="home-article-date" data-date="Sat Jun 24 2023 13:12:57 GMT+0800">
@@ -1241,11 +1477,12 @@
     <a href="/2023/0676d00749.html">Read more<span class="seo-reader-text">macOS Hook 系统调用</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
 </div>
 
+                </div>
             </li>
         
     </ul>
 
-    <div class="home-paginator">
+    <div class="home-paginator px-7 py-5">
         <div class="paginator">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa-regular fa-angle-right"></i></a>
 </div>
@@ -1272,10 +1509,23 @@
               <span>2022</span>
               -
             
-            2023&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">孙康</a>
+            2024&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">孙康</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        13 posts in total
+                    </span>
+                    
+                        <span>
+                            14.5k words in total
+                        </span>
+                    
+                </p>
+            
         </div>
         
-            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
             <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
                 
                     <span id="busuanzi_container_site_uv" class="lg:!block">
@@ -1293,7 +1543,7 @@
         
         <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
             <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
-            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.5.0</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.6.1</a></span>
         </div>
         
         
@@ -1504,11 +1754,10 @@
 
 
 
+
+
 <div class="post-scripts" data-swup-reload-script>
     
-        
-<script src="/js/libs/anime.min.js"></script>
-
         
 <script src="/js/tools/tocToggle.js" type="module"></script>
 
