@@ -13,27 +13,28 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="https://ConradSun.github.io/2023/08647ac6c0.html"/>
+    <link rel="canonical" href="https://ConradSun.github.io/2024/0560b05398.html"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="使用 NSPasteboard 类提供的各项方法实现对系统通用剪切板的查看和控制。在剪切板数据变更时获取当前拷贝的数据内容，根据需要修改或者删除相关类型的数据。">
+        <meta name="description" content="Windows 绕过主机安全应用的检查，有时候可以简单通过将恶意工具或者系统工具改名实现。为了提高绕过成本，可以借助 PE 文件的原始文件名属性辅助分析。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="macOS 剪切板数据查看与修改">
-<meta property="og:url" content="https://conradsun.github.io/2023/08647ac6c0.html">
+<meta property="og:title" content="Windows 二进制原始文件名获取">
+<meta property="og:url" content="https://conradsun.github.io/2024/0560b05398.html">
 <meta property="og:site_name" content="康的个人博客">
-<meta property="og:description" content="使用 NSPasteboard 类提供的各项方法实现对系统通用剪切板的查看和控制。在剪切板数据变更时获取当前拷贝的数据内容，根据需要修改或者删除相关类型的数据。">
+<meta property="og:description" content="Windows 绕过主机安全应用的检查，有时候可以简单通过将恶意工具或者系统工具改名实现。为了提高绕过成本，可以借助 PE 文件的原始文件名属性辅助分析。">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://conradsun.github.io/images/article-pics/Pasteboard-items.png">
-<meta property="article:published_time" content="2023-08-20T11:57:41.000Z">
-<meta property="article:modified_time" content="2023-08-31T11:55:48.946Z">
+<meta property="og:image" content="https://conradsun.github.io/images/article-pics/OriginalName-PEview.png">
+<meta property="og:image" content="https://conradsun.github.io/images/article-pics/OriginalName-prop.png">
+<meta property="article:published_time" content="2024-05-12T04:00:00.000Z">
+<meta property="article:modified_time" content="2024-05-13T02:43:33.754Z">
 <meta property="article:author" content="ConradSun">
-<meta property="article:tag" content="macOS">
-<meta property="article:tag" content="剪切板">
-<meta property="article:tag" content="pasteboard">
+<meta property="article:tag" content="Windows">
+<meta property="article:tag" content="原始文件名">
+<meta property="article:tag" content="OriginalFilename">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://conradsun.github.io/images/article-pics/Pasteboard-items.png">
+<meta name="twitter:image" content="https://conradsun.github.io/images/article-pics/OriginalName-PEview.png">
     
     
     <!--- Icon Part-->
@@ -45,7 +46,7 @@
     
     <title>
         
-            macOS 剪切板数据查看与修改 -
+            Windows 二进制原始文件名获取 -
         
         Kang&#39;s Blog
     </title>
@@ -556,7 +557,7 @@
         <div class="article-title relative w-full">
             
                 <div class="w-full flex items-center pt-6 justify-start">
-                    <h1 class="article-title-regular text-second-text-color text-4xl md:text-6xl font-bold px-2 sm:px-6 md:px-8 py-3">macOS 剪切板数据查看与修改</h1>
+                    <h1 class="article-title-regular text-second-text-color text-4xl md:text-6xl font-bold px-2 sm:px-6 md:px-8 py-3">Windows 二进制原始文件名获取</h1>
                 </div>
             
             </div>
@@ -575,15 +576,15 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
-        <span class="desktop">2023-08-20 19:57:41</span>
-        <span class="mobile">2023-08-20 19:57:41</span>
+        <span class="desktop">2024-05-12 12:00</span>
+        <span class="mobile">2024-05-12 12:00</span>
         <span class="hover-info">Created</span>
     </span>
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-08-31 19:55:48</span>
-            <span class="mobile">2023-08-31 19:55:48</span>
+            <span class="desktop">2024-05-13 10:43:33</span>
+            <span class="mobile">2024-05-13 10:43:33</span>
             <span class="hover-info">Updated</span>
         </span>
     
@@ -597,7 +598,7 @@
                     
                         
                         <li>
-                            <a href="/categories/macOS%E5%BC%80%E5%8F%91/">macOS开发</a>&nbsp;
+                            <a href="/categories/Windows%E5%BC%80%E5%8F%91/">Windows开发</a>&nbsp;
                         </li>
                     
                     
@@ -611,15 +612,15 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/macOS/">macOS</a>&nbsp;
+                        <a href="/tags/Windows/">Windows</a>&nbsp;
                     </li>
                 
                     <li>
-                        | <a href="/tags/%E5%89%AA%E5%88%87%E6%9D%BF/">剪切板</a>&nbsp;
+                        | <a href="/tags/%E5%8E%9F%E5%A7%8B%E6%96%87%E4%BB%B6%E5%90%8D/">原始文件名</a>&nbsp;
                     </li>
                 
                     <li>
-                        | <a href="/tags/pasteboard/">pasteboard</a>&nbsp;
+                        | <a href="/tags/OriginalFilename/">OriginalFilename</a>&nbsp;
                     </li>
                 
             </ul>
@@ -629,12 +630,12 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>1k Words</span>
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>1.6k Words</span>
         </span>
     
     
         <span class="article-min2read article-meta-item">
-            <i class="fa-regular fa-clock"></i>&nbsp;<span>4 Mins</span>
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>7 Mins</span>
         </span>
     
     
@@ -653,24 +654,30 @@
 
 
         <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
-            <p>macOS 系统没有内置的剪切板查看器，这对普通用户实际并没有什么影响，多数时候 <code>⌘ + C</code> 和 <code>⌘ + V</code> 就够用了。但对于一些开发者群体，可能需要查看当前拷贝内容的格式及数据是否正确，或者使用特定格式的数据完成某项工作，那么没有剪切板查看器会严重影响工作效率。<a class="link"   target="_blank" rel="noopener" href="https://github.com/ConradSun/PasteShow" >PasteShow <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 是一款开源的系统剪切板查看器，本文展示的代码源于该项目。</p>
-<p>macOS 实现一款剪切板查看器是不难的，借助 <a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/appkit" >AppKit <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 提供的 <a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/appkit/nspasteboard" >NSPasteboard <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 类可以很轻松的实现。系统标准剪切板分为几类，包括 general、font、ruler、find、drag，不同剪切板名称的含义请查看官方文档 <a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/appkit/nspasteboard/name" >NSPasteboard.Name <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，这里我们只涉及用于执行普通剪切、复制、粘贴操作的通用剪切板。</p>
-<h3 id="检查数据变更"><a href="#检查数据变更" class="headerlink" title="检查数据变更"></a>检查数据变更</h3><p>在获取剪切板最新拷贝内容之前，需要知道内容更新的时机。macOS 系统并没有提供一种通知机制可以让开发者知道何时剪切板发生了变更事件，所以这里我们只能使用定时器轮询，检查剪切板是否发生数据变更。</p>
-<div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">CopiedInfo</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> changeCount <span class="operator">=</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">var</span> copiedItems <span class="operator">=</span> [[<span class="type">String</span>: <span class="type">Data</span>]]()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PasteboardManager</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> shared <span class="operator">=</span> <span class="type">PasteboardManager</span>()</span><br><span class="line">    <span class="keyword">var</span> copiedInfo <span class="operator">=</span> <span class="type">CopiedInfo</span>()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">let</span> pasteboard <span class="operator">=</span> <span class="type">NSPasteboard</span>.general</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> observerTimer <span class="operator">=</span> <span class="type">Timer</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">init</span>() &#123;</span><br><span class="line">        setupObserverTimer()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">setupObserverTimer</span>() &#123;</span><br><span class="line">        observerTimer <span class="operator">=</span> <span class="type">Timer</span>.scheduledTimer(withTimeInterval: <span class="number">0.25</span>, repeats: <span class="literal">true</span>, block: &#123; [<span class="keyword">self</span>] <span class="keyword">_</span> <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">guard</span> copiedInfo.changeCount <span class="operator">!=</span> pasteboard.changeCount <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            onPasteboardChanged()</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>这里设置了一个定时器，0.25s 触发一次，用于检查剪切板数据是否发生变更。是否发生变更很好判断，检查保存的 <code>changeCount</code> 是否和剪切板当前的变更次数一致即可。如果不一致则表明定时器间隔时间内发生了剪切或者复制事件。然后获取剪切板中存储的待粘贴数据。</p>
-<h3 id="获取待粘贴数据"><a href="#获取待粘贴数据" class="headerlink" title="获取待粘贴数据"></a>获取待粘贴数据</h3><div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">onPasteboardChanged</span>() &#123;</span><br><span class="line">    copiedInfo.copiedItems.removeAll()</span><br><span class="line">    copiedInfo.changeCount <span class="operator">=</span> pasteboard.changeCount</span><br><span class="line"></span><br><span class="line">    <span class="keyword">guard</span> pasteboard.pasteboardItems <span class="operator">!=</span> <span class="literal">nil</span> <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> pasteboard.pasteboardItems<span class="operator">!</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> itemInfo <span class="operator">=</span> [<span class="type">String</span>: <span class="type">Data</span>]()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> type <span class="keyword">in</span> item.types &#123;</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">let</span> value <span class="operator">=</span> item.data(forType: type) &#123;</span><br><span class="line">                itemInfo[type.rawValue] <span class="operator">=</span> value</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        copiedInfo.copiedItems.append(itemInfo)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>使用 <code>data(forType:)</code> 接口可以获取指定类型的剪切板数据，至此待粘贴的所有类型的数据全部获取到了。如果把剪切板数据简单作为字符串打印显示，可以将使用的接口换成 <code>string(forType:)</code>，这将强制返回 <code>String</code> 类型的数据。如果需要显示带格式的数据，则需要绘制界面。</p>
-<h3 id="修改剪切板存储的数据"><a href="#修改剪切板存储的数据" class="headerlink" title="修改剪切板存储的数据"></a>修改剪切板存储的数据</h3><p>NSPasteboard 不仅提供了剪切板数据读取接口，也提供了数据设置接口。<strong>不过在修改（增加或者删除同理）数据前需将剪切板存储的数据全部清空，否则设置无法成功</strong>。此处为本人实际操作发现，没看到官方文档对此有说明，读者可自行尝试。下面举例说明删除某项数据的代码实现。</p>
-<div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">removeDataWithReserve</span>(<span class="params">data</span>: <span class="type">Data</span>, <span class="params">forType</span> <span class="params">type</span>: <span class="type">String</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> pasteItems <span class="operator">=</span> [<span class="type">NSPasteboardItem</span>]()</span><br><span class="line">    pasteboard.clearContents()</span><br><span class="line">    <span class="keyword">for</span> items <span class="keyword">in</span> copiedInfo.copiedItems &#123;</span><br><span class="line">        <span class="keyword">let</span> pasteItem <span class="operator">=</span> <span class="type">NSPasteboardItem</span>()</span><br><span class="line">        <span class="keyword">for</span> pair <span class="keyword">in</span> items &#123;</span><br><span class="line">            <span class="keyword">if</span> pair.key <span class="operator">==</span> type <span class="operator">&amp;&amp;</span> pair.value <span class="operator">==</span> data &#123;</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">            pasteItem.setData(pair.value, forType: <span class="type">NSPasteboard</span>.<span class="type">PasteboardType</span>(pair.key))</span><br><span class="line">        &#125;</span><br><span class="line">        pasteItems.append(pasteItem)</span><br><span class="line">    &#125;</span><br><span class="line">    pasteboard.writeObjects(pasteItems)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>实际上删除某项数据仅仅是清空所有数据，然后把不需要删除的数据添加回去。这里调用了两个接口：<code>setData(_:forType:)</code>、<code>writeObjects()</code>。虽然大多数情况下一次复制或者剪切的数据是一项（如复制一段文字、网页、图片等），一项数据内包含多个格式的数据，但类似一次复制多项文件（使用 <code>⌘</code> 或 <code>⇪</code> 多选）的情况，剪切板会设置多项数据，如下图所示。所以这里需要把各个项目的剪切板数据使用 <code>setData(_:forType:)</code> 接口设置完毕，再使用 <code>writeObjects()</code> 接口将所有项目的数据添加到剪切板。<br><figure class="image-caption"><img  
+            <p>在黑客攻击终端主机时，为绕过主机上 EDR 等防护软件的检测识别，可能会将恶意文件更名为主机上系统文件，如果防护软件针对该文件名做了白名单，则可能存在绕过风险。另外，为避免防护软件对危险进程的识别，如禁止 Windows 主机 PowerShell 等进程创建子进程，则可能将 PowerShell 二进制文件更名后启动，以绕过检测。</p>
+<h3 id="原始文件名属性介绍"><a href="#原始文件名属性介绍" class="headerlink" title="原始文件名属性介绍"></a>原始文件名属性介绍</h3><p>PE (Portable Executable) 文件是 Windows 操作系统中用于可执行文件、对象代码和动态链接库的文件格式。原始文件名属性位于 PE 文件的 rsrc section，属性定位的关键字是<code>OriginalFilename</code>，如下图所示，即 PEview.exe 文件的原始文件名属性定位。由于属性的存储方式是宽字符，所以每个字符占两个字节。<br><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/images/article-pics/Pasteboard-items.png"
-                      alt="同时拷贝多个文件"
-                ><figcaption>同时拷贝多个文件</figcaption></figure></p>
+                     data-src="/images/article-pics/OriginalName-PEview.png"
+                      alt="PEview.exe原始文件名"
+                ><figcaption>PEview.exe原始文件名</figcaption></figure> </p>
+<p>当然该属性也可以使用属性窗口查看，如果原始文件名的属性有定义，则会有如下的显示。<br><figure class="image-caption"><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/article-pics/OriginalName-prop.png"
+                      alt="PEview.exe原始文件名"
+                ><figcaption>PEview.exe原始文件名</figcaption></figure></p>
+<p>因为原始文件名属性存放在二进制文件中，所以不受文件下载、拷贝、移动、重命名等常规操作的影响，可以标识二进制的来源，维护版本的一致性。经过统计，约 90% 的系统二进制含原始文件名属性，所以基于原始文件名进行威胁检测识别是可行的。</p>
+<h3 id="使用-API-获取原始文件名"><a href="#使用-API-获取原始文件名" class="headerlink" title="使用 API 获取原始文件名"></a>使用 API 获取原始文件名</h3><p>使用 Windows API 可以方便地获取二进制原始文件名，API 使用需要链接系统库<code>version.lib</code>。步骤比较简单，需要注意的是，<code>Translation</code>查询的目的是获取文件版本信息资源中的翻译表，包含系列的语言和字符集组合。在获取翻译表后，代码使用翻译表的第一个语言-字符集组合来构建查询信息。翻译表并非是固定的或者和系统相关的，需每次查询原始文件名之前都查询一次。如果翻译表硬编码导致与实际不匹配，则会导致原始文件名查询失败。</p>
+<div class="highlight-container" data-rel="C++"><figure class="iseeu highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">getOriginalFileNameByAPI</span><span class="params">(<span class="type">const</span> std::string&amp; strFilePath, std::string&amp; strOriginalName)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (strFilePath.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	DWORD dwHandle = <span class="number">0</span>;</span><br><span class="line">	DWORD dwDataSize = <span class="built_in">GetFileVersionInfoSizeA</span>(strFilePath.<span class="built_in">c_str</span>(), &amp;dwHandle);</span><br><span class="line">	<span class="keyword">if</span> (dwDataSize == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function">std::unique_ptr&lt;BYTE[]&gt; <span class="title">pVersionData</span><span class="params">(<span class="keyword">new</span> (std::nothrow) BYTE[dwDataSize])</span></span>;</span><br><span class="line">	<span class="keyword">if</span> (!pVersionData) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!<span class="built_in">GetFileVersionInfoA</span>(strFilePath.<span class="built_in">c_str</span>(), dwHandle, dwDataSize, pVersionData.<span class="built_in">get</span>())) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	UINT iQuerySize = <span class="number">0</span>;</span><br><span class="line">	DWORD* pTransTable = <span class="literal">nullptr</span>;</span><br><span class="line">	<span class="type">const</span> <span class="type">char</span>* szQueryTrans = <span class="string">&quot;\\VarFileInfo\\Translation&quot;</span>;</span><br><span class="line">	<span class="keyword">if</span> (!<span class="built_in">VerQueryValueA</span>(pVersionData.<span class="built_in">get</span>(), szQueryTrans, <span class="built_in">reinterpret_cast</span>&lt;LPVOID*&gt;(&amp;pTransTable), &amp;iQuerySize) || iQuerySize == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	DWORD dwLangCharset = <span class="built_in">MAKELONG</span>(<span class="built_in">HIWORD</span>(pTransTable[<span class="number">0</span>]), <span class="built_in">LOWORD</span>(pTransTable[<span class="number">0</span>]));</span><br><span class="line">	<span class="type">char</span> szSubBlock[<span class="number">50</span>];</span><br><span class="line">	<span class="built_in">sprintf_s</span>(szSubBlock, <span class="string">&quot;\\StringFileInfo\\%08lx\\OriginalFileName&quot;</span>, dwLangCharset);</span><br><span class="line"></span><br><span class="line">	LPVOID lpData = <span class="literal">nullptr</span>;</span><br><span class="line">	<span class="keyword">if</span> (!<span class="built_in">VerQueryValueA</span>(pVersionData.<span class="built_in">get</span>(), szSubBlock, &amp;lpData, &amp;iQuerySize) || iQuerySize == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	strOriginalName = std::<span class="built_in">string</span>(<span class="built_in">static_cast</span>&lt;LPSTR&gt;(lpData)).<span class="built_in">c_str</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="手动解析-PE-文件获取原始文件名"><a href="#手动解析-PE-文件获取原始文件名" class="headerlink" title="手动解析 PE 文件获取原始文件名"></a>手动解析 PE 文件获取原始文件名</h3><p>既然原始文件名属性存储在二进制的资源区，那么就可以通过手动解析 PE 文件获取该属性。手动解析相比调用 API 步骤要繁琐一些：首先对打开的文件句柄创建内存映射，以便提升文件内容读取的访问速度并降低内存占用；然后检查文件的 DOS 和 NT 头，判断文件是否为有效的 PE 文件；然后定位资源区，根据标识定位原始文件名所在区域；最后提取原始文件名并将其由宽字符串转化为 UTF-8 格式的字符串。</p>
+<div class="highlight-container" data-rel="C++"><figure class="iseeu highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> ORIGINAL_FILENAME	<span class="string">L&quot;OriginalFilename&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ORI_FILENAME_SIZE	17</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PE_RSRCNAME			<span class="string">&quot;.rsrc&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">getOriginalFileName</span><span class="params">(<span class="type">const</span> std::string &amp;strFilePath, std::string &amp;strOriginalName)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// Custom deleter for HANDLE</span></span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">HandleDeleter</span> &#123;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">(HANDLE handle)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">if</span> (handle != <span class="literal">NULL</span> &amp;&amp; handle != INVALID_HANDLE_VALUE) &#123;</span><br><span class="line">				<span class="built_in">CloseHandle</span>(handle);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Custom deleter for memory-mapped file view</span></span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">MapViewDeleter</span> &#123;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">(LPVOID ptr)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">if</span> (ptr != <span class="literal">NULL</span>) &#123;</span><br><span class="line">				<span class="built_in">UnmapViewOfFile</span>(ptr);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Use smart pointers with custom deleters for automatic resource management</span></span><br><span class="line">	<span class="function">std::unique_ptr&lt;<span class="type">void</span>, HandleDeleter&gt; <span class="title">hFile</span><span class="params">(CreateFileA(strFilePath.c_str(), GENERIC_READ, FILE_SHARE_READ, <span class="literal">NULL</span>, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, <span class="literal">NULL</span>), HandleDeleter())</span></span>;</span><br><span class="line">	<span class="keyword">if</span> (hFile.<span class="built_in">get</span>() == INVALID_HANDLE_VALUE) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function">std::unique_ptr&lt;<span class="type">void</span>, HandleDeleter&gt; <span class="title">hFileMapping</span><span class="params">(CreateFileMappingA(hFile.get(), <span class="literal">NULL</span>, PAGE_READONLY, <span class="number">0</span>, <span class="number">0</span>, <span class="literal">NULL</span>), HandleDeleter())</span></span>;</span><br><span class="line">	<span class="keyword">if</span> (hFileMapping.<span class="built_in">get</span>() == <span class="literal">NULL</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function">std::unique_ptr&lt;<span class="type">void</span>, MapViewDeleter&gt; <span class="title">lpBaseAddress</span><span class="params">(MapViewOfFile(hFileMapping.get(), FILE_MAP_READ, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>), MapViewDeleter())</span></span>;</span><br><span class="line">	<span class="keyword">if</span> (lpBaseAddress.<span class="built_in">get</span>() == <span class="literal">NULL</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Check the DOS and NT header</span></span><br><span class="line">	PIMAGE_DOS_HEADER dosHeader = <span class="built_in">reinterpret_cast</span>&lt;PIMAGE_DOS_HEADER&gt;(lpBaseAddress.<span class="built_in">get</span>());</span><br><span class="line">	<span class="keyword">if</span> (dosHeader-&gt;e_magic != IMAGE_DOS_SIGNATURE) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	PIMAGE_NT_HEADERS ntHeaders = <span class="built_in">reinterpret_cast</span>&lt;PIMAGE_NT_HEADERS&gt;(<span class="built_in">reinterpret_cast</span>&lt;BYTE *&gt;(</span><br><span class="line">		lpBaseAddress.<span class="built_in">get</span>()) + dosHeader-&gt;e_lfanew);</span><br><span class="line">	<span class="keyword">if</span> (ntHeaders-&gt;Signature != IMAGE_NT_SIGNATURE) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	PIMAGE_SECTION_HEADER sectionHeaders = <span class="built_in">IMAGE_FIRST_SECTION</span>(ntHeaders);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Find the .rsrc section by VirtualAddress</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; ntHeaders-&gt;FileHeader.NumberOfSections; ++i) &#123;</span><br><span class="line">		PIMAGE_SECTION_HEADER sectionHeader = &amp;sectionHeaders[i];</span><br><span class="line">		<span class="keyword">if</span> (<span class="built_in">strncmp</span>(<span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> <span class="type">char</span> *&gt;(sectionHeader-&gt;Name), PE_RSRCNAME, IMAGE_SIZEOF_SHORT_NAME) == <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="comment">// Search for the originalFilename in the .rsrc section</span></span><br><span class="line">			DWORD dwRsrcOffset = sectionHeader-&gt;PointerToRawData;</span><br><span class="line">			<span class="type">const</span> BYTE *pRsrcBegin = <span class="built_in">reinterpret_cast</span>&lt;BYTE *&gt;(lpBaseAddress.<span class="built_in">get</span>()) + dwRsrcOffset;</span><br><span class="line">			<span class="type">const</span> BYTE *pRsrcEnd = pRsrcBegin + sectionHeader-&gt;SizeOfRawData;</span><br><span class="line">			<span class="type">const</span> BYTE *pFound = std::<span class="built_in">search</span>(pRsrcBegin, pRsrcEnd, <span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> BYTE *&gt;(ORIGINAL_FILENAME),</span><br><span class="line">				<span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> BYTE *&gt;(ORIGINAL_FILENAME) + ORI_FILENAME_SIZE * <span class="built_in">sizeof</span>(<span class="type">wchar_t</span>));</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (pFound != pRsrcEnd &amp;&amp; (pFound - <span class="built_in">sizeof</span>(<span class="type">wchar_t</span>) * <span class="number">2</span>) &gt;= pRsrcBegin) &#123;</span><br><span class="line">				<span class="comment">// Found the skip size and name length</span></span><br><span class="line">				<span class="type">const</span> <span class="type">wchar_t</span> *ptrSkip = <span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> <span class="type">wchar_t</span> *&gt;(pFound - <span class="built_in">sizeof</span>(<span class="type">wchar_t</span>) * <span class="number">1</span>);</span><br><span class="line">				<span class="type">const</span> <span class="type">wchar_t</span> *ptrLength = <span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> <span class="type">wchar_t</span> *&gt;(pFound - <span class="built_in">sizeof</span>(<span class="type">wchar_t</span>) * <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">				<span class="comment">// Skip the key to get to the value</span></span><br><span class="line">				<span class="type">const</span> <span class="type">wchar_t</span> *ptrName = <span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> <span class="type">wchar_t</span> *&gt;(</span><br><span class="line">					pFound + (ORI_FILENAME_SIZE - <span class="number">1</span> + *ptrSkip) * <span class="built_in">sizeof</span>(<span class="type">wchar_t</span>));</span><br><span class="line"></span><br><span class="line">				<span class="comment">// Convert the wstring to string and assign it to originalName</span></span><br><span class="line">				<span class="function">std::wstring <span class="title">wstrName</span><span class="params">(ptrName, *ptrLength)</span></span>;</span><br><span class="line">				<span class="type">int</span> iSize = <span class="built_in">WideCharToMultiByte</span>(CP_UTF8, <span class="number">0</span>, wstrName.<span class="built_in">data</span>(), wstrName.<span class="built_in">size</span>(), <span class="literal">NULL</span>, <span class="number">0</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">				strOriginalName.<span class="built_in">resize</span>(iSize);</span><br><span class="line">				<span class="built_in">WideCharToMultiByte</span>(CP_UTF8, <span class="number">0</span>, wstrName.<span class="built_in">data</span>(), wstrName.<span class="built_in">size</span>(), &amp;strOriginalName[<span class="number">0</span>], iSize, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="检查文件名是否发生篡改"><a href="#检查文件名是否发生篡改" class="headerlink" title="检查文件名是否发生篡改"></a>检查文件名是否发生篡改</h3><p>获取到原始文件名之后，可以以此分析当前二进制文件名是否发生篡改。经过对 Windows 系统二进制的分析，发现绝大多数二进制的文件名和原始文件名匹配，但需要经过一些匹配条件的过滤。如下代码进行了系列过滤：忽略大小写的影响；忽略原始文件名.mui 后缀；忽略原始文件名的前后<code>&quot;</code>号；原始文件名<code>.dynlink</code>后缀等价于<code>.dll</code>； 忽略原始文件名不带后缀。</p>
+<div class="highlight-container" data-rel="C++"><figure class="iseeu highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">checkNameMatch</span><span class="params">(std::string strFileName, std::string strOriginalName)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	std::<span class="built_in">transform</span>(strFileName.<span class="built_in">begin</span>(), strFileName.<span class="built_in">end</span>(), strFileName.<span class="built_in">begin</span>(), ::tolower);</span><br><span class="line">	std::<span class="built_in">transform</span>(strOriginalName.<span class="built_in">begin</span>(), strOriginalName.<span class="built_in">end</span>(), strOriginalName.<span class="built_in">begin</span>(), ::tolower);</span><br><span class="line"></span><br><span class="line">	strOriginalName = strOriginalName.<span class="built_in">substr</span>(<span class="number">0</span>, strOriginalName.<span class="built_in">find</span>(<span class="string">&quot;.mui&quot;</span>));</span><br><span class="line">	<span class="keyword">if</span> (strOriginalName.<span class="built_in">front</span>() == <span class="string">&#x27;&quot;&#x27;</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		strOriginalName.<span class="built_in">erase</span>(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">		strOriginalName.<span class="built_in">pop_back</span>();</span><br><span class="line">	&#125;</span><br><span class="line">	strOriginalName = strOriginalName.<span class="built_in">substr</span>(<span class="number">0</span>, strOriginalName.<span class="built_in">find</span>(<span class="string">&quot;.dynlink&quot;</span>));</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (strFileName == strOriginalName || strFileName.<span class="built_in">find</span>(strOriginalName.<span class="built_in">c_str</span>()) == <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>上述的过滤步骤不可任意调换，因为有类似<code>&quot;Abc.dynlink&quot;.MUI</code>的原始文件名，其真实名称为<code>abc.dll</code>。Windows 开发规范并没有要求第三方开发者开发的二进制必须实现原始文件名属性，所以以上的篡改识别方案并不具有普适性，针对的主要是系统二进制。</p>
 
         </div>
 
@@ -678,18 +685,18 @@
             <div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
                 <div class="article-copyright-info-container">
     <ul>
-        <li><strong>Title:</strong> macOS 剪切板数据查看与修改</li>
+        <li><strong>Title:</strong> Windows 二进制原始文件名获取</li>
         <li><strong>Author:</strong> 孙康</li>
         <li><strong>Created at
-                :</strong> 2023-08-20 19:57:41</li>
+                :</strong> 2024-05-12 12:00:00</li>
         
             <li>
                 <strong>Updated at
-                    :</strong> 2023-08-31 19:55:48
+                    :</strong> 2024-05-13 10:43:33
             </li>
         
         <li>
-            <strong>Link:</strong> https://conradsun.github.io/2023/08647ac6c0.html
+            <strong>Link:</strong> https://conradsun.github.io/2024/0560b05398.html
         </li>
         <li>
             <strong>
@@ -711,15 +718,15 @@
             <ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
                 
                     <li class="tag-item mx-0.5">
-                        <a href="/tags/macOS/">#macOS</a>&nbsp;
+                        <a href="/tags/Windows/">#Windows</a>&nbsp;
                     </li>
                 
                     <li class="tag-item mx-0.5">
-                        <a href="/tags/%E5%89%AA%E5%88%87%E6%9D%BF/">#剪切板</a>&nbsp;
+                        <a href="/tags/%E5%8E%9F%E5%A7%8B%E6%96%87%E4%BB%B6%E5%90%8D/">#原始文件名</a>&nbsp;
                     </li>
                 
                     <li class="tag-item mx-0.5">
-                        <a href="/tags/pasteboard/">#pasteboard</a>&nbsp;
+                        <a href="/tags/OriginalFilename/">#OriginalFilename</a>&nbsp;
                     </li>
                 
             </ul>
@@ -730,29 +737,14 @@
         
             <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
                 
-                    <div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
-                        <a class="prev"
-                        rel="prev"
-                        href="/2023/09e9decc83.html"
-                        >
-                            <span class="left arrow-icon flex justify-center items-center">
-                                <i class="fa-solid fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">SwiftUI 入门之 NavigationSplitView 应用</span>
-                                <span class="post-nav-item">Prev posts</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
                         <a class="next"
                         rel="next"
-                        href="/2023/0734337142.html"
+                        href="/2023/09e9decc83.html"
                         >
                             <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">汇编语言入门之 call 指令</span>
+                                <span class="post-nav-title-item">SwiftUI 入门之 NavigationSplitView 应用</span>
                                 <span class="post-nav-item">Next posts</span>
                             </span>
                             <span class="right arrow-icon flex justify-center items-center">
@@ -827,8 +819,8 @@
             <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">On this page</div>
-        <div class="page-title">macOS 剪切板数据查看与修改</div>
-        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E6%95%B0%E6%8D%AE%E5%8F%98%E6%9B%B4"><span class="nav-text">检查数据变更</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%BE%85%E7%B2%98%E8%B4%B4%E6%95%B0%E6%8D%AE"><span class="nav-text">获取待粘贴数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%89%AA%E5%88%87%E6%9D%BF%E5%AD%98%E5%82%A8%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="nav-text">修改剪切板存储的数据</span></a></li></ol>
+        <div class="page-title">Windows 二进制原始文件名获取</div>
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%A7%8B%E6%96%87%E4%BB%B6%E5%90%8D%E5%B1%9E%E6%80%A7%E4%BB%8B%E7%BB%8D"><span class="nav-text">原始文件名属性介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-API-%E8%8E%B7%E5%8F%96%E5%8E%9F%E5%A7%8B%E6%96%87%E4%BB%B6%E5%90%8D"><span class="nav-text">使用 API 获取原始文件名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%8A%A8%E8%A7%A3%E6%9E%90-PE-%E6%96%87%E4%BB%B6%E8%8E%B7%E5%8F%96%E5%8E%9F%E5%A7%8B%E6%96%87%E4%BB%B6%E5%90%8D"><span class="nav-text">手动解析 PE 文件获取原始文件名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E6%96%87%E4%BB%B6%E5%90%8D%E6%98%AF%E5%90%A6%E5%8F%91%E7%94%9F%E7%AF%A1%E6%94%B9"><span class="nav-text">检查文件名是否发生篡改</span></a></li></ol>
 
     </div>
 </div>
