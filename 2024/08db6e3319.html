@@ -13,18 +13,29 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="https://ConradSun.github.io/categories/macos开发/"/>
+    <link rel="canonical" href="https://ConradSun.github.io/2024/08db6e3319.html"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta property="og:type" content="website">
-<meta property="og:title" content="康的个人博客">
-<meta property="og:url" content="https://conradsun.github.io/categories/macOS%E5%BC%80%E5%8F%91/index.html">
+        <meta name="description" content="AC自动机是一种高效的多模式字符串匹配算法，通过 Trie 树和失配指针的结合优化匹配过程。本文结合图例，基于go语言进行算法讲解和实现。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="字符串模式匹配AC自动机算法实现">
+<meta property="og:url" content="https://conradsun.github.io/2024/08db6e3319.html">
 <meta property="og:site_name" content="康的个人博客">
+<meta property="og:description" content="AC自动机是一种高效的多模式字符串匹配算法，通过 Trie 树和失配指针的结合优化匹配过程。本文结合图例，基于go语言进行算法讲解和实现。">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://conradsun.github.io/images/article-pics/AC-Ttrie.png">
+<meta property="og:image" content="https://conradsun.github.io/images/article-pics/AC-Fail-change.png">
+<meta property="og:image" content="https://conradsun.github.io/images/article-pics/AC-Fail-map.png">
+<meta property="article:published_time" content="2024-08-24T02:12:00.000Z">
+<meta property="article:modified_time" content="2024-08-23T03:12:43.333Z">
 <meta property="article:author" content="ConradSun">
+<meta property="article:tag" content="字符串匹配">
+<meta property="article:tag" content="AC自动机">
+<meta property="article:tag" content="AhoCorasick">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://conradsun.github.io/images/article-pics/AC-Ttrie.png">
     
     
     <!--- Icon Part-->
@@ -36,7 +47,7 @@
     
     <title>
         
-            Category: macOS开发 -
+            字符串模式匹配AC自动机算法实现 -
         
         Kang&#39;s Blog
     </title>
@@ -541,128 +552,295 @@
             <div class="main-content">
 
                 
-                    <div class="category-container">
-    <div class="category-name">
-        <i class="fa-solid fa-folder"></i>&nbsp;macOS开发
-    </div>
-    <div class="category-post-list">
+                    <div class="post-page-container flex relative justify-between box-border w-full h-full">
+    <div class="article-content-container">
+
+        <div class="article-title relative w-full">
+            
+                <div class="w-full flex items-center pt-6 justify-start">
+                    <h1 class="article-title-regular text-second-text-color text-4xl md:text-6xl font-bold px-2 sm:px-6 md:px-8 py-3">字符串模式匹配AC自动机算法实现</h1>
+                </div>
+            
+            </div>
+
+        
+            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/images/git-avatar.svg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">孙康</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2024-08-24 10:12</span>
+        <span class="mobile">2024-08-24 10:12</span>
+        <span class="hover-info">Created</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2024-08-23 11:12:43</span>
+            <span class="mobile">2024-08-23 11:12:43</span>
+            <span class="hover-info">Updated</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/">算法实现</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8C%B9%E9%85%8D/">字符串匹配</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/AC%E8%87%AA%E5%8A%A8%E6%9C%BA/">AC自动机</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/AhoCorasick/">AhoCorasick</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>1.4k Words</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>5 Mins</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
         
 
-<div class="archive-list-container">
-    
-        <section class="archive-item mb-spacing-unit last:mb-0">
-            <div class="archive-item-header flex flex-row items-center mb-2">
-                <span class="archive-year font-semibold text-3xl mr-2">2023</span>
-                <span class="archive-year-post-count text-xs md:text-sm font-bold rounded-small bg-third-background-color py-[2px] px-[10px] border border-border-color">10</span>
+        
+
+
+        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+            <p>AC 自动机（Aho-Corasick 算法）是一种线性时间复杂度的多模式字符串匹配算法。它能够在给定的文本中同时查找多个模式字符串，适用于需要快速查找的场景，如搜索引擎、文本编辑器和网络安全等。</p>
+<p>AC 自动机的核心思想是利用 Trie 树（字典树）来存储模式字符串，并通过失配指针（Fail 指针）来优化匹配过程。失配指针基于 KMP 算法的思想进行构建，以避免重复查找。从而实现线性时间复杂度的匹配。</p>
+<h3 id="字典树构建"><a href="#字典树构建" class="headerlink" title="字典树构建"></a>字典树构建</h3><p>Trie 树是一种树形数据结构，用于存储字符串集合。每个节点代表一个字符，路径从根节点到某个节点表示一个字符串。Trie 树的优点是可以高效地进行前缀匹配。</p>
+<p>这里以字符串集合<code>&#123;&quot;mine&quot;, &quot;my&quot;, &quot;he&quot;, &quot;she&quot;, &quot;his&quot;, &quot;hers&quot;&#125;</code>为例，构成的字典树如下图：</p>
+<p><figure class="image-caption"><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/article-pics/AC-Ttrie.png"
+                      alt="字典树"
+                ><figcaption>字典树</figcaption></figure></p>
+<p>图中的根结点 R 是空结点，用于标识树的起点，其余结点代表一个字符，由根结点向下的任意一条路径表示一个字符串。在进行字符串插入时，从根结点开始遍历，逐个字符插入，如果当前字符的结点不存在则创建一个新结点。</p>
+<p>为便于描述，对结点进行数据结构定义，这里将实际存储字符的数据描述为边，类型为映射，如果待存储的字符串仅包含英文字母，则这里可以简单将类型定义为长度为 26 的数组。</p>
+<div class="highlight-container" data-rel="Go"><figure class="iseeu highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> TrieNode <span class="keyword">struct</span> &#123;</span><br><span class="line">	edges <span class="keyword">map</span>[<span class="type">rune</span>]*TrieNode</span><br><span class="line">	isEnd <span class="type">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewTrieNode</span><span class="params">()</span></span> *TrieNode &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;TrieNode&#123;</span><br><span class="line">		edges: <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">rune</span>]*TrieNode),</span><br><span class="line">		isEnd: <span class="literal">false</span>,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> TrieTree <span class="keyword">struct</span> &#123;</span><br><span class="line">	root *TrieNode</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>字典树的构建过程很好理解，从根结点开始遍历，如果当前字符已有结点表示，则继续插入下一字符；如果当前字符没有表示结点，则创建新结点，并在当前字符串插入完毕后增加结束标记。</p>
+<div class="highlight-container" data-rel="Go"><figure class="iseeu highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(trie *TrieTree)</span></span> Insert(pattern <span class="type">string</span>) &#123;</span><br><span class="line">	node := trie.root</span><br><span class="line">	<span class="keyword">for</span> _, char := <span class="keyword">range</span> pattern &#123;</span><br><span class="line">		<span class="keyword">if</span> _, exists := node.edges[char]; !exists &#123;</span><br><span class="line">			node.edges[char] = NewTrieNode()</span><br><span class="line">		&#125;</span><br><span class="line">		node = node.edges[char]</span><br><span class="line">	&#125;</span><br><span class="line">	node.isEnd = <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="失配指针构建"><a href="#失配指针构建" class="headerlink" title="失配指针构建"></a>失配指针构建</h3><p>失配指针用于在匹配失败时，快速回退到可能的匹配位置。它指向当前节点的最长可匹配前缀的后缀节点。以上面构建的字典树为例，待匹配字符串为<code>shers</code>，匹配到字符<code>e</code>时，已经找到了匹配模式<code>she</code>，在继续向下匹配时，因为<code>she</code>分支已经没有向下的路径，所以需要切换分支，但我们不希望每次切换分支都从根结点开始重新匹配，毕竟当前已经知道待匹配字符串是包含<code>she</code>子串的，如果可以直接从前缀包含<code>she</code>后缀的分支开始匹配，则可以节省大量时间，而且最好选择的分支包含<code>she</code>后缀的深度最深。比如这里，我们希望切换分支匹配时直接切换到<code>her</code>分支的结点<code>e</code>上。</p>
+<p><figure class="image-caption"><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/article-pics/AC-Fail-change.png"
+                      alt="匹配失败切换分支"
+                ><figcaption>匹配失败切换分支</figcaption></figure></p>
+<p>在构建失配指针时借用了 KMP 算法的思想，不了解该算法的不影响阅读本文，在构建失配指针时，遵循失配指针指向已匹配串的最长后缀分支，以上面的字典树为例，失配指针构建的结果如下：</p>
+<p><figure class="image-caption"><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/article-pics/AC-Fail-map.png"
+                      alt="匹配失败切换分支"
+                ><figcaption>匹配失败切换分支</figcaption></figure></p>
+<p>这里将上面字典树的数据结构稍作更改，实现失配指针的构建。构建失配指针使用广度优先搜索（BFS）来构建失配指针，即待构建层的上层结点均已完成失配指针的构建。对于字典树的每个结点，检查其子结点的失配指针，如果当前结点的失配指针指向的结点没有当前字符的子结点，则继续向上查找，直到找到一个有该字符的结点或到达根结点。</p>
+<div class="highlight-container" data-rel="Go"><figure class="iseeu highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> TrieNode <span class="keyword">struct</span> &#123;</span><br><span class="line">	edges <span class="keyword">map</span>[<span class="type">rune</span>]*TrieNode</span><br><span class="line">	isEnd <span class="type">bool</span></span><br><span class="line">	fail  *TrieNode</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> AhoCorasick <span class="keyword">struct</span> &#123;</span><br><span class="line">	root     *TrieNode</span><br><span class="line">	patterns <span class="keyword">map</span>[*TrieNode]<span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ac *AhoCorasick)</span></span> BuildFailPointers() &#123;</span><br><span class="line">	queue := []*TrieNode&#123;ac.root&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> <span class="built_in">len</span>(queue) &gt; <span class="number">0</span> &#123;</span><br><span class="line">		current := queue[<span class="number">0</span>]</span><br><span class="line">		queue = queue[<span class="number">1</span>:]</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> char, edge := <span class="keyword">range</span> current.edges &#123;</span><br><span class="line">			queue = <span class="built_in">append</span>(queue, edge)</span><br><span class="line"></span><br><span class="line">			fail := current.fail</span><br><span class="line">			<span class="keyword">for</span> fail != <span class="literal">nil</span> &amp;&amp; fail.edges[char] == <span class="literal">nil</span> &#123;</span><br><span class="line">				fail = fail.fail</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> fail != <span class="literal">nil</span> &#123;</span><br><span class="line">				edge.fail = fail.edges[char]</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				edge.fail = ac.root</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="模式匹配"><a href="#模式匹配" class="headerlink" title="模式匹配"></a>模式匹配</h3><p>对给定字符串进行匹配时，从根节点开始，逐字符遍历文本。如果当前字符在当前结点的子结点中，则继续向下查找；如果不在，则通过失配指针回退。当到达一个结束结点时，表示找到一个匹配的模式字符串。</p>
+<div class="highlight-container" data-rel="Go"><figure class="iseeu highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ac *AhoCorasick)</span></span> Search(text <span class="type">string</span>) []<span class="type">string</span> &#123;</span><br><span class="line">	node := ac.root</span><br><span class="line">	results := <span class="built_in">make</span>([]<span class="type">string</span>, <span class="number">0</span>, <span class="built_in">len</span>(text)/<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> _, char := <span class="keyword">range</span> text &#123;</span><br><span class="line">		<span class="keyword">for</span> node != <span class="literal">nil</span> &amp;&amp; node.edges[char] == <span class="literal">nil</span> &#123;</span><br><span class="line">			node = node.fail</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> node == <span class="literal">nil</span> &#123;</span><br><span class="line">			node = ac.root</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		node = node.edges[char]</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> node.isEnd &#123;</span><br><span class="line">			results = <span class="built_in">append</span>(results, ac.patterns[node])</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		failNode := node.fail</span><br><span class="line">		<span class="keyword">for</span> failNode != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">if</span> failNode.isEnd &#123;</span><br><span class="line">				results = <span class="built_in">append</span>(results, ac.patterns[failNode])</span><br><span class="line">			&#125;</span><br><span class="line">			failNode = failNode.fail</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> results</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>AC 自动机是一种高效的多模式字符串匹配算法，通过 Trie 树和失配指针的结合，能够在 O(n + m)的时间复杂度内完成匹配，其中 n 是文本长度，m 是模式字符串的总长度。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>Title:</strong> 字符串模式匹配AC自动机算法实现</li>
+        <li><strong>Author:</strong> 孙康</li>
+        <li><strong>Created at
+                :</strong> 2024-08-24 10:12:00</li>
+        
+            <li>
+                <strong>Updated at
+                    :</strong> 2024-08-23 11:12:43
+            </li>
+        
+        <li>
+            <strong>Link:</strong> https://conradsun.github.io/2024/08db6e3319.html
+        </li>
+        <li>
+            <strong>
+                License:
+            </strong>
+            
+
+            
+                This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a>.
+            
+        </li>
+    </ul>
+</div>
+
             </div>
-            <ul class="article-list pl-0 md:pl-8 text-lg leading-[1.5]">
-              
+        
+
+        
+            <ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
                 
-                    
-                    <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='08-20'>
+                    <li class="tag-item mx-0.5">
+                        <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8C%B9%E9%85%8D/">#字符串匹配</a>&nbsp;
+                    </li>
                 
-                    
-                        <a href="/2023/08647ac6c0.html" class="block overflow-hidden w-fit">
-                            <span class="article-title mb-0.5 text-2xl">macOS 剪切板数据查看与修改</span>
-                        </a>
-                    
-              
+                    <li class="tag-item mx-0.5">
+                        <a href="/tags/AC%E8%87%AA%E5%8A%A8%E6%9C%BA/">#AC自动机</a>&nbsp;
+                    </li>
                 
-                    
-                    <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='07-15'>
+                    <li class="tag-item mx-0.5">
+                        <a href="/tags/AhoCorasick/">#AhoCorasick</a>&nbsp;
+                    </li>
                 
-                    
-                        <a href="/2023/078d2ace36.html" class="block overflow-hidden w-fit">
-                            <span class="article-title mb-0.5 text-2xl">macOS 应用内更新检查</span>
-                        </a>
-                    
-              
-                
-                    
-                    <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='07-09'>
-                
-                    
-                        <a href="/2023/07f5dbd820.html" class="block overflow-hidden w-fit">
-                            <span class="article-title mb-0.5 text-2xl">macOS 应用程序坞和菜单栏设置</span>
-                        </a>
-                    
-              
-                
-                    
-                    <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='06-26'>
-                
-                    
-                        <a href="/2023/06b81ddf97.html" class="block overflow-hidden w-fit">
-                            <span class="article-title mb-0.5 text-2xl">macOS 修改 MachO 文件实现动态库注入（三）</span>
-                        </a>
-                    
-              
-                
-                    
-                    <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='06-25'>
-                
-                    
-                        <a href="/2023/06f5037cc5.html" class="block overflow-hidden w-fit">
-                            <span class="article-title mb-0.5 text-2xl">macOS 修改 MachO 文件实现动态库注入（二）</span>
-                        </a>
-                    
-              
-                
-                    
-                        <a href="/2023/0686aa5ea2.html" class="block overflow-hidden w-fit">
-                            <span class="article-title mb-0.5 text-2xl">macOS 修改 Mach-o 文件实现动态库注入（一）</span>
-                        </a>
-                    
-              
-                
-                    
-                    <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='06-24'>
-                
-                    
-                        <a href="/2023/0676d00749.html" class="block overflow-hidden w-fit">
-                            <span class="article-title mb-0.5 text-2xl">macOS Hook 系统调用</span>
-                        </a>
-                    
-              
-                
-                    
-                    <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='06-23'>
-                
-                    
-                        <a href="/2023/06b3e3d734.html" class="block overflow-hidden w-fit">
-                            <span class="article-title mb-0.5 text-2xl">macOS 用户态进程间的通信实现</span>
-                        </a>
-                    
-              
-                
-                    
-                    <li class="article-item space-y-2 px-6 pt-10 pb-2 text-xl relative border-l-2 border-border-color" date-is='06-21'>
-                
-                    
-                        <a href="/2023/0699a600b0.html" class="block overflow-hidden w-fit">
-                            <span class="article-title mb-0.5 text-2xl">macOS 内核拓展与用户态进程的通信实现（二）</span>
-                        </a>
-                    
-              
-                
-                    
-                        <a href="/2023/06a9b0ec68.html" class="block overflow-hidden w-fit">
-                            <span class="article-title mb-0.5 text-2xl">macOS 内核拓展与用户态进程的通信实现（一）</span>
-                        </a>
-                    
-              
             </ul>
-        </section>
+        
+
+        
+
+        
+            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+                
+                
+                    <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="next"
+                        rel="next"
+                        href="/2024/0560b05398.html"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">Windows 二进制原始文件名获取</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+                <div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        Comments
+    </div>
+    
+
+        
+            
+    <div id="giscus-container"></div>
+    <script data-swup-reload-script defer>
+        async function loadGiscus() {
+            const giscusConfig = {
+                'src': 'https://giscus.app/client.js',
+                'data-repo': 'ConradSun/ConradSun.github.io',
+                'data-repo-id': 'R_kgDOJyCxdQ',
+                'data-category': 'Show and tell',
+                'data-category-id': 'DIC_kwDOJyCxdc4CXco-',
+                'data-mapping': 'pathname',
+                'data-strict': '0',
+                'data-reactions-enabled': '1',
+                'data-emit-metadata': '1',
+                'data-theme': 'preferred_color_scheme',
+                'data-lang': 'zh-CN',
+                'data-input-position': 'bottom',
+                'data-loading': 'lazy',
+                'crossorigin': 'anonymous',
+                'async': true
+            }
+            const giscusScript = document.createElement('script');
+            for (const key in giscusConfig) {
+                giscusScript.setAttribute(key, giscusConfig[key]);
+            }
+            document.getElementById('giscus-container').appendChild(giscusScript);
+        }
+        if ('true') {
+            let loadGiscusTimeout = setTimeout(() => {
+                loadGiscus();
+                clearTimeout(loadGiscusTimeout);
+            }, 1000);
+        } else {
+            document.addEventListener('DOMContentLoaded', loadGiscus);
+        }
+    </script>
+
+
+        
+        
     
 </div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">On this page</div>
+        <div class="page-title">字符串模式匹配AC自动机算法实现</div>
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E5%85%B8%E6%A0%91%E6%9E%84%E5%BB%BA"><span class="nav-text">字典树构建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%B1%E9%85%8D%E6%8C%87%E9%92%88%E6%9E%84%E5%BB%BA"><span class="nav-text">失配指针构建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D"><span class="nav-text">模式匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li></ol>
 
     </div>
 </div>
-<div class="category-paginator">
-    <div class="paginator">
-    <span class="page-number current">1</span>
-</div>
-
+        </div>
+    
 </div>
 
 
@@ -751,6 +929,27 @@
         </div>
     </div>
 
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
     
 
     <div class="right-side-tools-container">
