@@ -18,15 +18,17 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="Windows 绕过主机安全应用的检查，有时候可以简单通过将恶意工具或者系统工具改名实现。为了提高绕过成本，可以借助 PE 文件的原始文件名属性辅助分析。">
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Windows 二进制原始文件名获取">
 <meta property="og:url" content="https://conradsun.github.io/2024/0560b05398.html">
 <meta property="og:site_name" content="康的个人博客">
-<meta property="og:description" content="Windows 绕过主机安全应用的检查，有时候可以简单通过将恶意工具或者系统工具改名实现。为了提高绕过成本，可以借助 PE 文件的原始文件名属性辅助分析。">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://conradsun.github.io/images/article-pics/OriginalName-PEview.png">
-<meta property="og:image" content="https://conradsun.github.io/images/article-pics/OriginalName-prop.png">
+<meta property="og:image" content="https://conradsun.github.io/images/redefine-og.webp">
 <meta property="article:published_time" content="2024-05-12T04:00:00.000Z">
 <meta property="article:modified_time" content="2024-08-22T08:46:20.441Z">
 <meta property="article:author" content="ConradSun">
@@ -34,7 +36,7 @@
 <meta property="article:tag" content="原始文件名">
 <meta property="article:tag" content="OriginalFilename">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://conradsun.github.io/images/article-pics/OriginalName-PEview.png">
+<meta name="twitter:image" content="https://conradsun.github.io/images/redefine-og.webp">
     
     
     <!--- Icon Part-->
@@ -46,9 +48,8 @@
     
     <title>
         
-            Windows 二进制原始文件名获取 -
+            Windows 二进制原始文件名获取 | Kang&#39;s Blog
         
-        Kang&#39;s Blog
     </title>
 
     
@@ -59,171 +60,20 @@
     
 
     
-        <style>
-    :root {
-        --preloader-background-color: #fff;
-        --preloader-text-color: #000;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        :root {
-            --preloader-background-color: #202124;
-            --preloader-text-color: #fff;
-        }
-    }
-
-    @media (prefers-color-scheme: light) {
-        :root {
-            --preloader-background-color: #fff;
-            --preloader-text-color: #000;
-        }
-    }
-
-    @media (max-width: 600px) {
-        .ml13 {
-            font-size: 2.6rem !important; /* Adjust this value as needed */
-        }
-    }
-
-    .preloader {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem; /* Tailwind 'gap-4' is 1rem */
-        align-items: center;
-        justify-content: center;
-        position: fixed;
-        padding: 12px;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh; /* 'h-screen' is 100% of the viewport height */
-        background-color: var(--preloader-background-color);
-        z-index: 1100; /* 'z-[1100]' sets the z-index */
-        transition: opacity 0.2s ease-in-out;
-    }
-
-    .ml13 {
-        font-size: 3.2rem;
-        /* text-transform: uppercase; */
-        color: var(--preloader-text-color);
-        letter-spacing: -1px;
-        font-weight: 500;
-        font-family: 'Chillax-Variable', sans-serif;
-        text-align: center;
-    }
-
-    .ml13 .word {
-        display: inline-flex;
-        flex-wrap: wrap;
-        white-space: nowrap;
-    }
-
-    .ml13 .letter {
-        display: inline-block;
-        line-height: 1em;
-    }
-</style>
-
-<div class="preloader">
-    
-<script src="/js/libs/anime.min.js"></script>
-
-    <h1 class="ml13">
-        Kang&#39;s Blog
-    </h1>
-    <script>
-        var textWrapper = document.querySelector('.ml13');
-        // Split text into words
-        var words = textWrapper.textContent.trim().split(' ');
-
-        // Clear the existing content
-        textWrapper.innerHTML = '';
-
-        // Wrap each word and its letters in spans
-        words.forEach(function(word) {
-            var wordSpan = document.createElement('span');
-            wordSpan.classList.add('word');
-            wordSpan.innerHTML = word.replace(/\S/g, "<span class='letter'>$&</span>");
-            textWrapper.appendChild(wordSpan);
-            textWrapper.appendChild(document.createTextNode(' ')); // Add space between words
-        });
-
-
-        anime.timeline({loop: true})
-            .add({
-                targets: '.ml13 .letter',
-                translateY: [100,0],
-                translateZ: 0,
-                opacity: [0,1],
-                easing: "easeOutExpo",
-                duration: 1400,
-                delay: (el, i) => 300 + 30 * i
-            }).add({
-            targets: '.ml13 .letter',
-            translateY: [0,-100],
-            opacity: [1,0],
-            easing: "easeInExpo",
-            duration: 1200,
-            delay: (el, i) => 100 + 30 * i
-        });
-
-        let themeStatus = JSON.parse(localStorage.getItem('REDEFINE-THEME-STATUS'))?.isDark;
-
-        // If the theme status is not found in local storage, check the preferred color scheme
-        if (themeStatus === undefined || themeStatus === null) {
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                themeStatus = 'dark';
-            } else {
-                themeStatus = 'light';
-            }
-        }
-
-        // Now you can use the themeStatus variable in your code
-        if (themeStatus) {
-            document.documentElement.style.setProperty('--preloader-background-color', '#202124');
-            document.documentElement.style.setProperty('--preloader-text-color', '#fff');
-        } else {
-            document.documentElement.style.setProperty('--preloader-background-color', '#fff');
-            document.documentElement.style.setProperty('--preloader-text-color', '#000');
-        }
-
-        window.addEventListener('load', function () {
-            hidePreloaderAfterTimeout(1000); // Hide after 1000 milliseconds once the window has loaded
-        });
-
-        // Backup failsafe: Hide preloader after a maximum of 5000 milliseconds, regardless of the window load event
-        hidePreloaderAfterTimeout(5000);
-
-        function hidePreloaderAfterTimeout(delay) {
-            setTimeout(function () {
-                var preloader = document.querySelector('.preloader');
-                preloader.style.opacity = '0';
-                setTimeout(function () {
-                    preloader.style.display = 'none';
-                }, 200);
-            }, delay);
-        }
-    </script>
-</div>
-    
-
-    
 <link rel="stylesheet" href="/css/style.css">
 
 
     
         
-<link rel="stylesheet" href="/assets/build/styles.css">
+<link rel="stylesheet" href="/css/build/tailwind.css">
 
     
 
     
-<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
 
     
-<link rel="stylesheet" href="/fonts/Satoshi/satoshi.css">
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
 
     <!--- Font Part-->
     
@@ -238,11 +88,12 @@
     
         <link href="https://fonts.googleapis.com/css2?family=Lora" rel="stylesheet">
     
-
+    
+    
 
     <script id="hexo-configurations">
     window.config = {"hostname":"conradsun.github.io","root":"/","language":"en","path":"search.xml"};
-    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true,"title_alignment":"left","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/ConradSun","bilibili":"https://space.bilibili.com/91647922?spm_id_from=333.1007.0.0","zhihu":null,"email":"sunkangnuaa@163.com"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.6.1","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"ME":"/me","Github":"https://github.com/ConradSun","Friends":"/links"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/ConradSun","bilibili":"https://space.bilibili.com/91647922?spm_id_from=333.1007.0.0","zhihu":null,"email":"sunkangnuaa@163.com"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1"}},"version":"2.8.2","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"ME":"/me","Github":"https://github.com/ConradSun","Friends":"/links"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
     window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
     window.data = {"masonry":false};
   </script>
@@ -275,34 +126,31 @@
 <meta name="generator" content="Hexo 6.3.0"></head>
 
 
+
 <body>
-<div class="progress-bar-container">
-    
+	<div class="progress-bar-container">
+	
 
-    
-        <span class="pjax-progress-bar"></span>
-<!--        <span class="swup-progress-icon">-->
-<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
-<!--        </span>-->
-    
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
 </div>
-
 
 <main class="page-container" id="swup">
 
-    
+	
 
-    <div class="main-content-container">
-
-
-        <div class="main-content-header">
-            <header class="navbar-container px-6 md:px-12">
-
-    <div class="navbar-content ">
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
         <div class="left">
             
-                <a class="logo-image" href="/">
-                    <img src="/images/git-avatar.svg">
+                <a class="logo-image h-8 w-8 sm:w-10 sm:h-10 mr-3" href="/">
+                    <img src="/images/git-avatar.svg" class="w-full h-full rounded-sm">
                 </a>
             
             <a class="logo-title" href="/">
@@ -411,7 +259,7 @@
     </div>
 
     <!-- Mobile sheet -->
-    <div class="navbar-drawer h-screen w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
         <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
             
                 
@@ -542,38 +390,35 @@
 </header>
 
 
-        </div>
+		</div>
 
-        <div class="main-content-body">
+		<div class="main-content-body transition-fade-up">
+			
 
-            
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
 
-            <div class="main-content">
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">Windows 二进制原始文件名获取</h1>
+			</div>
+			
+		</div>
 
-                
-                    <div class="post-page-container flex relative justify-between box-border w-full h-full">
-    <div class="article-content-container">
-
-        <div class="article-title relative w-full">
-            
-                <div class="w-full flex items-center pt-6 justify-start">
-                    <h1 class="article-title-regular text-second-text-color text-4xl md:text-6xl font-bold px-2 sm:px-6 md:px-8 py-3">Windows 二进制原始文件名获取</h1>
-                </div>
-            
-            </div>
-
-        
-            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
-                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
-                    <img src="/images/git-avatar.svg">
-                </div>
-                <div class="info flex flex-col justify-between">
-                    <div class="author flex items-center">
-                        <span class="name text-default-text-color text-lg font-semibold">孙康</span>
-                        
-                    </div>
-                    <div class="meta-info">
-                        <div class="article-meta-info">
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="/images/git-avatar.svg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">孙康</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
         <span class="desktop">2024-05-12 12:00</span>
@@ -645,16 +490,16 @@
     
 </div>
 
-                    </div>
-                </div>
-            </div>
-        
+				</div>
+			</div>
+		</div>
+		
 
-        
+		
 
 
-        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
-            <p>在黑客攻击终端主机时，为绕过主机上 EDR 等防护软件的检测识别，可能会将恶意文件更名为主机上系统文件，如果防护软件针对该文件名做了白名单，则可能存在绕过风险。另外，为避免防护软件对危险进程的识别，如禁止 Windows 主机 PowerShell 等进程创建子进程，则可能将 PowerShell 二进制文件更名后启动，以绕过检测。</p>
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<p>在黑客攻击终端主机时，为绕过主机上 EDR 等防护软件的检测识别，可能会将恶意文件更名为主机上系统文件，如果防护软件针对该文件名做了白名单，则可能存在绕过风险。另外，为避免防护软件对危险进程的识别，如禁止 Windows 主机 PowerShell 等进程创建子进程，则可能将 PowerShell 二进制文件更名后启动，以绕过检测。</p>
 <h3 id="原始文件名属性介绍"><a href="#原始文件名属性介绍" class="headerlink" title="原始文件名属性介绍"></a>原始文件名属性介绍</h3><p>PE (Portable Executable) 文件是 Windows 操作系统中用于可执行文件、对象代码和动态链接库的文件格式。原始文件名属性位于 PE 文件的资源区，属性定位的关键字是<code>OriginalFilename</code>，如下图所示，即 PEview.exe 文件的原始文件名属性定位。由于属性的存储方式是宽字符，所以每个字符占两个字节。<br><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
@@ -669,21 +514,21 @@
                 ><figcaption>PEview.exe 原始文件名</figcaption></figure></p>
 <p>因为原始文件名属性存放在二进制文件中，所以不受文件下载、拷贝、移动、重命名等常规操作的影响，可以标识二进制的来源，维护版本的一致性。经过统计，约 90% 的系统二进制含原始文件名属性，所以基于原始文件名进行威胁检测识别是可行的。</p>
 <h3 id="使用-API-获取原始文件名"><a href="#使用-API-获取原始文件名" class="headerlink" title="使用 API 获取原始文件名"></a>使用 API 获取原始文件名</h3><p>使用 Windows API 可以方便地获取二进制原始文件名，API 使用需要链接系统库<code>version.lib</code>。步骤比较简单，需要注意的是，<code>Translation</code>查询的目的是获取文件版本信息资源中的翻译表，包含系列的语言和字符集组合。在获取翻译表后，代码使用翻译表的第一个语言-字符集组合来构建查询信息。翻译表并非是固定的或者和系统相关的，需每次查询原始文件名之前都查询一次。如果翻译表硬编码导致与实际不匹配，则会导致原始文件名查询失败。</p>
-<div class="highlight-container" data-rel="C++"><figure class="iseeu highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">getOriginalFileNameByAPI</span><span class="params">(<span class="type">const</span> std::string&amp; strFilePath, std::string&amp; strOriginalName)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (strFilePath.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	DWORD dwHandle = <span class="number">0</span>;</span><br><span class="line">	DWORD dwDataSize = <span class="built_in">GetFileVersionInfoSizeA</span>(strFilePath.<span class="built_in">c_str</span>(), &amp;dwHandle);</span><br><span class="line">	<span class="keyword">if</span> (dwDataSize == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function">std::unique_ptr&lt;BYTE[]&gt; <span class="title">pVersionData</span><span class="params">(<span class="keyword">new</span> (std::nothrow) BYTE[dwDataSize])</span></span>;</span><br><span class="line">	<span class="keyword">if</span> (!pVersionData) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!<span class="built_in">GetFileVersionInfoA</span>(strFilePath.<span class="built_in">c_str</span>(), dwHandle, dwDataSize, pVersionData.<span class="built_in">get</span>())) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	UINT iQuerySize = <span class="number">0</span>;</span><br><span class="line">	DWORD* pTransTable = <span class="literal">nullptr</span>;</span><br><span class="line">	<span class="type">const</span> <span class="type">char</span>* szQueryTrans = <span class="string">&quot;\\VarFileInfo\\Translation&quot;</span>;</span><br><span class="line">	<span class="keyword">if</span> (!<span class="built_in">VerQueryValueA</span>(pVersionData.<span class="built_in">get</span>(), szQueryTrans, <span class="built_in">reinterpret_cast</span>&lt;LPVOID*&gt;(&amp;pTransTable), &amp;iQuerySize) || iQuerySize == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	DWORD dwLangCharset = <span class="built_in">MAKELONG</span>(<span class="built_in">HIWORD</span>(pTransTable[<span class="number">0</span>]), <span class="built_in">LOWORD</span>(pTransTable[<span class="number">0</span>]));</span><br><span class="line">	<span class="type">char</span> szSubBlock[<span class="number">50</span>];</span><br><span class="line">	<span class="built_in">sprintf_s</span>(szSubBlock, <span class="string">&quot;\\StringFileInfo\\%08lx\\OriginalFileName&quot;</span>, dwLangCharset);</span><br><span class="line"></span><br><span class="line">	LPVOID lpData = <span class="literal">nullptr</span>;</span><br><span class="line">	<span class="keyword">if</span> (!<span class="built_in">VerQueryValueA</span>(pVersionData.<span class="built_in">get</span>(), szSubBlock, &amp;lpData, &amp;iQuerySize) || iQuerySize == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	strOriginalName = std::<span class="built_in">string</span>(<span class="built_in">static_cast</span>&lt;LPSTR&gt;(lpData)).<span class="built_in">c_str</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="code-container" data-rel="C++"><figure class="iseeu highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">getOriginalFileNameByAPI</span><span class="params">(<span class="type">const</span> std::string&amp; strFilePath, std::string&amp; strOriginalName)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (strFilePath.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	DWORD dwHandle = <span class="number">0</span>;</span><br><span class="line">	DWORD dwDataSize = <span class="built_in">GetFileVersionInfoSizeA</span>(strFilePath.<span class="built_in">c_str</span>(), &amp;dwHandle);</span><br><span class="line">	<span class="keyword">if</span> (dwDataSize == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function">std::unique_ptr&lt;BYTE[]&gt; <span class="title">pVersionData</span><span class="params">(<span class="keyword">new</span> (std::nothrow) BYTE[dwDataSize])</span></span>;</span><br><span class="line">	<span class="keyword">if</span> (!pVersionData) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!<span class="built_in">GetFileVersionInfoA</span>(strFilePath.<span class="built_in">c_str</span>(), dwHandle, dwDataSize, pVersionData.<span class="built_in">get</span>())) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	UINT iQuerySize = <span class="number">0</span>;</span><br><span class="line">	DWORD* pTransTable = <span class="literal">nullptr</span>;</span><br><span class="line">	<span class="type">const</span> <span class="type">char</span>* szQueryTrans = <span class="string">&quot;\\VarFileInfo\\Translation&quot;</span>;</span><br><span class="line">	<span class="keyword">if</span> (!<span class="built_in">VerQueryValueA</span>(pVersionData.<span class="built_in">get</span>(), szQueryTrans, <span class="built_in">reinterpret_cast</span>&lt;LPVOID*&gt;(&amp;pTransTable), &amp;iQuerySize) || iQuerySize == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	DWORD dwLangCharset = <span class="built_in">MAKELONG</span>(<span class="built_in">HIWORD</span>(pTransTable[<span class="number">0</span>]), <span class="built_in">LOWORD</span>(pTransTable[<span class="number">0</span>]));</span><br><span class="line">	<span class="type">char</span> szSubBlock[<span class="number">50</span>];</span><br><span class="line">	<span class="built_in">sprintf_s</span>(szSubBlock, <span class="string">&quot;\\StringFileInfo\\%08lx\\OriginalFileName&quot;</span>, dwLangCharset);</span><br><span class="line"></span><br><span class="line">	LPVOID lpData = <span class="literal">nullptr</span>;</span><br><span class="line">	<span class="keyword">if</span> (!<span class="built_in">VerQueryValueA</span>(pVersionData.<span class="built_in">get</span>(), szSubBlock, &amp;lpData, &amp;iQuerySize) || iQuerySize == <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	strOriginalName = std::<span class="built_in">string</span>(<span class="built_in">static_cast</span>&lt;LPSTR&gt;(lpData)).<span class="built_in">c_str</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <h3 id="手动解析-PE-文件获取原始文件名"><a href="#手动解析-PE-文件获取原始文件名" class="headerlink" title="手动解析 PE 文件获取原始文件名"></a>手动解析 PE 文件获取原始文件名</h3><p>既然原始文件名属性存储在二进制的资源区，那么就可以通过手动解析 PE 文件获取该属性。手动解析相比调用 API 步骤要繁琐一些：首先对打开的文件句柄创建内存映射，以便提升文件内容读取的访问速度并降低内存占用；然后检查文件的 DOS 和 NT 头，判断文件是否为有效的 PE 文件；然后定位资源区，根据标识定位原始文件名所在区域；最后提取原始文件名并将其由宽字符串转化为 UTF-8 格式的字符串。</p>
-<div class="highlight-container" data-rel="C++"><figure class="iseeu highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> ORIGINAL_FILENAME	<span class="string">L&quot;OriginalFilename&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ORI_FILENAME_SIZE	17</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PE_RSRCNAME			<span class="string">&quot;.rsrc&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">getOriginalFileName</span><span class="params">(<span class="type">const</span> std::string &amp;strFilePath, std::string &amp;strOriginalName)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// Custom deleter for HANDLE</span></span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">HandleDeleter</span> &#123;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">(HANDLE handle)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">if</span> (handle != <span class="literal">NULL</span> &amp;&amp; handle != INVALID_HANDLE_VALUE) &#123;</span><br><span class="line">				<span class="built_in">CloseHandle</span>(handle);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Custom deleter for memory-mapped file view</span></span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">MapViewDeleter</span> &#123;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">(LPVOID ptr)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">if</span> (ptr != <span class="literal">NULL</span>) &#123;</span><br><span class="line">				<span class="built_in">UnmapViewOfFile</span>(ptr);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Use smart pointers with custom deleters for automatic resource management</span></span><br><span class="line">	<span class="function">std::unique_ptr&lt;<span class="type">void</span>, HandleDeleter&gt; <span class="title">hFile</span><span class="params">(CreateFileA(strFilePath.c_str(), GENERIC_READ, FILE_SHARE_READ, <span class="literal">NULL</span>, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, <span class="literal">NULL</span>), HandleDeleter())</span></span>;</span><br><span class="line">	<span class="keyword">if</span> (hFile.<span class="built_in">get</span>() == INVALID_HANDLE_VALUE) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function">std::unique_ptr&lt;<span class="type">void</span>, HandleDeleter&gt; <span class="title">hFileMapping</span><span class="params">(CreateFileMappingA(hFile.get(), <span class="literal">NULL</span>, PAGE_READONLY, <span class="number">0</span>, <span class="number">0</span>, <span class="literal">NULL</span>), HandleDeleter())</span></span>;</span><br><span class="line">	<span class="keyword">if</span> (hFileMapping.<span class="built_in">get</span>() == <span class="literal">NULL</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function">std::unique_ptr&lt;<span class="type">void</span>, MapViewDeleter&gt; <span class="title">lpBaseAddress</span><span class="params">(MapViewOfFile(hFileMapping.get(), FILE_MAP_READ, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>), MapViewDeleter())</span></span>;</span><br><span class="line">	<span class="keyword">if</span> (lpBaseAddress.<span class="built_in">get</span>() == <span class="literal">NULL</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Check the DOS and NT header</span></span><br><span class="line">	PIMAGE_DOS_HEADER dosHeader = <span class="built_in">reinterpret_cast</span>&lt;PIMAGE_DOS_HEADER&gt;(lpBaseAddress.<span class="built_in">get</span>());</span><br><span class="line">	<span class="keyword">if</span> (dosHeader-&gt;e_magic != IMAGE_DOS_SIGNATURE) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	PIMAGE_NT_HEADERS ntHeaders = <span class="built_in">reinterpret_cast</span>&lt;PIMAGE_NT_HEADERS&gt;(<span class="built_in">reinterpret_cast</span>&lt;BYTE *&gt;(</span><br><span class="line">		lpBaseAddress.<span class="built_in">get</span>()) + dosHeader-&gt;e_lfanew);</span><br><span class="line">	<span class="keyword">if</span> (ntHeaders-&gt;Signature != IMAGE_NT_SIGNATURE) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	PIMAGE_SECTION_HEADER sectionHeaders = <span class="built_in">IMAGE_FIRST_SECTION</span>(ntHeaders);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Find the .rsrc section by VirtualAddress</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; ntHeaders-&gt;FileHeader.NumberOfSections; ++i) &#123;</span><br><span class="line">		PIMAGE_SECTION_HEADER sectionHeader = &amp;sectionHeaders[i];</span><br><span class="line">		<span class="keyword">if</span> (<span class="built_in">strncmp</span>(<span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> <span class="type">char</span> *&gt;(sectionHeader-&gt;Name), PE_RSRCNAME, IMAGE_SIZEOF_SHORT_NAME) == <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="comment">// Search for the originalFilename in the .rsrc section</span></span><br><span class="line">			DWORD dwRsrcOffset = sectionHeader-&gt;PointerToRawData;</span><br><span class="line">			<span class="type">const</span> BYTE *pRsrcBegin = <span class="built_in">reinterpret_cast</span>&lt;BYTE *&gt;(lpBaseAddress.<span class="built_in">get</span>()) + dwRsrcOffset;</span><br><span class="line">			<span class="type">const</span> BYTE *pRsrcEnd = pRsrcBegin + sectionHeader-&gt;SizeOfRawData;</span><br><span class="line">			<span class="type">const</span> BYTE *pFound = std::<span class="built_in">search</span>(pRsrcBegin, pRsrcEnd, <span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> BYTE *&gt;(ORIGINAL_FILENAME),</span><br><span class="line">				<span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> BYTE *&gt;(ORIGINAL_FILENAME) + ORI_FILENAME_SIZE * <span class="built_in">sizeof</span>(<span class="type">wchar_t</span>));</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (pFound != pRsrcEnd &amp;&amp; (pFound - <span class="built_in">sizeof</span>(<span class="type">wchar_t</span>) * <span class="number">2</span>) &gt;= pRsrcBegin) &#123;</span><br><span class="line">				<span class="comment">// Found the skip size and name length</span></span><br><span class="line">				<span class="type">const</span> <span class="type">wchar_t</span> *ptrSkip = <span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> <span class="type">wchar_t</span> *&gt;(pFound - <span class="built_in">sizeof</span>(<span class="type">wchar_t</span>) * <span class="number">1</span>);</span><br><span class="line">				<span class="type">const</span> <span class="type">wchar_t</span> *ptrLength = <span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> <span class="type">wchar_t</span> *&gt;(pFound - <span class="built_in">sizeof</span>(<span class="type">wchar_t</span>) * <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">				<span class="comment">// Skip the key to get to the value</span></span><br><span class="line">				<span class="type">const</span> <span class="type">wchar_t</span> *ptrName = <span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> <span class="type">wchar_t</span> *&gt;(</span><br><span class="line">					pFound + (ORI_FILENAME_SIZE - <span class="number">1</span> + *ptrSkip) * <span class="built_in">sizeof</span>(<span class="type">wchar_t</span>));</span><br><span class="line"></span><br><span class="line">				<span class="comment">// Convert the wstring to string and assign it to originalName</span></span><br><span class="line">				<span class="function">std::wstring <span class="title">wstrName</span><span class="params">(ptrName, *ptrLength)</span></span>;</span><br><span class="line">				<span class="type">int</span> iSize = <span class="built_in">WideCharToMultiByte</span>(CP_UTF8, <span class="number">0</span>, wstrName.<span class="built_in">data</span>(), wstrName.<span class="built_in">size</span>(), <span class="literal">NULL</span>, <span class="number">0</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">				strOriginalName.<span class="built_in">resize</span>(iSize);</span><br><span class="line">				<span class="built_in">WideCharToMultiByte</span>(CP_UTF8, <span class="number">0</span>, wstrName.<span class="built_in">data</span>(), wstrName.<span class="built_in">size</span>(), &amp;strOriginalName[<span class="number">0</span>], iSize, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="code-container" data-rel="C++"><figure class="iseeu highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> ORIGINAL_FILENAME	<span class="string">L&quot;OriginalFilename&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ORI_FILENAME_SIZE	17</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PE_RSRCNAME			<span class="string">&quot;.rsrc&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">getOriginalFileName</span><span class="params">(<span class="type">const</span> std::string &amp;strFilePath, std::string &amp;strOriginalName)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// Custom deleter for HANDLE</span></span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">HandleDeleter</span> &#123;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">(HANDLE handle)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">if</span> (handle != <span class="literal">NULL</span> &amp;&amp; handle != INVALID_HANDLE_VALUE) &#123;</span><br><span class="line">				<span class="built_in">CloseHandle</span>(handle);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Custom deleter for memory-mapped file view</span></span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">MapViewDeleter</span> &#123;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">(LPVOID ptr)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">if</span> (ptr != <span class="literal">NULL</span>) &#123;</span><br><span class="line">				<span class="built_in">UnmapViewOfFile</span>(ptr);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Use smart pointers with custom deleters for automatic resource management</span></span><br><span class="line">	<span class="function">std::unique_ptr&lt;<span class="type">void</span>, HandleDeleter&gt; <span class="title">hFile</span><span class="params">(CreateFileA(strFilePath.c_str(), GENERIC_READ, FILE_SHARE_READ, <span class="literal">NULL</span>, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, <span class="literal">NULL</span>), HandleDeleter())</span></span>;</span><br><span class="line">	<span class="keyword">if</span> (hFile.<span class="built_in">get</span>() == INVALID_HANDLE_VALUE) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function">std::unique_ptr&lt;<span class="type">void</span>, HandleDeleter&gt; <span class="title">hFileMapping</span><span class="params">(CreateFileMappingA(hFile.get(), <span class="literal">NULL</span>, PAGE_READONLY, <span class="number">0</span>, <span class="number">0</span>, <span class="literal">NULL</span>), HandleDeleter())</span></span>;</span><br><span class="line">	<span class="keyword">if</span> (hFileMapping.<span class="built_in">get</span>() == <span class="literal">NULL</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function">std::unique_ptr&lt;<span class="type">void</span>, MapViewDeleter&gt; <span class="title">lpBaseAddress</span><span class="params">(MapViewOfFile(hFileMapping.get(), FILE_MAP_READ, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>), MapViewDeleter())</span></span>;</span><br><span class="line">	<span class="keyword">if</span> (lpBaseAddress.<span class="built_in">get</span>() == <span class="literal">NULL</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Check the DOS and NT header</span></span><br><span class="line">	PIMAGE_DOS_HEADER dosHeader = <span class="built_in">reinterpret_cast</span>&lt;PIMAGE_DOS_HEADER&gt;(lpBaseAddress.<span class="built_in">get</span>());</span><br><span class="line">	<span class="keyword">if</span> (dosHeader-&gt;e_magic != IMAGE_DOS_SIGNATURE) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	PIMAGE_NT_HEADERS ntHeaders = <span class="built_in">reinterpret_cast</span>&lt;PIMAGE_NT_HEADERS&gt;(<span class="built_in">reinterpret_cast</span>&lt;BYTE *&gt;(</span><br><span class="line">		lpBaseAddress.<span class="built_in">get</span>()) + dosHeader-&gt;e_lfanew);</span><br><span class="line">	<span class="keyword">if</span> (ntHeaders-&gt;Signature != IMAGE_NT_SIGNATURE) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	PIMAGE_SECTION_HEADER sectionHeaders = <span class="built_in">IMAGE_FIRST_SECTION</span>(ntHeaders);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Find the .rsrc section by VirtualAddress</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; ntHeaders-&gt;FileHeader.NumberOfSections; ++i) &#123;</span><br><span class="line">		PIMAGE_SECTION_HEADER sectionHeader = &amp;sectionHeaders[i];</span><br><span class="line">		<span class="keyword">if</span> (<span class="built_in">strncmp</span>(<span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> <span class="type">char</span> *&gt;(sectionHeader-&gt;Name), PE_RSRCNAME, IMAGE_SIZEOF_SHORT_NAME) == <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="comment">// Search for the originalFilename in the .rsrc section</span></span><br><span class="line">			DWORD dwRsrcOffset = sectionHeader-&gt;PointerToRawData;</span><br><span class="line">			<span class="type">const</span> BYTE *pRsrcBegin = <span class="built_in">reinterpret_cast</span>&lt;BYTE *&gt;(lpBaseAddress.<span class="built_in">get</span>()) + dwRsrcOffset;</span><br><span class="line">			<span class="type">const</span> BYTE *pRsrcEnd = pRsrcBegin + sectionHeader-&gt;SizeOfRawData;</span><br><span class="line">			<span class="type">const</span> BYTE *pFound = std::<span class="built_in">search</span>(pRsrcBegin, pRsrcEnd, <span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> BYTE *&gt;(ORIGINAL_FILENAME),</span><br><span class="line">				<span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> BYTE *&gt;(ORIGINAL_FILENAME) + ORI_FILENAME_SIZE * <span class="built_in">sizeof</span>(<span class="type">wchar_t</span>));</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (pFound != pRsrcEnd &amp;&amp; (pFound - <span class="built_in">sizeof</span>(<span class="type">wchar_t</span>) * <span class="number">2</span>) &gt;= pRsrcBegin) &#123;</span><br><span class="line">				<span class="comment">// Found the skip size and name length</span></span><br><span class="line">				<span class="type">const</span> <span class="type">wchar_t</span> *ptrSkip = <span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> <span class="type">wchar_t</span> *&gt;(pFound - <span class="built_in">sizeof</span>(<span class="type">wchar_t</span>) * <span class="number">1</span>);</span><br><span class="line">				<span class="type">const</span> <span class="type">wchar_t</span> *ptrLength = <span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> <span class="type">wchar_t</span> *&gt;(pFound - <span class="built_in">sizeof</span>(<span class="type">wchar_t</span>) * <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">				<span class="comment">// Skip the key to get to the value</span></span><br><span class="line">				<span class="type">const</span> <span class="type">wchar_t</span> *ptrName = <span class="built_in">reinterpret_cast</span>&lt;<span class="type">const</span> <span class="type">wchar_t</span> *&gt;(</span><br><span class="line">					pFound + (ORI_FILENAME_SIZE - <span class="number">1</span> + *ptrSkip) * <span class="built_in">sizeof</span>(<span class="type">wchar_t</span>));</span><br><span class="line"></span><br><span class="line">				<span class="comment">// Convert the wstring to string and assign it to originalName</span></span><br><span class="line">				<span class="function">std::wstring <span class="title">wstrName</span><span class="params">(ptrName, *ptrLength)</span></span>;</span><br><span class="line">				<span class="type">int</span> iSize = <span class="built_in">WideCharToMultiByte</span>(CP_UTF8, <span class="number">0</span>, wstrName.<span class="built_in">data</span>(), wstrName.<span class="built_in">size</span>(), <span class="literal">NULL</span>, <span class="number">0</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">				strOriginalName.<span class="built_in">resize</span>(iSize);</span><br><span class="line">				<span class="built_in">WideCharToMultiByte</span>(CP_UTF8, <span class="number">0</span>, wstrName.<span class="built_in">data</span>(), wstrName.<span class="built_in">size</span>(), &amp;strOriginalName[<span class="number">0</span>], iSize, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <h3 id="检查文件名是否发生篡改"><a href="#检查文件名是否发生篡改" class="headerlink" title="检查文件名是否发生篡改"></a>检查文件名是否发生篡改</h3><p>获取到原始文件名之后，可以以此分析当前二进制文件名是否发生篡改。经过对 Windows 系统二进制的分析，发现绝大多数二进制的文件名和原始文件名匹配，但需要经过一些匹配条件的过滤。如下代码进行了系列过滤：忽略大小写的影响；忽略原始文件名<code>.mui</code>后缀；忽略原始文件名的前后<code>&quot;</code>号；原始文件名<code>.dynlink</code>后缀等价于<code>.dll</code>； 忽略原始文件名不带后缀。</p>
-<div class="highlight-container" data-rel="C++"><figure class="iseeu highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">checkNameMatch</span><span class="params">(std::string strFileName, std::string strOriginalName)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	std::<span class="built_in">transform</span>(strFileName.<span class="built_in">begin</span>(), strFileName.<span class="built_in">end</span>(), strFileName.<span class="built_in">begin</span>(), ::tolower);</span><br><span class="line">	std::<span class="built_in">transform</span>(strOriginalName.<span class="built_in">begin</span>(), strOriginalName.<span class="built_in">end</span>(), strOriginalName.<span class="built_in">begin</span>(), ::tolower);</span><br><span class="line"></span><br><span class="line">	strOriginalName = strOriginalName.<span class="built_in">substr</span>(<span class="number">0</span>, strOriginalName.<span class="built_in">find</span>(<span class="string">&quot;.mui&quot;</span>));</span><br><span class="line">	<span class="keyword">if</span> (strOriginalName.<span class="built_in">front</span>() == <span class="string">&#x27;&quot;&#x27;</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		strOriginalName.<span class="built_in">erase</span>(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">		strOriginalName.<span class="built_in">pop_back</span>();</span><br><span class="line">	&#125;</span><br><span class="line">	strOriginalName = strOriginalName.<span class="built_in">substr</span>(<span class="number">0</span>, strOriginalName.<span class="built_in">find</span>(<span class="string">&quot;.dynlink&quot;</span>));</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (strFileName == strOriginalName || strFileName.<span class="built_in">find</span>(strOriginalName.<span class="built_in">c_str</span>()) == <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="code-container" data-rel="C++"><figure class="iseeu highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">checkNameMatch</span><span class="params">(std::string strFileName, std::string strOriginalName)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	std::<span class="built_in">transform</span>(strFileName.<span class="built_in">begin</span>(), strFileName.<span class="built_in">end</span>(), strFileName.<span class="built_in">begin</span>(), ::tolower);</span><br><span class="line">	std::<span class="built_in">transform</span>(strOriginalName.<span class="built_in">begin</span>(), strOriginalName.<span class="built_in">end</span>(), strOriginalName.<span class="built_in">begin</span>(), ::tolower);</span><br><span class="line"></span><br><span class="line">	strOriginalName = strOriginalName.<span class="built_in">substr</span>(<span class="number">0</span>, strOriginalName.<span class="built_in">find</span>(<span class="string">&quot;.mui&quot;</span>));</span><br><span class="line">	<span class="keyword">if</span> (strOriginalName.<span class="built_in">front</span>() == <span class="string">&#x27;&quot;&#x27;</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		strOriginalName.<span class="built_in">erase</span>(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">		strOriginalName.<span class="built_in">pop_back</span>();</span><br><span class="line">	&#125;</span><br><span class="line">	strOriginalName = strOriginalName.<span class="built_in">substr</span>(<span class="number">0</span>, strOriginalName.<span class="built_in">find</span>(<span class="string">&quot;.dynlink&quot;</span>));</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (strFileName == strOriginalName || strFileName.<span class="built_in">find</span>(strOriginalName.<span class="built_in">c_str</span>()) == <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <p>上述的过滤步骤不可任意调换，因为有类似<code>&quot;Abc.dynlink&quot;.MUI</code>的原始文件名，其真实名称为<code>abc.dll</code>。Windows 开发规范并没有要求第三方开发者开发的二进制必须实现原始文件名属性，所以以上的篡改识别方案并不具有普适性，针对的主要是系统二进制。</p>
 
-        </div>
+		</div>
 
-        
-            <div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
-                <div class="article-copyright-info-container">
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
     <ul>
         <li><strong>Title:</strong> Windows 二进制原始文件名获取</li>
         <li><strong>Author:</strong> 孙康</li>
@@ -711,70 +556,64 @@
     </ul>
 </div>
 
-            </div>
-        
+		</div>
+		
 
-        
-            <ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
-                
-                    <li class="tag-item mx-0.5">
-                        <a href="/tags/Windows/">#Windows</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item mx-0.5">
-                        <a href="/tags/%E5%8E%9F%E5%A7%8B%E6%96%87%E4%BB%B6%E5%90%8D/">#原始文件名</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item mx-0.5">
-                        <a href="/tags/OriginalFilename/">#OriginalFilename</a>&nbsp;
-                    </li>
-                
-            </ul>
-        
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/Windows/">#Windows</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E5%8E%9F%E5%A7%8B%E6%96%87%E4%BB%B6%E5%90%8D/">#原始文件名</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/OriginalFilename/">#OriginalFilename</a>&nbsp;
+			</li>
+			
+		</ul>
+		
 
-        
+		
 
-        
-            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
-                
-                    <div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
-                        <a class="prev"
-                        rel="prev"
-                        href="/2024/08db6e3319.html"
-                        >
-                            <span class="left arrow-icon flex justify-center items-center">
-                                <i class="fa-solid fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">字符串模式匹配AC自动机算法实现</span>
-                                <span class="post-nav-item">Prev posts</span>
-                            </span>
-                        </a>
-                    </div>
-                
-                
-                    <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
-                        <a class="next"
-                        rel="next"
-                        href="/2023/09e9decc83.html"
-                        >
-                            <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">SwiftUI 入门之 NavigationSplitView 应用</span>
-                                <span class="post-nav-item">Next posts</span>
-                            </span>
-                            <span class="right arrow-icon flex justify-center items-center">
-                                <i class="fa-solid fa-chevron-right"></i>
-                            </span>
-                        </a>
-                    </div>
-                
-            </div>
-        
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2024/08db6e3319.html">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item">字符串模式匹配AC自动机算法实现</span>
+						<span class="post-nav-item">Prev posts</span>
+					</span>
+				</a>
+			</div>
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2023/09e9decc83.html">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item">SwiftUI 入门之 NavigationSplitView 应用</span>
+						<span class="post-nav-item">Next posts</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
 
 
-        
-            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
-                <div class="comments-container mt-10 w-full ">
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
     <div id="comment-anchor" class="w-full h-2.5"></div>
     <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
         Comments
@@ -825,36 +664,30 @@
     
 </div>
 
-            </div>
-        
-    </div>
+		</div>
+		
+	</div>
 
-    
-        <div class="toc-content-container">
-            <div class="post-toc-wrap">
-    <div class="post-toc">
-        <div class="toc-title">On this page</div>
-        <div class="page-title">Windows 二进制原始文件名获取</div>
-        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%A7%8B%E6%96%87%E4%BB%B6%E5%90%8D%E5%B1%9E%E6%80%A7%E4%BB%8B%E7%BB%8D"><span class="nav-text">原始文件名属性介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-API-%E8%8E%B7%E5%8F%96%E5%8E%9F%E5%A7%8B%E6%96%87%E4%BB%B6%E5%90%8D"><span class="nav-text">使用 API 获取原始文件名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%8A%A8%E8%A7%A3%E6%9E%90-PE-%E6%96%87%E4%BB%B6%E8%8E%B7%E5%8F%96%E5%8E%9F%E5%A7%8B%E6%96%87%E4%BB%B6%E5%90%8D"><span class="nav-text">手动解析 PE 文件获取原始文件名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E6%96%87%E4%BB%B6%E5%90%8D%E6%98%AF%E5%90%A6%E5%8F%91%E7%94%9F%E7%AF%A1%E6%94%B9"><span class="nav-text">检查文件名是否发生篡改</span></a></li></ol>
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">On this page</div>
+		<div class="page-title">Windows 二进制原始文件名获取</div>
+		<ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%A7%8B%E6%96%87%E4%BB%B6%E5%90%8D%E5%B1%9E%E6%80%A7%E4%BB%8B%E7%BB%8D"><span class="nav-text">原始文件名属性介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-API-%E8%8E%B7%E5%8F%96%E5%8E%9F%E5%A7%8B%E6%96%87%E4%BB%B6%E5%90%8D"><span class="nav-text">使用 API 获取原始文件名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%8A%A8%E8%A7%A3%E6%9E%90-PE-%E6%96%87%E4%BB%B6%E8%8E%B7%E5%8F%96%E5%8E%9F%E5%A7%8B%E6%96%87%E4%BB%B6%E5%90%8D"><span class="nav-text">手动解析 PE 文件获取原始文件名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E6%96%87%E4%BB%B6%E5%90%8D%E6%98%AF%E5%90%A6%E5%8F%91%E7%94%9F%E7%AF%A1%E6%94%B9"><span class="nav-text">检查文件名是否发生篡改</span></a></li></ol>
 
-    </div>
+	</div>
 </div>
-        </div>
-    
+	</div>
+	
 </div>
+			</div>
 
+			
+		</div>
 
-
-                
-
-            </div>
-
-            
-
-        </div>
-
-        <div class="main-content-footer">
-            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
     <div class="info-container py-3 text-center">
         
         <div class="text-center">
@@ -897,7 +730,7 @@
         
         <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
             <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
-            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.6.1</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.2</a></span>
         </div>
         
         
@@ -926,124 +759,113 @@
         
     </div>  
 </footer>
-        </div>
-    </div>
+		</div>
+	</div>
 
-    
-        <div class="post-tools">
-            <div class="post-tools-container">
-    <ul class="article-tools-list">
-        <!-- TOC aside toggle -->
-        
-            <li class="right-bottom-tools page-aside-toggle">
-                <i class="fa-regular fa-outdent"></i>
-            </li>
-        
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
 
-        <!-- go comment -->
-        
-            <li class="go-comment">
-                <i class="fa-regular fa-comments"></i>
-            </li>
-        
-    </ul>
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
 </div>
 
-        </div>
-    
-
-    <div class="right-side-tools-container">
-        <div class="side-tools-container">
-    <ul class="hidden-tools-list">
-        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
-            <i class="fa-regular fa-magnifying-glass-plus"></i>
-        </li>
-
-        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
-            <i class="fa-regular fa-magnifying-glass-minus"></i>
-        </li>
-
-        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
-            <i class="fa-regular fa-moon"></i>
-        </li>
-
-        <!-- rss -->
-        
-
-        
-
-        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
-            <i class="fa-regular fa-arrow-down"></i>
-        </li>
-    </ul>
-
-    <ul class="visible-tools-list">
-        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
-            <i class="fa-regular fa-cog fa-spin"></i>
-        </li>
-        
-            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
-                <i class="arrow-up fas fa-arrow-up"></i>
-                <span class="percent"></span>
-            </li>
-        
-        
-    </ul>
+	
+	<div class="search-pop-overlay">
+	<div class="popup search-popup">
+		<div class="search-header">
+			<span class="search-input-field-pre">
+				<i class="fa-solid fa-keyboard"></i>
+			</span>
+			<div class="search-input-container">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Search..." spellcheck="false" type="search" class="search-input">
+			</div>
+			<span class="popup-btn-close">
+				<i class="fa-solid fa-times"></i>
+			</span>
+		</div>
+		<div id="search-result">
+			<div id="no-result">
+				<i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+			</div>
+		</div>
+	</div>
 </div>
-
-    </div>
-
-    <div class="image-viewer-container">
-    <img src="">
-</div>
-
-
-    
-        <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-          <span class="search-input-field-pre">
-            <i class="fa-solid fa-keyboard"></i>
-          </span>
-            <div class="search-input-container">
-                <input autocomplete="off"
-                       autocorrect="off"
-                       autocapitalize="off"
-                       placeholder="Search..."
-                       spellcheck="false"
-                       type="search"
-                       class="search-input"
-                >
-            </div>
-            <span class="popup-btn-close">
-                <i class="fa-solid fa-times"></i>
-            </span>
-        </div>
-        <div id="search-result">
-            <div id="no-result">
-                <i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
-            </div>
-        </div>
-    </div>
-</div>
-
-    
+	
 
 </main>
 
 
-    
-<script src="/js/libs/Swup.min.js"></script>
 
-<script src="/js/libs/SwupSlideTheme.min.js"></script>
+<script src="/js/build/libs/Swup.min.js"></script>
 
-<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
 
-<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
 
-<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
 
-<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
 
 <script>
     const swup = new Swup({
@@ -1067,48 +889,46 @@
 
 
 
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
 
+<script src="/js/build/utils.js" type="module"></script>
 
+<script src="/js/build/main.js" type="module"></script>
 
-<script src="/js/tools/imageViewer.js" type="module"></script>
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
 
-<script src="/js/utils.js" type="module"></script>
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
 
-<script src="/js/main.js" type="module"></script>
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
 
-<script src="/js/layouts/navbarShrink.js" type="module"></script>
-
-<script src="/js/tools/scrollTopBottom.js" type="module"></script>
-
-<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
-
-<script src="/js/layouts/categoryList.js" type="module"></script>
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
 
 
 
     
-<script src="/js/tools/localSearch.js" type="module"></script>
+<script src="/js/build/tools/localSearch.js" type="module"></script>
 
 
 
 
     
-<script src="/js/tools/codeBlock.js" type="module"></script>
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
 
 
 
 
     
-<script src="/js/layouts/lazyload.js" type="module"></script>
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
 
 
 
 
     
-<script src="/js/tools/runtime.js"></script>
+<script src="/js/build/tools/runtime.js"></script>
 
     
-<script src="/js/libs/odometer.min.js"></script>
+<script src="/js/build/libs/odometer.min.js"></script>
 
     
 <link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
@@ -1117,10 +937,10 @@
 
 
   
-<script src="/js/libs/Typed.min.js"></script>
+<script src="/js/build/libs/Typed.min.js"></script>
 
   
-<script src="/js/plugins/typed.js" type="module"></script>
+<script src="/js/build/plugins/typed.js" type="module"></script>
 
 
 
@@ -1128,20 +948,34 @@
 
 
 
-
-
-<div class="post-scripts" data-swup-reload-script>
-    
-        
-<script src="/js/tools/tocToggle.js" type="module"></script>
-
-<script src="/js/layouts/toc.js" type="module"></script>
-
-<script src="/js/plugins/tabs.js" type="module"></script>
 
     
-</div>
+<script src="/js/build/libs/anime.min.js"></script>
 
 
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+	
 </body>
+
 </html>

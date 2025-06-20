@@ -18,13 +18,17 @@
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="基于 XPC 实现 macOS 进程间通信。XPC 框架可以让开发者像使用本地实现的函数一样方便地调用其他进程实现的函数。本文使用 swift 语言实现 Apple 推荐的 XPC 进程通信机制。">
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="macOS 用户态进程间的通信实现">
 <meta property="og:url" content="https://conradsun.github.io/2023/06b3e3d734.html">
 <meta property="og:site_name" content="康的个人博客">
-<meta property="og:description" content="基于 XPC 实现 macOS 进程间通信。XPC 框架可以让开发者像使用本地实现的函数一样方便地调用其他进程实现的函数。本文使用 swift 语言实现 Apple 推荐的 XPC 进程通信机制。">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://conradsun.github.io/images/redefine-og.webp">
 <meta property="article:published_time" content="2023-06-23T05:12:57.000Z">
 <meta property="article:modified_time" content="2023-08-31T11:56:20.344Z">
 <meta property="article:author" content="ConradSun">
@@ -32,6 +36,7 @@
 <meta property="article:tag" content="进程间通信">
 <meta property="article:tag" content="XPC">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://conradsun.github.io/images/redefine-og.webp">
     
     
     <!--- Icon Part-->
@@ -43,9 +48,8 @@
     
     <title>
         
-            macOS 用户态进程间的通信实现 -
+            macOS 用户态进程间的通信实现 | Kang&#39;s Blog
         
-        Kang&#39;s Blog
     </title>
 
     
@@ -56,171 +60,20 @@
     
 
     
-        <style>
-    :root {
-        --preloader-background-color: #fff;
-        --preloader-text-color: #000;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        :root {
-            --preloader-background-color: #202124;
-            --preloader-text-color: #fff;
-        }
-    }
-
-    @media (prefers-color-scheme: light) {
-        :root {
-            --preloader-background-color: #fff;
-            --preloader-text-color: #000;
-        }
-    }
-
-    @media (max-width: 600px) {
-        .ml13 {
-            font-size: 2.6rem !important; /* Adjust this value as needed */
-        }
-    }
-
-    .preloader {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem; /* Tailwind 'gap-4' is 1rem */
-        align-items: center;
-        justify-content: center;
-        position: fixed;
-        padding: 12px;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh; /* 'h-screen' is 100% of the viewport height */
-        background-color: var(--preloader-background-color);
-        z-index: 1100; /* 'z-[1100]' sets the z-index */
-        transition: opacity 0.2s ease-in-out;
-    }
-
-    .ml13 {
-        font-size: 3.2rem;
-        /* text-transform: uppercase; */
-        color: var(--preloader-text-color);
-        letter-spacing: -1px;
-        font-weight: 500;
-        font-family: 'Chillax-Variable', sans-serif;
-        text-align: center;
-    }
-
-    .ml13 .word {
-        display: inline-flex;
-        flex-wrap: wrap;
-        white-space: nowrap;
-    }
-
-    .ml13 .letter {
-        display: inline-block;
-        line-height: 1em;
-    }
-</style>
-
-<div class="preloader">
-    
-<script src="/js/libs/anime.min.js"></script>
-
-    <h1 class="ml13">
-        Kang&#39;s Blog
-    </h1>
-    <script>
-        var textWrapper = document.querySelector('.ml13');
-        // Split text into words
-        var words = textWrapper.textContent.trim().split(' ');
-
-        // Clear the existing content
-        textWrapper.innerHTML = '';
-
-        // Wrap each word and its letters in spans
-        words.forEach(function(word) {
-            var wordSpan = document.createElement('span');
-            wordSpan.classList.add('word');
-            wordSpan.innerHTML = word.replace(/\S/g, "<span class='letter'>$&</span>");
-            textWrapper.appendChild(wordSpan);
-            textWrapper.appendChild(document.createTextNode(' ')); // Add space between words
-        });
-
-
-        anime.timeline({loop: true})
-            .add({
-                targets: '.ml13 .letter',
-                translateY: [100,0],
-                translateZ: 0,
-                opacity: [0,1],
-                easing: "easeOutExpo",
-                duration: 1400,
-                delay: (el, i) => 300 + 30 * i
-            }).add({
-            targets: '.ml13 .letter',
-            translateY: [0,-100],
-            opacity: [1,0],
-            easing: "easeInExpo",
-            duration: 1200,
-            delay: (el, i) => 100 + 30 * i
-        });
-
-        let themeStatus = JSON.parse(localStorage.getItem('REDEFINE-THEME-STATUS'))?.isDark;
-
-        // If the theme status is not found in local storage, check the preferred color scheme
-        if (themeStatus === undefined || themeStatus === null) {
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                themeStatus = 'dark';
-            } else {
-                themeStatus = 'light';
-            }
-        }
-
-        // Now you can use the themeStatus variable in your code
-        if (themeStatus) {
-            document.documentElement.style.setProperty('--preloader-background-color', '#202124');
-            document.documentElement.style.setProperty('--preloader-text-color', '#fff');
-        } else {
-            document.documentElement.style.setProperty('--preloader-background-color', '#fff');
-            document.documentElement.style.setProperty('--preloader-text-color', '#000');
-        }
-
-        window.addEventListener('load', function () {
-            hidePreloaderAfterTimeout(1000); // Hide after 1000 milliseconds once the window has loaded
-        });
-
-        // Backup failsafe: Hide preloader after a maximum of 5000 milliseconds, regardless of the window load event
-        hidePreloaderAfterTimeout(5000);
-
-        function hidePreloaderAfterTimeout(delay) {
-            setTimeout(function () {
-                var preloader = document.querySelector('.preloader');
-                preloader.style.opacity = '0';
-                setTimeout(function () {
-                    preloader.style.display = 'none';
-                }, 200);
-            }, delay);
-        }
-    </script>
-</div>
-    
-
-    
 <link rel="stylesheet" href="/css/style.css">
 
 
     
         
-<link rel="stylesheet" href="/assets/build/styles.css">
+<link rel="stylesheet" href="/css/build/tailwind.css">
 
     
 
     
-<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
 
     
-<link rel="stylesheet" href="/fonts/Satoshi/satoshi.css">
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
 
     <!--- Font Part-->
     
@@ -235,11 +88,12 @@
     
         <link href="https://fonts.googleapis.com/css2?family=Lora" rel="stylesheet">
     
-
+    
+    
 
     <script id="hexo-configurations">
     window.config = {"hostname":"conradsun.github.io","root":"/","language":"en","path":"search.xml"};
-    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true,"title_alignment":"left","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/ConradSun","bilibili":"https://space.bilibili.com/91647922?spm_id_from=333.1007.0.0","zhihu":null,"email":"sunkangnuaa@163.com"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.6.1","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"ME":"/me","Github":"https://github.com/ConradSun","Friends":"/links"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.8,"image_border_radius":"14px","image_alignment":"center","image_caption":true,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":false,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":true,"family":"Courier","url":"https://fonts.googleapis.com/css2?family=Courier:wght@400;500;600;700&display=swap"}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wlop-wind.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"Noto Serif SC","url":"https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap"},"english":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora"},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wlop-wind.webp","dark":"/images/wlop-light.webp"},"title":"Research & Share","subtitle":{"text":["Refrash your mind"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":true,"family":"Lora","url":"https://fonts.googleapis.com/css2?family=Lora:wght@400;500;700&display=swap"},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/ConradSun","bilibili":"https://space.bilibili.com/91647922?spm_id_from=333.1007.0.0","zhihu":null,"email":"sunkangnuaa@163.com"},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1"}},"version":"2.8.2","navbar":{"auto_hide":true,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"icon":"fa-regular fa-user","submenus":{"ME":"/me","Github":"https://github.com/ConradSun","Friends":"/links"}}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
     window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
     window.data = {"masonry":false};
   </script>
@@ -272,34 +126,31 @@
 <meta name="generator" content="Hexo 6.3.0"></head>
 
 
+
 <body>
-<div class="progress-bar-container">
-    
+	<div class="progress-bar-container">
+	
 
-    
-        <span class="pjax-progress-bar"></span>
-<!--        <span class="swup-progress-icon">-->
-<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
-<!--        </span>-->
-    
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
 </div>
-
 
 <main class="page-container" id="swup">
 
-    
+	
 
-    <div class="main-content-container">
-
-
-        <div class="main-content-header">
-            <header class="navbar-container px-6 md:px-12">
-
-    <div class="navbar-content ">
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
         <div class="left">
             
-                <a class="logo-image" href="/">
-                    <img src="/images/git-avatar.svg">
+                <a class="logo-image h-8 w-8 sm:w-10 sm:h-10 mr-3" href="/">
+                    <img src="/images/git-avatar.svg" class="w-full h-full rounded-sm">
                 </a>
             
             <a class="logo-title" href="/">
@@ -408,7 +259,7 @@
     </div>
 
     <!-- Mobile sheet -->
-    <div class="navbar-drawer h-screen w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
         <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
             
                 
@@ -539,38 +390,35 @@
 </header>
 
 
-        </div>
+		</div>
 
-        <div class="main-content-body">
+		<div class="main-content-body transition-fade-up">
+			
 
-            
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
 
-            <div class="main-content">
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">macOS 用户态进程间的通信实现</h1>
+			</div>
+			
+		</div>
 
-                
-                    <div class="post-page-container flex relative justify-between box-border w-full h-full">
-    <div class="article-content-container">
-
-        <div class="article-title relative w-full">
-            
-                <div class="w-full flex items-center pt-6 justify-start">
-                    <h1 class="article-title-regular text-second-text-color text-4xl md:text-6xl font-bold px-2 sm:px-6 md:px-8 py-3">macOS 用户态进程间的通信实现</h1>
-                </div>
-            
-            </div>
-
-        
-            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
-                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
-                    <img src="/images/git-avatar.svg">
-                </div>
-                <div class="info flex flex-col justify-between">
-                    <div class="author flex items-center">
-                        <span class="name text-default-text-color text-lg font-semibold">孙康</span>
-                        
-                    </div>
-                    <div class="meta-info">
-                        <div class="article-meta-info">
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="/images/git-avatar.svg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">孙康</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
         <span class="desktop">2023-06-23 13:12:57</span>
@@ -642,31 +490,31 @@
     
 </div>
 
-                    </div>
-                </div>
-            </div>
-        
+				</div>
+			</div>
+		</div>
+		
 
-        
+		
 
 
-        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
-            <p>macOS 内核与用户态进程的通信前面已经讲解过了，用户态进程间通信较为简单，Apple 官方推荐使用 <a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/xpc" >XPC <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 机制。XPC 有底层的 C API，也有封装后的上层的 objc 和 swift API，可以实现像调用自身进程的接口一样调用对端的暴露接口。这里以 swift 为例说明 XPC 的代码实现。开源项目 <a class="link"   target="_blank" rel="noopener" href="https://github.com/ConradSun/NuwaStone" >NuwaStone <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 用户态进程间通信均基于 XPC 实现，更多代码细节可参考该项目。</p>
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<p>macOS 内核与用户态进程的通信前面已经讲解过了，用户态进程间通信较为简单，Apple 官方推荐使用 <a class="link"   target="_blank" rel="noopener" href="https://developer.apple.com/documentation/xpc" >XPC<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a> 机制。XPC 有底层的 C API，也有封装后的上层的 objc 和 swift API，可以实现像调用自身进程的接口一样调用对端的暴露接口。这里以 swift 为例说明 XPC 的代码实现。开源项目 <a class="link"   target="_blank" rel="noopener" href="https://github.com/ConradSun/NuwaStone" >NuwaStone<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a> 用户态进程间通信均基于 XPC 实现，更多代码细节可参考该项目。</p>
 <h3 id="对外接口及类定义"><a href="#对外接口及类定义" class="headerlink" title="对外接口及类定义"></a>对外接口及类定义</h3><p>使用 XPC 需新建两个协议，作为自身进程和对端进程的通信接口，然后新建一个处理 XPC 连接请求的类，注意需继承 NSObject，以便实现 XPC 系统调用所需的代理接口。注意，为了方便 XPCConnection 类是自身进程与对端进程共用的，但部分方法是不能共用的，详细见注释。</p>
-<div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 客户端进程协议</span></span><br><span class="line"><span class="keyword">@objc</span> <span class="keyword">protocol</span> <span class="title class_">ClientXPCProtocol</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 服务端进程协议</span></span><br><span class="line"><span class="keyword">@objc</span> <span class="keyword">protocol</span> <span class="title class_">ServerXPCProtocol</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">connectResponse</span>(<span class="keyword">_</span> <span class="params">handler</span>: <span class="keyword">@escaping</span> (<span class="type">Bool</span>) -&gt; <span class="type">Void</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 连接请求处理类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">XPCConnection</span>: <span class="title class_">NSObject</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> shared <span class="operator">=</span> <span class="type">XPCConnection</span>()</span><br><span class="line">    <span class="keyword">var</span> listener: <span class="type">NSXPCListener</span>?</span><br><span class="line">    <span class="comment">// 连接处理对象</span></span><br><span class="line">    <span class="keyword">var</span> connection: <span class="type">NSXPCConnection</span>?</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">getMachServiceName</span>(<span class="params">from</span> <span class="params">bundle</span>: <span class="type">Bundle</span>) -&gt; <span class="type">String</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> clientKeys <span class="operator">=</span> bundle.object(forInfoDictionaryKey: <span class="type">ClientName</span>) <span class="keyword">as?</span> [<span class="type">String</span>: <span class="keyword">Any</span>]</span><br><span class="line">        <span class="keyword">let</span> machServiceName <span class="operator">=</span> clientKeys<span class="operator">?</span>[<span class="type">MachServiceKey</span>] <span class="keyword">as?</span> <span class="type">String</span></span><br><span class="line">        <span class="keyword">return</span> machServiceName <span class="operator">??</span> <span class="string">&quot;&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 仅服务端进程调用</span></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">startListener</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> newListener <span class="operator">=</span> <span class="type">NSXPCListener</span>(machServiceName: <span class="string">&quot;your service name&quot;</span>)</span><br><span class="line">        newListener.delegate <span class="operator">=</span> <span class="keyword">self</span></span><br><span class="line">        newListener.resume()</span><br><span class="line">        listener <span class="operator">=</span> newListener</span><br><span class="line">        <span class="type">Logger</span>(.<span class="type">Info</span>, <span class="string">&quot;Start XPC listener successfully.&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 仅客户端进程调用</span></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">connectToServer</span>(<span class="params">bundle</span>: <span class="type">Bundle</span>, <span class="params">delegate</span>: <span class="type">ClientXPCProtocol</span>, <span class="params">handler</span>: <span class="keyword">@escaping</span> (<span class="type">Bool</span>) -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">        <span class="keyword">guard</span> connection <span class="operator">==</span> <span class="literal">nil</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="type">Logger</span>(.<span class="type">Info</span>, <span class="string">&quot;Client already connected.&quot;</span>)</span><br><span class="line">            handler(<span class="literal">true</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">guard</span> getMachServiceName(from: bundle) <span class="operator">==</span> <span class="type">ClientBundle</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            handler(<span class="literal">false</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> newConnection <span class="operator">=</span> <span class="type">NSXPCConnection</span>(machServiceName: <span class="type">DaemonBundle</span>)</span><br><span class="line">        newConnection.exportedObject <span class="operator">=</span> delegate</span><br><span class="line">        newConnection.exportedInterface <span class="operator">=</span> <span class="type">NSXPCInterface</span>(with: <span class="type">ClientXPCProtocol</span>.<span class="keyword">self</span>)</span><br><span class="line">        newConnection.remoteObjectInterface <span class="operator">=</span> <span class="type">NSXPCInterface</span>(with: <span class="type">DaemonXPCProtocol</span>.<span class="keyword">self</span>)</span><br><span class="line">        connection <span class="operator">=</span> newConnection</span><br><span class="line">        newConnection.resume()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> proxy <span class="operator">=</span> newConnection.remoteObjectProxyWithErrorHandler &#123; error <span class="keyword">in</span></span><br><span class="line">            <span class="type">Logger</span>(.<span class="type">Error</span>, <span class="string">&quot;Failed to connect with error [<span class="subst">\(error)</span>]&quot;</span>)</span><br><span class="line">            <span class="keyword">self</span>.connection<span class="operator">?</span>.invalidate()</span><br><span class="line">            <span class="keyword">self</span>.connection <span class="operator">=</span> <span class="literal">nil</span></span><br><span class="line">            handler(<span class="literal">false</span>)</span><br><span class="line">        &#125; <span class="keyword">as?</span> <span class="type">DaemonXPCProtocol</span></span><br><span class="line"></span><br><span class="line">        proxy<span class="operator">?</span>.connectResponse(handler)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="code-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 客户端进程协议</span></span><br><span class="line"><span class="keyword">@objc</span> <span class="keyword">protocol</span> <span class="title class_">ClientXPCProtocol</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 服务端进程协议</span></span><br><span class="line"><span class="keyword">@objc</span> <span class="keyword">protocol</span> <span class="title class_">ServerXPCProtocol</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">connectResponse</span>(<span class="keyword">_</span> <span class="params">handler</span>: <span class="keyword">@escaping</span> (<span class="type">Bool</span>) -&gt; <span class="type">Void</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 连接请求处理类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">XPCConnection</span>: <span class="title class_">NSObject</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> shared <span class="operator">=</span> <span class="type">XPCConnection</span>()</span><br><span class="line">    <span class="keyword">var</span> listener: <span class="type">NSXPCListener</span>?</span><br><span class="line">    <span class="comment">// 连接处理对象</span></span><br><span class="line">    <span class="keyword">var</span> connection: <span class="type">NSXPCConnection</span>?</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">getMachServiceName</span>(<span class="params">from</span> <span class="params">bundle</span>: <span class="type">Bundle</span>) -&gt; <span class="type">String</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> clientKeys <span class="operator">=</span> bundle.object(forInfoDictionaryKey: <span class="type">ClientName</span>) <span class="keyword">as?</span> [<span class="type">String</span>: <span class="keyword">Any</span>]</span><br><span class="line">        <span class="keyword">let</span> machServiceName <span class="operator">=</span> clientKeys<span class="operator">?</span>[<span class="type">MachServiceKey</span>] <span class="keyword">as?</span> <span class="type">String</span></span><br><span class="line">        <span class="keyword">return</span> machServiceName <span class="operator">??</span> <span class="string">&quot;&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 仅服务端进程调用</span></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">startListener</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> newListener <span class="operator">=</span> <span class="type">NSXPCListener</span>(machServiceName: <span class="string">&quot;your service name&quot;</span>)</span><br><span class="line">        newListener.delegate <span class="operator">=</span> <span class="keyword">self</span></span><br><span class="line">        newListener.resume()</span><br><span class="line">        listener <span class="operator">=</span> newListener</span><br><span class="line">        <span class="type">Logger</span>(.<span class="type">Info</span>, <span class="string">&quot;Start XPC listener successfully.&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 仅客户端进程调用</span></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">connectToServer</span>(<span class="params">bundle</span>: <span class="type">Bundle</span>, <span class="params">delegate</span>: <span class="type">ClientXPCProtocol</span>, <span class="params">handler</span>: <span class="keyword">@escaping</span> (<span class="type">Bool</span>) -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">        <span class="keyword">guard</span> connection <span class="operator">==</span> <span class="literal">nil</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="type">Logger</span>(.<span class="type">Info</span>, <span class="string">&quot;Client already connected.&quot;</span>)</span><br><span class="line">            handler(<span class="literal">true</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">guard</span> getMachServiceName(from: bundle) <span class="operator">==</span> <span class="type">ClientBundle</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            handler(<span class="literal">false</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> newConnection <span class="operator">=</span> <span class="type">NSXPCConnection</span>(machServiceName: <span class="type">DaemonBundle</span>)</span><br><span class="line">        newConnection.exportedObject <span class="operator">=</span> delegate</span><br><span class="line">        newConnection.exportedInterface <span class="operator">=</span> <span class="type">NSXPCInterface</span>(with: <span class="type">ClientXPCProtocol</span>.<span class="keyword">self</span>)</span><br><span class="line">        newConnection.remoteObjectInterface <span class="operator">=</span> <span class="type">NSXPCInterface</span>(with: <span class="type">DaemonXPCProtocol</span>.<span class="keyword">self</span>)</span><br><span class="line">        connection <span class="operator">=</span> newConnection</span><br><span class="line">        newConnection.resume()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> proxy <span class="operator">=</span> newConnection.remoteObjectProxyWithErrorHandler &#123; error <span class="keyword">in</span></span><br><span class="line">            <span class="type">Logger</span>(.<span class="type">Error</span>, <span class="string">&quot;Failed to connect with error [<span class="subst">\(error)</span>]&quot;</span>)</span><br><span class="line">            <span class="keyword">self</span>.connection<span class="operator">?</span>.invalidate()</span><br><span class="line">            <span class="keyword">self</span>.connection <span class="operator">=</span> <span class="literal">nil</span></span><br><span class="line">            handler(<span class="literal">false</span>)</span><br><span class="line">        &#125; <span class="keyword">as?</span> <span class="type">DaemonXPCProtocol</span></span><br><span class="line"></span><br><span class="line">        proxy<span class="operator">?</span>.connectResponse(handler)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <p>XPC 的代码实现是较为简单的，<code>startListener</code>函数首先需创建连接所用的 Mach 端口，网络资源在 Mac 内核抽象为了 Mach 端口资源，然后设置处理连接请求的代理为自身类，后面需编写请求处理代码以校验对端并建立连接。<code>connectToServer</code>函数首先判断是否连接已建立，然后简单校验了一下 APP 包名。创建连接对象时需设置自身暴露接口和远程调用接口，设置完成后所调用的<code>connectResponse</code>为连接测试函数。在调用远程接口前均需获取<code>remoteObjectProxy</code>远程对象代理，这里需进行错误处理，如果出错则表示连接断开。</p>
 <h3 id="XPC-连接请求系统调用代理接口"><a href="#XPC-连接请求系统调用代理接口" class="headerlink" title="XPC 连接请求系统调用代理接口"></a>XPC 连接请求系统调用代理接口</h3><p><code>startListener</code>函数中设置处理连接请求的代理为自身类，所以类需要实现代理方法，代理方法的实现很简单，仅需实现下面一种方法。函数内的实现看起来与<code>connectToServer</code>差不多，不过多了错误处理机制。建立连接前可以进行签名校验以增强安全性。这里的<code>invalidationHandler</code>被系统调用时表明连接正常断开，<code>interruptionHandler</code>被系统调用时表明连接意外断开，如果有断开重连要求可以加在这里。</p>
-<div class="highlight-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extension</span> <span class="title class_">XPCConnection</span>: <span class="title class_">NSXPCListenerDelegate</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">listener</span>(<span class="keyword">_</span> <span class="params">listener</span>: <span class="type">NSXPCListener</span>, <span class="params">shouldAcceptNewConnection</span> <span class="params">newConnection</span>: <span class="type">NSXPCConnection</span>) -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        newConnection.exportedObject <span class="operator">=</span> <span class="keyword">self</span></span><br><span class="line">        newConnection.exportedInterface <span class="operator">=</span> <span class="type">NSXPCInterface</span>(with: <span class="type">DaemonXPCProtocol</span>.<span class="keyword">self</span>)</span><br><span class="line">        newConnection.remoteObjectInterface <span class="operator">=</span> <span class="type">NSXPCInterface</span>(with: <span class="type">ClientXPCProtocol</span>.<span class="keyword">self</span>)</span><br><span class="line">        newConnection.invalidationHandler <span class="operator">=</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.connection <span class="operator">=</span> <span class="literal">nil</span></span><br><span class="line">            <span class="type">Logger</span>(.<span class="type">Info</span>, <span class="string">&quot;Client disconnected.&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        newConnection.interruptionHandler <span class="operator">=</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.connection <span class="operator">=</span> <span class="literal">nil</span></span><br><span class="line">            <span class="type">Logger</span>(.<span class="type">Info</span>, <span class="string">&quot;Client interrupted.&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        connection <span class="operator">=</span> newConnection</span><br><span class="line">        newConnection.resume()</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+<div class="code-container" data-rel="Swift"><figure class="iseeu highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extension</span> <span class="title class_">XPCConnection</span>: <span class="title class_">NSXPCListenerDelegate</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">listener</span>(<span class="keyword">_</span> <span class="params">listener</span>: <span class="type">NSXPCListener</span>, <span class="params">shouldAcceptNewConnection</span> <span class="params">newConnection</span>: <span class="type">NSXPCConnection</span>) -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        newConnection.exportedObject <span class="operator">=</span> <span class="keyword">self</span></span><br><span class="line">        newConnection.exportedInterface <span class="operator">=</span> <span class="type">NSXPCInterface</span>(with: <span class="type">DaemonXPCProtocol</span>.<span class="keyword">self</span>)</span><br><span class="line">        newConnection.remoteObjectInterface <span class="operator">=</span> <span class="type">NSXPCInterface</span>(with: <span class="type">ClientXPCProtocol</span>.<span class="keyword">self</span>)</span><br><span class="line">        newConnection.invalidationHandler <span class="operator">=</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.connection <span class="operator">=</span> <span class="literal">nil</span></span><br><span class="line">            <span class="type">Logger</span>(.<span class="type">Info</span>, <span class="string">&quot;Client disconnected.&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        newConnection.interruptionHandler <span class="operator">=</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.connection <span class="operator">=</span> <span class="literal">nil</span></span><br><span class="line">            <span class="type">Logger</span>(.<span class="type">Info</span>, <span class="string">&quot;Client interrupted.&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        connection <span class="operator">=</span> newConnection</span><br><span class="line">        newConnection.resume()</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
 
 <h3 id="服务端对外暴露接口"><a href="#服务端对外暴露接口" class="headerlink" title="服务端对外暴露接口"></a>服务端对外暴露接口</h3><p>暴露接口根据自己的项目需要自行设计实现就好，但要注意这些接口是无返回值的，毕竟是远程调用，基本也不会需要返回值。这里使用<code>@escaping</code>修饰代码块，表示代码块的调用可能在函数返回后。</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">extension XPCConnection: DaemonXPCProtocol &#123;</span><br><span class="line">    func connectResponse(_ handler: @escaping (Bool) -&gt; Void) &#123;</span><br><span class="line">        Logger(.Info, &quot;Client connected.&quot;)</span><br><span class="line">        handler(true)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">extension XPCConnection: DaemonXPCProtocol &#123;</span><br><span class="line">    func connectResponse(_ handler: @escaping (Bool) -&gt; Void) &#123;</span><br><span class="line">        Logger(.Info, &quot;Client connected.&quot;)</span><br><span class="line">        handler(true)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-        </div>
+		</div>
 
-        
-            <div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
-                <div class="article-copyright-info-container">
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
     <ul>
         <li><strong>Title:</strong> macOS 用户态进程间的通信实现</li>
         <li><strong>Author:</strong> 孙康</li>
@@ -694,70 +542,64 @@
     </ul>
 </div>
 
-            </div>
-        
+		</div>
+		
 
-        
-            <ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
-                
-                    <li class="tag-item mx-0.5">
-                        <a href="/tags/macOS/">#macOS</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item mx-0.5">
-                        <a href="/tags/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/">#进程间通信</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item mx-0.5">
-                        <a href="/tags/XPC/">#XPC</a>&nbsp;
-                    </li>
-                
-            </ul>
-        
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/macOS/">#macOS</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/">#进程间通信</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/XPC/">#XPC</a>&nbsp;
+			</li>
+			
+		</ul>
+		
 
-        
+		
 
-        
-            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
-                
-                    <div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
-                        <a class="prev"
-                        rel="prev"
-                        href="/2023/0676d00749.html"
-                        >
-                            <span class="left arrow-icon flex justify-center items-center">
-                                <i class="fa-solid fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">macOS Hook 系统调用</span>
-                                <span class="post-nav-item">Prev posts</span>
-                            </span>
-                        </a>
-                    </div>
-                
-                
-                    <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
-                        <a class="next"
-                        rel="next"
-                        href="/2023/0699a600b0.html"
-                        >
-                            <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">macOS 内核拓展与用户态进程的通信实现（二）</span>
-                                <span class="post-nav-item">Next posts</span>
-                            </span>
-                            <span class="right arrow-icon flex justify-center items-center">
-                                <i class="fa-solid fa-chevron-right"></i>
-                            </span>
-                        </a>
-                    </div>
-                
-            </div>
-        
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2023/0676d00749.html">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item">macOS Hook 系统调用</span>
+						<span class="post-nav-item">Prev posts</span>
+					</span>
+				</a>
+			</div>
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2023/0699a600b0.html">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item">macOS 内核拓展与用户态进程的通信实现（二）</span>
+						<span class="post-nav-item">Next posts</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
 
 
-        
-            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
-                <div class="comments-container mt-10 w-full ">
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
     <div id="comment-anchor" class="w-full h-2.5"></div>
     <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
         Comments
@@ -808,36 +650,30 @@
     
 </div>
 
-            </div>
-        
-    </div>
+		</div>
+		
+	</div>
 
-    
-        <div class="toc-content-container">
-            <div class="post-toc-wrap">
-    <div class="post-toc">
-        <div class="toc-title">On this page</div>
-        <div class="page-title">macOS 用户态进程间的通信实现</div>
-        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E5%A4%96%E6%8E%A5%E5%8F%A3%E5%8F%8A%E7%B1%BB%E5%AE%9A%E4%B9%89"><span class="nav-text">对外接口及类定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XPC-%E8%BF%9E%E6%8E%A5%E8%AF%B7%E6%B1%82%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E4%BB%A3%E7%90%86%E6%8E%A5%E5%8F%A3"><span class="nav-text">XPC 连接请求系统调用代理接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%AF%B9%E5%A4%96%E6%9A%B4%E9%9C%B2%E6%8E%A5%E5%8F%A3"><span class="nav-text">服务端对外暴露接口</span></a></li></ol>
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">On this page</div>
+		<div class="page-title">macOS 用户态进程间的通信实现</div>
+		<ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E5%A4%96%E6%8E%A5%E5%8F%A3%E5%8F%8A%E7%B1%BB%E5%AE%9A%E4%B9%89"><span class="nav-text">对外接口及类定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XPC-%E8%BF%9E%E6%8E%A5%E8%AF%B7%E6%B1%82%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E4%BB%A3%E7%90%86%E6%8E%A5%E5%8F%A3"><span class="nav-text">XPC 连接请求系统调用代理接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%AF%B9%E5%A4%96%E6%9A%B4%E9%9C%B2%E6%8E%A5%E5%8F%A3"><span class="nav-text">服务端对外暴露接口</span></a></li></ol>
 
-    </div>
+	</div>
 </div>
-        </div>
-    
+	</div>
+	
 </div>
+			</div>
 
+			
+		</div>
 
-
-                
-
-            </div>
-
-            
-
-        </div>
-
-        <div class="main-content-footer">
-            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
     <div class="info-container py-3 text-center">
         
         <div class="text-center">
@@ -880,7 +716,7 @@
         
         <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
             <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
-            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.6.1</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.2</a></span>
         </div>
         
         
@@ -909,124 +745,113 @@
         
     </div>  
 </footer>
-        </div>
-    </div>
+		</div>
+	</div>
 
-    
-        <div class="post-tools">
-            <div class="post-tools-container">
-    <ul class="article-tools-list">
-        <!-- TOC aside toggle -->
-        
-            <li class="right-bottom-tools page-aside-toggle">
-                <i class="fa-regular fa-outdent"></i>
-            </li>
-        
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
 
-        <!-- go comment -->
-        
-            <li class="go-comment">
-                <i class="fa-regular fa-comments"></i>
-            </li>
-        
-    </ul>
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
 </div>
 
-        </div>
-    
-
-    <div class="right-side-tools-container">
-        <div class="side-tools-container">
-    <ul class="hidden-tools-list">
-        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
-            <i class="fa-regular fa-magnifying-glass-plus"></i>
-        </li>
-
-        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
-            <i class="fa-regular fa-magnifying-glass-minus"></i>
-        </li>
-
-        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
-            <i class="fa-regular fa-moon"></i>
-        </li>
-
-        <!-- rss -->
-        
-
-        
-
-        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
-            <i class="fa-regular fa-arrow-down"></i>
-        </li>
-    </ul>
-
-    <ul class="visible-tools-list">
-        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
-            <i class="fa-regular fa-cog fa-spin"></i>
-        </li>
-        
-            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
-                <i class="arrow-up fas fa-arrow-up"></i>
-                <span class="percent"></span>
-            </li>
-        
-        
-    </ul>
+	
+	<div class="search-pop-overlay">
+	<div class="popup search-popup">
+		<div class="search-header">
+			<span class="search-input-field-pre">
+				<i class="fa-solid fa-keyboard"></i>
+			</span>
+			<div class="search-input-container">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Search..." spellcheck="false" type="search" class="search-input">
+			</div>
+			<span class="popup-btn-close">
+				<i class="fa-solid fa-times"></i>
+			</span>
+		</div>
+		<div id="search-result">
+			<div id="no-result">
+				<i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+			</div>
+		</div>
+	</div>
 </div>
-
-    </div>
-
-    <div class="image-viewer-container">
-    <img src="">
-</div>
-
-
-    
-        <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-          <span class="search-input-field-pre">
-            <i class="fa-solid fa-keyboard"></i>
-          </span>
-            <div class="search-input-container">
-                <input autocomplete="off"
-                       autocorrect="off"
-                       autocapitalize="off"
-                       placeholder="Search..."
-                       spellcheck="false"
-                       type="search"
-                       class="search-input"
-                >
-            </div>
-            <span class="popup-btn-close">
-                <i class="fa-solid fa-times"></i>
-            </span>
-        </div>
-        <div id="search-result">
-            <div id="no-result">
-                <i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
-            </div>
-        </div>
-    </div>
-</div>
-
-    
+	
 
 </main>
 
 
-    
-<script src="/js/libs/Swup.min.js"></script>
 
-<script src="/js/libs/SwupSlideTheme.min.js"></script>
+<script src="/js/build/libs/Swup.min.js"></script>
 
-<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
 
-<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
 
-<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
 
-<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
 
 <script>
     const swup = new Swup({
@@ -1050,48 +875,46 @@
 
 
 
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
 
+<script src="/js/build/utils.js" type="module"></script>
 
+<script src="/js/build/main.js" type="module"></script>
 
-<script src="/js/tools/imageViewer.js" type="module"></script>
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
 
-<script src="/js/utils.js" type="module"></script>
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
 
-<script src="/js/main.js" type="module"></script>
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
 
-<script src="/js/layouts/navbarShrink.js" type="module"></script>
-
-<script src="/js/tools/scrollTopBottom.js" type="module"></script>
-
-<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
-
-<script src="/js/layouts/categoryList.js" type="module"></script>
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
 
 
 
     
-<script src="/js/tools/localSearch.js" type="module"></script>
+<script src="/js/build/tools/localSearch.js" type="module"></script>
 
 
 
 
     
-<script src="/js/tools/codeBlock.js" type="module"></script>
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
 
 
 
 
     
-<script src="/js/layouts/lazyload.js" type="module"></script>
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
 
 
 
 
     
-<script src="/js/tools/runtime.js"></script>
+<script src="/js/build/tools/runtime.js"></script>
 
     
-<script src="/js/libs/odometer.min.js"></script>
+<script src="/js/build/libs/odometer.min.js"></script>
 
     
 <link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
@@ -1100,10 +923,10 @@
 
 
   
-<script src="/js/libs/Typed.min.js"></script>
+<script src="/js/build/libs/Typed.min.js"></script>
 
   
-<script src="/js/plugins/typed.js" type="module"></script>
+<script src="/js/build/plugins/typed.js" type="module"></script>
 
 
 
@@ -1111,20 +934,34 @@
 
 
 
-
-
-<div class="post-scripts" data-swup-reload-script>
-    
-        
-<script src="/js/tools/tocToggle.js" type="module"></script>
-
-<script src="/js/layouts/toc.js" type="module"></script>
-
-<script src="/js/plugins/tabs.js" type="module"></script>
 
     
-</div>
+<script src="/js/build/libs/anime.min.js"></script>
 
 
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+	
 </body>
+
 </html>
