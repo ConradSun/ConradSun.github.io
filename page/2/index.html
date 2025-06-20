@@ -546,7 +546,7 @@
 
         <div class="statistics flex justify-around my-2.5">
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">27</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">29</div>
         <div class="label text-third-text-color text-sm">Tags</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
@@ -554,7 +554,7 @@
         <div class="label text-third-text-color text-sm">Categories</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">15</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">17</div>
         <div class="label text-third-text-color text-sm">Posts</div>
     </a>
 </div>
@@ -622,7 +622,7 @@
 </div>
                 <div class="statistics flex justify-around my-2.5">
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">27</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">29</div>
         <div class="label text-third-text-color text-sm">Tags</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
@@ -630,7 +630,7 @@
         <div class="label text-third-text-color text-sm">Categories</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">15</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">17</div>
         <div class="label text-third-text-color text-sm">Posts</div>
     </a>
 </div>
@@ -647,6 +647,162 @@
                 
                     <div class="home-content-container">
     <ul class="home-article-list">
+        
+            <li class="home-article-item">
+
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2023/06b81ddf97.html">
+                            macOS 修改 MachO 文件实现动态库注入（三）
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            <p>通过在 Mach-o 文件中插入 Load Commands 指令实现动态库注入的方法有一定局限性，因为如果没有足够的空白的空间，则不便插入新指令。本文讲解在不新增 Load Commands 指令的前提下实现自定义动态库的注入。</p>
+
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Mon Jun 26 2023 15:12:57 GMT+0800">
+                
+                    2023-06-26
+                
+            </span>
+        </span>
+        
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/macOS%E5%BC%80%E5%8F%91/">macOS开发</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/macOS/">macOS</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Mach-o/">Mach-o</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/interpose/">interpose</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2023/06b81ddf97.html">Read more<span class="seo-reader-text">macOS 修改 MachO 文件实现动态库注入（三）</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2023/06f5037cc5.html">
+                            macOS 修改 MachO 文件实现动态库注入（二）
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            <p>macOS 上大部分 Mach-o 文件是多架构的。了解如何修改单架构二进制文件后，还需进一步实现多架构 Mach-o 文件 Load Commands 指令的插入方法。</p>
+
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Sun Jun 25 2023 15:12:57 GMT+0800">
+                
+                    2023-06-25
+                
+            </span>
+        </span>
+        
+            <span class="home-article-category">
+                <i class="fa-solid fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/macOS%E5%BC%80%E5%8F%91/">macOS开发</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/macOS/">macOS</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/Mach-o/">Mach-o</a>&nbsp;
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/interpose/">interpose</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2023/06f5037cc5.html">Read more<span class="seo-reader-text">macOS 修改 MachO 文件实现动态库注入（二）</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+</div>
+
+                </div>
+            </li>
         
             <li class="home-article-item">
 
@@ -707,12 +863,12 @@
                     
                         <li>
                             | 
-                            <a href="/tags/interpose/">interpose</a>&nbsp;
+                            <a href="/tags/Mach-o/">Mach-o</a>&nbsp;
                         </li>
                     
                         <li>
                             | 
-                            <a href="/tags/Mach-o/">Mach-o</a>&nbsp;
+                            <a href="/tags/interpose/">interpose</a>&nbsp;
                         </li>
                     
                 </ul>
@@ -785,12 +941,12 @@
                     
                         <li>
                             | 
-                            <a href="/tags/hook/">hook</a>&nbsp;
+                            <a href="/tags/interpose/">interpose</a>&nbsp;
                         </li>
                     
                         <li>
                             | 
-                            <a href="/tags/interpose/">interpose</a>&nbsp;
+                            <a href="/tags/hook/">hook</a>&nbsp;
                         </li>
                     
                 </ul>
@@ -1067,16 +1223,16 @@
               <span>2022</span>
               -
             
-            2024&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">孙康</a>
+            2025&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">孙康</a>
             
                 
                 <p class="post-count space-x-0.5">
                     <span>
-                        15 posts in total
+                        17 posts in total
                     </span>
                     
                         <span>
-                            17.5k words in total
+                            19.7k words in total
                         </span>
                     
                 </p>
